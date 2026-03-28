@@ -50,6 +50,13 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
+        /* Responsive Stat Values */
+        .stat-value {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            word-break: break-word;
+            line-height: 1.2;
+        }
+
         /* Animate modal */
         .modal-enter {
             animation: fadeIn 0.3s ease-out;
@@ -82,7 +89,7 @@
         }
     </style>
 </head>
-<body class="custom-scrollbar">
+<body class="custom-scrollbar bg-[#0f172a]">
 
     <div class="app-container">
         <!-- Sidebar -->
@@ -100,7 +107,7 @@
                         <i class="fas fa-th-large w-5"></i> Dashboard
                     </button>
                     <button onclick="switchTab('carnes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white" id="nav-carnes">
-                        <i class="fas fa-file-invoice-dollar w-5"></i> Carnês e Parcelas
+                        <i class="fas fa-file-invoice-dollar w-5"></i> Registros e Parcelas
                     </button>
                     <button onclick="switchTab('emprestimos')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white" id="nav-emprestimos">
                         <i class="fas fa-hand-holding-usd w-5"></i> Empréstimos
@@ -114,7 +121,7 @@
             <div class="mt-auto p-6">
                 <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
                     <p class="text-xs text-slate-400 mb-2">Suporte Premium</p>
-                    <p class="text-sm font-medium">Calixto Systems v1.0</p>
+                    <p class="text-sm font-medium">Calixto Systems v1.1</p>
                 </div>
             </div>
         </aside>
@@ -137,35 +144,35 @@
             </header>
 
             <!-- Scrollable Content -->
-            <div id="content-container" class="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-950">
+            <div id="content-container" class="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-900">
                 
                 <!-- Dashboard View -->
                 <section id="view-dashboard" class="space-y-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
-                            <p class="text-slate-400 text-sm mb-1">Total Emprestado</p>
-                            <h3 id="stat-total-emprestado" class="text-2xl font-bold text-white">R$ 0,00</h3>
+                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                            <p class="text-slate-400 text-sm mb-1 truncate">Total Saída (Emprést.)</p>
+                            <h3 id="stat-total-emprestado" class="stat-value font-bold text-white">R$ 0,00</h3>
                             <div class="mt-2 text-xs text-indigo-400 flex items-center gap-1">
                                 <i class="fas fa-arrow-up"></i> Fluxo de saída
                             </div>
                         </div>
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
-                            <p class="text-slate-400 text-sm mb-1">Total a Receber</p>
-                            <h3 id="stat-total-receber" class="text-2xl font-bold text-white">R$ 0,00</h3>
+                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                            <p class="text-slate-400 text-sm mb-1 truncate">Expectativa Bruta</p>
+                            <h3 id="stat-total-receber" class="stat-value font-bold text-white">R$ 0,00</h3>
                             <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
-                                <i class="fas fa-clock"></i> Expectativa bruta
+                                <i class="fas fa-clock"></i> Total a receber
                             </div>
                         </div>
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
-                            <p class="text-slate-400 text-sm mb-1">Já Recebido</p>
-                            <h3 id="stat-total-recebido" class="text-2xl font-bold text-emerald-400">R$ 0,00</h3>
+                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                            <p class="text-slate-400 text-sm mb-1 truncate">Já Recebido</p>
+                            <h3 id="stat-total-recebido" class="stat-value font-bold text-emerald-400">R$ 0,00</h3>
                             <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
                                 <i class="fas fa-check-circle"></i> Capital retornado
                             </div>
                         </div>
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
-                            <p class="text-slate-400 text-sm mb-1">Total em Aberto</p>
-                            <h3 id="stat-total-aberto" class="text-2xl font-bold text-rose-400">R$ 0,00</h3>
+                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                            <p class="text-slate-400 text-sm mb-1 truncate">Total em Aberto</p>
+                            <h3 id="stat-total-aberto" class="stat-value font-bold text-rose-400">R$ 0,00</h3>
                             <div class="mt-2 text-xs text-rose-400 flex items-center gap-1">
                                 <i class="fas fa-exclamation-triangle"></i> Pendente
                             </div>
@@ -182,7 +189,7 @@
                             </div>
                         </div>
                         <div class="space-y-4">
-                            <h4 class="text-lg font-medium">Distribuição por Categoria</h4>
+                            <h4 class="text-lg font-medium">Distribuição por Tipo</h4>
                             <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
                                 <div id="category-stats" class="space-y-4">
                                     <!-- JS Inject -->
@@ -195,10 +202,9 @@
                 <!-- Carnês View -->
                 <section id="view-carnes" class="hidden space-y-6">
                     <div class="flex items-center justify-between">
-                        <div class="flex gap-2">
+                        <div id="dynamic-filters" class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                             <button onclick="filterType('todos')" class="px-4 py-2 rounded-lg bg-indigo-600 text-sm font-medium filter-btn" data-type="todos">Todos</button>
-                            <button onclick="filterType('pessoal')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm font-medium filter-btn" data-type="pessoal">Pessoal</button>
-                            <button onclick="filterType('cliente')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm font-medium filter-btn" data-type="cliente">Clientes</button>
+                            <!-- Filtros dinâmicos injetados aqui -->
                         </div>
                         <div class="flex items-center gap-2">
                             <label class="text-sm text-slate-400">Ordenar por:</label>
@@ -220,21 +226,23 @@
                         <!-- Cards here -->
                     </div>
                     <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider">
-                                <tr>
-                                    <th class="px-6 py-4 font-medium">Devedor</th>
-                                    <th class="px-6 py-4 font-medium">Valor Orig.</th>
-                                    <th class="px-6 py-4 font-medium">Total c/ Juros</th>
-                                    <th class="px-6 py-4 font-medium">Parcelas</th>
-                                    <th class="px-6 py-4 font-medium">Status</th>
-                                    <th class="px-6 py-4 font-medium">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="loans-table-body" class="divide-y divide-slate-700">
-                                <!-- JS Inject -->
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4 font-medium">Devedor</th>
+                                        <th class="px-6 py-4 font-medium">Valor Orig.</th>
+                                        <th class="px-6 py-4 font-medium">Total c/ Juros</th>
+                                        <th class="px-6 py-4 font-medium">Parcelas</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        <th class="px-6 py-4 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loans-table-body" class="divide-y divide-slate-700">
+                                    <!-- JS Inject -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
@@ -303,16 +311,11 @@
                     </div>
                     <div class="col-span-full">
                         <label class="block text-sm font-medium text-slate-400 mb-2">Observação</label>
-                        <textarea id="entry-observation" rows="3" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" placeholder="Ex: Pagamento referente ao mês de janeiro..."></textarea>
+                        <textarea id="entry-observation" rows="3" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" placeholder="Ex: Detalhes adicionais..."></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-2">Tipo de Registro</label>
-                        <select id="entry-type" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="pessoal">Gasto Pessoal</option>
-                            <option value="cliente">Parcelamento de Cliente</option>
-                            <option value="emprestimo">Empréstimo Concedido</option>
-                            <option value="investimento">Investimento</option>
-                        </select>
+                        <input type="text" id="entry-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo, Investimento, Aluguel...">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-2">Valor Total (R$)</label>
@@ -385,7 +388,7 @@
             e.preventDefault();
             const name = document.getElementById('entry-name').value;
             const observation = document.getElementById('entry-observation').value;
-            const type = document.getElementById('entry-type').value;
+            const type = document.getElementById('entry-type').value.trim();
             const value = parseFloat(document.getElementById('entry-value').value);
             const count = parseInt(document.getElementById('entry-installments').value);
             const interest = parseFloat(document.getElementById('entry-interest').value) || 0;
@@ -473,7 +476,10 @@
 
         // --- UI RENDERING ---
         function updateStats() {
-            const totalEmprestado = carnes.filter(c => c.type === 'emprestimo').reduce((acc, c) => acc + c.originalValue, 0);
+            const totalEmprestado = carnes
+                .filter(c => c.type.toLowerCase().includes('emprest'))
+                .reduce((acc, c) => acc + c.originalValue, 0);
+            
             const totalReceber = carnes.reduce((acc, c) => acc + c.totalValue, 0);
             
             let totalRecebido = 0;
@@ -504,11 +510,11 @@
                 const dueFmt = new Date(p.dueDate + 'T00:00:00').toLocaleDateString('pt-BR');
                 return `
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between card-hover">
-                        <div>
-                            <p class="font-bold text-sm text-white">${p.parentName}</p>
+                        <div class="min-w-0">
+                            <p class="font-bold text-sm text-white truncate">${p.parentName}</p>
                             <p class="text-xs text-slate-400">Venc: ${dueFmt}</p>
                         </div>
-                        <div class="text-right">
+                        <div class="text-right flex-shrink-0 ml-4">
                             <p class="font-bold text-indigo-400">${formatBRL(p.value)}</p>
                             <span class="status-badge ${status.color}">${status.text}</span>
                         </div>
@@ -517,16 +523,22 @@
             }).join('');
             document.getElementById('upcoming-list').innerHTML = upcomingHtml || '<p class="text-slate-500 text-sm">Nenhuma parcela pendente.</p>';
 
-            const types = ['pessoal', 'cliente', 'emprestimo', 'investimento'];
-            const categoryHtml = types.map(t => {
-                const count = carnes.filter(c => c.type === t).length;
-                const total = carnes.filter(c => c.type === t).reduce((acc, c) => acc + c.totalValue, 0);
-                const percentage = carnes.length > 0 ? (count / carnes.length) * 100 : 0;
+            const typesStats = {};
+            carnes.forEach(c => {
+                const t = c.type || 'Sem Categoria';
+                if (!typesStats[t]) typesStats[t] = { count: 0, total: 0 };
+                typesStats[t].count++;
+                typesStats[t].total += c.totalValue;
+            });
+
+            const categoryHtml = Object.keys(typesStats).map(t => {
+                const data = typesStats[t];
+                const percentage = carnes.length > 0 ? (data.count / carnes.length) * 100 : 0;
                 return `
                     <div class="space-y-1">
                         <div class="flex justify-between text-xs mb-1">
-                            <span class="capitalize text-slate-300 font-medium">${t}</span>
-                            <span class="text-slate-400">${formatBRL(total)}</span>
+                            <span class="capitalize text-slate-300 font-medium truncate pr-2">${t}</span>
+                            <span class="text-slate-400 whitespace-nowrap">${formatBRL(data.total)}</span>
                         </div>
                         <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
                             <div class="bg-indigo-500 h-full" style="width: ${percentage}%"></div>
@@ -534,7 +546,21 @@
                     </div>
                 `;
             }).join('');
-            document.getElementById('category-stats').innerHTML = categoryHtml;
+            document.getElementById('category-stats').innerHTML = categoryHtml || '<p class="text-slate-500 text-xs">Nenhum dado registrado.</p>';
+            
+            updateDynamicFilters(Object.keys(typesStats));
+        }
+
+        function updateDynamicFilters(types) {
+            const filterContainer = document.getElementById('dynamic-filters');
+            const currentFilterBtn = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter === 'todos' ? 'bg-indigo-600' : 'bg-slate-800'} text-sm font-medium filter-btn whitespace-nowrap" data-type="todos">Todos</button>`;
+            
+            const dynamicBtns = types.map(t => {
+                const active = currentFilter === t;
+                return `<button onclick="filterType('${t}')" class="px-4 py-2 rounded-lg ${active ? 'bg-indigo-600' : 'bg-slate-800'} text-sm font-medium filter-btn whitespace-nowrap" data-type="${t}">${t}</button>`;
+            }).join('');
+            
+            filterContainer.innerHTML = currentFilterBtn + dynamicBtns;
         }
 
         function renderLists() {
@@ -558,21 +584,21 @@
                 return `
                     <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg card-hover">
                         <div class="p-5 border-b border-slate-700 flex justify-between items-start">
-                            <div>
-                                <span class="text-[10px] uppercase font-bold tracking-widest text-indigo-400">${c.type}</span>
-                                <h4 class="font-bold text-lg truncate w-40 text-white">${c.name}</h4>
+                            <div class="min-w-0">
+                                <span class="text-[10px] uppercase font-bold tracking-widest text-indigo-400 block truncate">${c.type}</span>
+                                <h4 class="font-bold text-lg truncate text-white">${c.name}</h4>
                             </div>
-                            <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500 transition-colors">
+                            <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500 transition-colors flex-shrink-0 ml-2">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                         <div class="p-5 space-y-4">
-                            <div class="flex justify-between items-end">
-                                <div>
+                            <div class="flex justify-between items-end gap-2">
+                                <div class="min-w-0">
                                     <p class="text-xs text-slate-500">Valor Total</p>
-                                    <p class="text-xl font-bold text-white">${formatBRL(c.totalValue)}</p>
+                                    <p class="text-xl font-bold text-white truncate">${formatBRL(c.totalValue)}</p>
                                 </div>
-                                <div class="text-right">
+                                <div class="text-right flex-shrink-0">
                                     <p class="text-xs text-slate-500">${c.installmentsCount} parcelas</p>
                                     <p class="text-sm font-medium text-slate-300">${formatBRL(c.totalValue / c.installmentsCount)}/mês</p>
                                 </div>
@@ -594,7 +620,7 @@
                 `;
             }).join('');
 
-            const loans = carnes.filter(c => c.type === 'emprestimo');
+            const loans = carnes.filter(c => c.type.toLowerCase().includes('emprest'));
             tableBody.innerHTML = loans.map(l => {
                 const paid = l.installments.filter(i => i.paid).length;
                 const profit = l.totalValue - l.originalValue;
@@ -604,7 +630,12 @@
                     <tr class="hover:bg-slate-800/50 transition-colors">
                         <td class="px-6 py-4 font-medium text-slate-200">${l.name}</td>
                         <td class="px-6 py-4 text-slate-400">${formatBRL(l.originalValue)}</td>
-                        <td class="px-6 py-4 text-emerald-400 font-bold">${formatBRL(l.totalValue)} <span class="text-[10px] text-slate-500 block">+${formatBRL(profit)} lucro</span></td>
+                        <td class="px-6 py-4 text-emerald-400 font-bold">
+                            <div class="flex flex-col">
+                                <span>${formatBRL(l.totalValue)}</span>
+                                <span class="text-[10px] text-slate-500">+${formatBRL(profit)} lucro</span>
+                            </div>
+                        </td>
                         <td class="px-6 py-4">
                             <span class="text-xs font-medium text-white">${paid} / ${l.installmentsCount}</span>
                         </td>
@@ -630,7 +661,7 @@
 
             document.getElementById('details-title').innerText = carne.name;
             document.getElementById('details-subtitle').innerHTML = `
-                <p>${carne.installmentsCount} parcelas de ${formatBRL(carne.totalValue/carne.installmentsCount)}</p>
+                <p>${carne.installmentsCount} parcelas de ${formatBRL(carne.totalValue/carne.installmentsCount)} | Tipo: ${carne.type}</p>
                 ${carne.observation ? `<p class="mt-1 text-xs italic text-slate-500">Obs: ${carne.observation}</p>` : ''}
             `;
             
@@ -645,14 +676,14 @@
                 
                 return `
                     <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">${idx + 1}</div>
-                            <div>
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500 flex-shrink-0">${idx + 1}</div>
+                            <div class="min-w-0">
                                 <p class="text-sm font-bold text-slate-200">Vencimento: ${dueFmt}</p>
                                 <span class="status-badge ${status.color} mt-1 inline-block">${status.text}</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-6">
+                        <div class="flex items-center gap-6 flex-shrink-0 ml-4">
                             <p class="font-bold text-slate-300">${formatBRL(p.value)}</p>
                             <button onclick="toggleParcela(${carne.id}, ${p.id})" class="w-10 h-10 rounded-xl ${p.paid ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'} flex items-center justify-center transition-all hover:scale-105 shadow-lg">
                                 <i class="fas ${p.paid ? 'fa-check' : 'fa-wallet'}"></i>
@@ -694,13 +725,8 @@
 
         function filterType(type) {
             currentFilter = type;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-indigo-600');
-                btn.classList.add('bg-slate-800');
-            });
-            const activeFilterBtn = document.querySelector(`[data-type="${type}"]`);
-            if(activeFilterBtn) activeFilterBtn.classList.add('bg-indigo-600');
             renderLists();
+            updateStats();
         }
 
         function openModal(id) {
