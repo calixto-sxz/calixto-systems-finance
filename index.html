@@ -301,13 +301,8 @@
                         <input type="date" id="entry-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Frequência</label>
-                        <select id="entry-frequency" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="mensal">Mensal</option>
-                            <option value="diario">Diário</option>
-                            <option value="semanal">Semanal</option>
-                            <option value="anual">Anual</option>
-                        </select>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Data de Vencimento</label>
+                        <input type="date" id="entry-due-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                 </div>
                 <div class="pt-4 flex gap-4">
@@ -364,31 +359,29 @@
             const count = parseInt(document.getElementById('entry-installments').value);
             const interest = parseFloat(document.getElementById('entry-interest').value) || 0;
             const startDate = document.getElementById('entry-date').value;
-            const freq = document.getElementById('entry-frequency').value;
+            const dueDateInput = document.getElementById('entry-due-date').value;
 
             // Calculation
             const totalWithInterest = value * (1 + (interest / 100));
             const parcelValue = totalWithInterest / count;
             
             const installments = [];
-            let lastDate = new Date(startDate + 'T00:00:00');
+            let lastDate = new Date(dueDateInput + 'T00:00:00');
 
             for (let i = 1; i <= count; i++) {
-                const dueDate = new Date(lastDate);
+                const currentDueDate = new Date(lastDate);
                 if (i > 1) {
-                    if (freq === 'diario') dueDate.setDate(dueDate.getDate() + 1);
-                    else if (freq === 'semanal') dueDate.setDate(dueDate.getDate() + 7);
-                    else if (freq === 'mensal') dueDate.setMonth(dueDate.getMonth() + 1);
-                    else if (freq === 'anual') dueDate.setFullYear(dueDate.getFullYear() + 1);
+                    // Default to monthly if count > 1
+                    currentDueDate.setMonth(currentDueDate.getMonth() + 1);
                 }
                 
                 installments.push({
                     id: Date.now() + i,
-                    dueDate: dueDate.toISOString().split('T')[0],
+                    dueDate: currentDueDate.toISOString().split('T')[0],
                     value: parcelValue,
                     paid: false
                 });
-                lastDate = dueDate;
+                lastDate = currentDueDate;
             }
 
             const newCarne = {
@@ -400,7 +393,7 @@
                 interestRate: interest,
                 installmentsCount: count,
                 startDate,
-                frequency: freq,
+                firstDueDate: dueDateInput,
                 installments,
                 createdAt: new Date().toISOString()
             };
@@ -409,6 +402,8 @@
             saveData();
             closeModal('modal-add-carne');
             e.target.reset();
+            document.getElementById('entry-date').valueAsDate = new Date();
+            document.getElementById('entry-due-date').valueAsDate = new Date();
         }
 
         function deleteCarne(id) {
@@ -708,8 +703,9 @@
 
         // --- INITIALIZATION ---
         window.onload = () => {
-            // Set default date to today
+            // Set default dates to today
             document.getElementById('entry-date').valueAsDate = new Date();
+            document.getElementById('entry-due-date').valueAsDate = new Date();
             updateStats();
             renderLists();
             switchTab('dashboard');
