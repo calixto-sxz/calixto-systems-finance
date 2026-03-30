@@ -50,14 +50,12 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
-        /* Responsive Stat Values */
         .stat-value {
             font-size: clamp(1.1rem, 2.5vw, 1.5rem);
             word-break: break-word;
             line-height: 1.2;
         }
 
-        /* Animate modal */
         .modal-enter {
             animation: fadeIn 0.3s ease-out;
         }
@@ -66,7 +64,6 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* Fix layout structure */
         .app-container {
             display: flex;
             height: 100vh;
@@ -75,7 +72,7 @@
         }
 
         .sidebar {
-            width: 16rem; /* 64px * 4 = 256px */
+            width: 16rem;
             flex-shrink: 0;
             z-index: 40;
         }
@@ -84,7 +81,7 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            min-width: 0; /* Prevents flex items from overflowing */
+            min-width: 0;
             position: relative;
         }
     </style>
@@ -109,8 +106,8 @@
                     <button onclick="switchTab('carnes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-carnes">
                         <i class="fas fa-file-invoice-dollar w-5 flex-shrink-0"></i> Registros e Parcelas
                     </button>
-                    <button onclick="switchTab('emprestimos')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-emprestimos">
-                        <i class="fas fa-hand-holding-usd w-5 flex-shrink-0"></i> Empréstimos
+                    <button onclick="switchTab('arquivos')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-arquivos">
+                        <i class="fas fa-folder-open w-5 flex-shrink-0"></i> Arquivos e Recibos
                     </button>
                     <button onclick="switchTab('calculadora')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-calculadora">
                         <i class="fas fa-calculator w-5 flex-shrink-0"></i> Calculadora
@@ -121,7 +118,7 @@
             <div class="mt-auto p-6">
                 <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
                     <p class="text-xs text-slate-400 mb-2">Suporte Premium</p>
-                    <p class="text-sm font-medium">Calixto Systems v1.1</p>
+                    <p class="text-sm font-medium">Calixto Systems v1.2</p>
                 </div>
             </div>
         </aside>
@@ -204,7 +201,6 @@
                     <div class="flex items-center justify-between">
                         <div id="dynamic-filters" class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                             <button onclick="filterType('todos')" class="px-4 py-2 rounded-lg bg-indigo-600 text-sm font-medium filter-btn" data-type="todos">Todos</button>
-                            <!-- Filtros dinâmicos injetados aqui -->
                         </div>
                         <div class="flex items-center gap-2">
                             <label class="text-sm text-slate-400">Ordenar por:</label>
@@ -220,29 +216,21 @@
                     </div>
                 </section>
 
-                <!-- Emprestimos View -->
-                <section id="view-emprestimos" class="hidden space-y-6">
-                    <div id="loan-summary-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Cards here -->
-                    </div>
-                    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider">
-                                    <tr>
-                                        <th class="px-6 py-4 font-medium">Devedor</th>
-                                        <th class="px-6 py-4 font-medium">Valor Orig.</th>
-                                        <th class="px-6 py-4 font-medium">Total c/ Juros</th>
-                                        <th class="px-6 py-4 font-medium">Parcelas</th>
-                                        <th class="px-6 py-4 font-medium">Status</th>
-                                        <th class="px-6 py-4 font-medium">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="loans-table-body" class="divide-y divide-slate-700">
-                                    <!-- JS Inject -->
-                                </tbody>
-                            </table>
+                <!-- Arquivos View -->
+                <section id="view-arquivos" class="hidden space-y-6">
+                    <div class="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
+                        <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-600 rounded-2xl p-10 hover:border-indigo-500 transition-colors cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
+                            <div class="w-16 h-16 bg-indigo-600/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-indigo-500"></i>
+                            </div>
+                            <p class="text-lg font-bold text-white">Upload de Comprovantes</p>
+                            <p class="text-sm text-slate-400 mt-1">Selecione imagens (JPG, PNG) ou documentos PDF</p>
+                            <input type="file" id="file-upload-input" class="hidden" accept="image/*,application/pdf" onchange="handleFileUpload(event)">
                         </div>
+                    </div>
+
+                    <div id="files-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- JS Inject -->
                     </div>
                 </section>
 
@@ -296,7 +284,7 @@
         </main>
     </div>
 
-    <!-- Modal Adicionar Carnê/Empréstimo -->
+    <!-- Modal Adicionar Registro -->
     <div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-2xl rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
@@ -374,14 +362,17 @@
     <script>
         // --- DATA & STATE ---
         let carnes = JSON.parse(localStorage.getItem('calixto_data')) || [];
+        let files = JSON.parse(localStorage.getItem('calixto_files')) || [];
         let currentFilter = 'todos';
         let searchQuery = '';
 
         // --- CORE FUNCTIONS ---
         function saveData() {
             localStorage.setItem('calixto_data', JSON.stringify(carnes));
+            localStorage.setItem('calixto_files', JSON.stringify(files));
             updateStats();
             renderLists();
+            renderFiles();
         }
 
         function saveEntry(e) {
@@ -395,7 +386,6 @@
             const startDate = document.getElementById('entry-date').value;
             const dueDateInput = document.getElementById('entry-due-date').value;
 
-            // Calculation
             const totalWithInterest = value * (1 + (interest / 100));
             const parcelValue = totalWithInterest / count;
             
@@ -456,6 +446,76 @@
                     saveData();
                     showDetails(carneId);
                 }
+            }
+        }
+
+        // --- FILE HANDLING ---
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 3 * 1024 * 1024) {
+                alert("Arquivo muito grande. Limite de 3MB para armazenamento local.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const newFile = {
+                    id: Date.now(),
+                    name: file.name,
+                    type: file.type,
+                    data: event.target.result,
+                    date: new Date().toISOString()
+                };
+                files.push(newFile);
+                saveData();
+                e.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteFile(id) {
+            if (confirm('Excluir este arquivo permanentemente?')) {
+                files = files.filter(f => f.id !== id);
+                saveData();
+            }
+        }
+
+        function renderFiles() {
+            const grid = document.getElementById('files-grid');
+            if (!grid) return;
+
+            grid.innerHTML = files.map(f => {
+                const isPdf = f.type === 'application/pdf';
+                const dateFmt = new Date(f.date).toLocaleDateString('pt-BR');
+                
+                return `
+                    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg card-hover group">
+                        <div class="h-40 bg-slate-900 flex items-center justify-center overflow-hidden relative">
+                            ${isPdf ? 
+                                `<i class="fas fa-file-pdf text-5xl text-rose-500"></i>` : 
+                                `<img src="${f.data}" class="w-full h-full object-cover">`
+                            }
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                <a href="${f.data}" download="${f.name}" class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white hover:bg-indigo-500">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                <button onclick="deleteFile(${f.id})" class="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center text-white hover:bg-rose-500">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm font-bold text-white truncate" title="${f.name}">${f.name}</p>
+                            <p class="text-[10px] text-slate-500 uppercase mt-1">${dateFmt} • ${isPdf ? 'PDF' : 'Imagem'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (files.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 italic">Nenhum comprovante enviado ainda.</div>`;
             }
         }
 
@@ -553,6 +613,7 @@
 
         function updateDynamicFilters(types) {
             const filterContainer = document.getElementById('dynamic-filters');
+            if(!filterContainer) return;
             const currentFilterBtn = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter === 'todos' ? 'bg-indigo-600' : 'bg-slate-800'} text-sm font-medium filter-btn whitespace-nowrap" data-type="todos">Todos</button>`;
             
             const dynamicBtns = types.map(t => {
@@ -565,7 +626,7 @@
 
         function renderLists() {
             const grid = document.getElementById('carnes-grid');
-            const tableBody = document.getElementById('loans-table-body');
+            if(!grid) return;
             const sortBy = document.getElementById('sort-carnes').value;
 
             let filtered = carnes.filter(c => {
@@ -617,40 +678,6 @@
                             </button>
                         </div>
                     </div>
-                `;
-            }).join('');
-
-            const loans = carnes.filter(c => c.type.toLowerCase().includes('emprest'));
-            tableBody.innerHTML = loans.map(l => {
-                const paid = l.installments.filter(i => i.paid).length;
-                const profit = l.totalValue - l.originalValue;
-                const isLate = l.installments.some(p => !p.paid && new Date(p.dueDate + 'T00:00:00') < new Date().setHours(0,0,0,0));
-                
-                return `
-                    <tr class="hover:bg-slate-800/50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-slate-200">${l.name}</td>
-                        <td class="px-6 py-4 text-slate-400">${formatBRL(l.originalValue)}</td>
-                        <td class="px-6 py-4 text-emerald-400 font-bold">
-                            <div class="flex flex-col">
-                                <span>${formatBRL(l.totalValue)}</span>
-                                <span class="text-[10px] text-slate-500">+${formatBRL(profit)} lucro</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-xs font-medium text-white">${paid} / ${l.installmentsCount}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            ${paid === l.installmentsCount 
-                                ? '<span class="status-badge bg-emerald-500/20 text-emerald-400">QUITADO</span>' 
-                                : isLate 
-                                    ? '<span class="status-badge bg-rose-500/20 text-rose-400">EM ATRASO</span>'
-                                    : '<span class="status-badge bg-blue-500/20 text-blue-400">EM DIA</span>'
-                            }
-                        </td>
-                        <td class="px-6 py-4 text-indigo-400 cursor-pointer font-bold hover:underline" onclick="showDetails(${l.id})">
-                            Gerenciar
-                        </td>
-                    </tr>
                 `;
             }).join('');
         }
@@ -715,7 +742,13 @@
                 activeNav.classList.remove('text-slate-400');
             }
             
-            document.getElementById('current-tab-title').innerText = tab.charAt(0).toUpperCase() + tab.slice(1);
+            const titles = {
+                'dashboard': 'Dashboard',
+                'carnes': 'Registros e Parcelas',
+                'arquivos': 'Arquivos e Recibos',
+                'calculadora': 'Calculadora Financeira'
+            };
+            document.getElementById('current-tab-title').innerText = titles[tab] || 'Calixto Systems';
         }
 
         function handleSearch(val) {
@@ -759,6 +792,7 @@
             document.getElementById('entry-due-date').valueAsDate = new Date();
             updateStats();
             renderLists();
+            renderFiles();
             switchTab('dashboard');
         };
     </script>
