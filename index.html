@@ -200,14 +200,7 @@
                 
                 <!-- Dashboard View -->
                 <section id="view-dashboard" class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                            <p class="text-slate-400 text-sm mb-1 truncate">Total Saída (Emprést.)</p>
-                            <h3 id="stat-total-emprestado" class="stat-value font-bold text-white">R$ 0,00</h3>
-                            <div class="mt-2 text-xs text-indigo-400 flex items-center gap-1">
-                                <i class="fas fa-arrow-up"></i> Fluxo de saída
-                            </div>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
                             <p class="text-slate-400 text-sm mb-1 truncate">Expectativa Bruta</p>
                             <h3 id="stat-total-receber" class="stat-value font-bold text-white">R$ 0,00</h3>
@@ -1004,10 +997,6 @@
 
         // --- UI RENDERING ---
         function updateStats() {
-            const totalEmprestado = carnes
-                .filter(c => c.type.toLowerCase().includes('emprest'))
-                .reduce((acc, c) => acc + c.originalValue, 0);
-            
             const totalReceber = carnes.reduce((acc, c) => acc + c.totalValue, 0);
             
             let totalRecebido = 0;
@@ -1020,7 +1009,6 @@
                 });
             });
 
-            document.getElementById('stat-total-emprestado').innerText = formatBRL(totalEmprestado);
             document.getElementById('stat-total-receber').innerText = formatBRL(totalReceber);
             document.getElementById('stat-total-recebido').innerText = formatBRL(totalRecebido);
             document.getElementById('stat-total-aberto').innerText = formatBRL(totalAberto);
