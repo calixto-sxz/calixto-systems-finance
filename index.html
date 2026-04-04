@@ -88,7 +88,56 @@
 </head>
 <body class="custom-scrollbar bg-[#0f172a]">
 
-    <div class="app-container">
+    <!-- Auth Section -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-slate-950">
+        <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-md modal-enter">
+            <div class="flex flex-col items-center mb-8">
+                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
+                    <i class="fas fa-shield-alt text-white text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight">Calixto <span class="text-indigo-500">Systems</span></h1>
+                <p class="text-slate-400 text-sm mt-2" id="auth-subtitle">Entre na sua conta para continuar</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                    <input type="email" id="login-email" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="seu@email.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
+                    <input type="password" id="login-password" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/20 mt-2">Acessar Painel</button>
+                <p class="text-center text-sm text-slate-400 mt-6">
+                    Não tem conta? <button type="button" onclick="toggleAuth(false)" class="text-indigo-400 font-bold hover:underline">Cadastre-se</button>
+                </p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
+                    <input type="text" id="reg-name" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="João Silva">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                    <input type="email" id="reg-email" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="exemplo@email.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
+                    <input type="password" id="reg-password" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Mínimo 6 caracteres">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 mt-2">Criar minha conta</button>
+                <p class="text-center text-sm text-slate-400 mt-6">
+                    Já possui conta? <button type="button" onclick="toggleAuth(true)" class="text-indigo-400 font-bold hover:underline">Fazer Login</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div id="main-app" class="app-container hidden">
         <!-- Sidebar -->
         <aside class="sidebar bg-slate-900 border-r border-slate-800 hidden md:flex flex-col">
             <div class="p-6">
@@ -115,11 +164,14 @@
                 </nav>
             </div>
 
-            <div class="mt-auto p-6">
+            <div class="mt-auto p-6 space-y-4">
                 <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
-                    <p class="text-xs text-slate-400 mb-2">Suporte Premium</p>
-                    <p class="text-sm font-medium">Calixto Systems v1.2</p>
+                    <p class="text-[10px] text-slate-400 mb-1">Usuário Logado</p>
+                    <p id="user-display-name" class="text-sm font-medium truncate">Carregando...</p>
                 </div>
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white py-3 rounded-xl text-sm font-bold transition-all">
+                    <i class="fas fa-sign-out-alt"></i> Sair do Sistema
+                </button>
             </div>
         </aside>
 
@@ -390,21 +442,125 @@
     </div>
 
     <script>
+        // --- AUTH LOGIC ---
+        const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
+        const ADMIN_PASS = 'admin@123';
+
+        // Simple Hash function for passwords
+        function hashPassword(pwd) {
+            let hash = 0;
+            for (let i = 0; i < pwd.length; i++) {
+                const char = pwd.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        function initAdmin() {
+            let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+            if (!users.find(u => u.email === ADMIN_EMAIL)) {
+                users.push({
+                    id: 'admin_root',
+                    name: 'Administrador Calixto',
+                    email: ADMIN_EMAIL,
+                    password: hashPassword(ADMIN_PASS)
+                });
+                localStorage.setItem('calixto_users', JSON.stringify(users));
+            }
+        }
+
+        function toggleAuth(showLogin) {
+            document.getElementById('login-form').classList.toggle('hidden', !showLogin);
+            document.getElementById('register-form').classList.toggle('hidden', showLogin);
+            document.getElementById('auth-subtitle').innerText = showLogin ? 
+                'Entre na sua conta para continuar' : 
+                'Preencha os dados para criar sua conta';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+
+            const user = users.find(u => u.email === email && u.password === hashPassword(pass));
+
+            if (user) {
+                sessionStorage.setItem('logged_user', JSON.stringify(user));
+                startApp();
+            } else {
+                alert('E-mail ou senha incorretos.');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-password').value;
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+
+            if (pass.length < 6) return alert('A senha deve ter no mínimo 6 caracteres.');
+            if (users.find(u => u.email === email)) return alert('Este e-mail já está cadastrado.');
+
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password: hashPassword(pass)
+            };
+
+            users.push(newUser);
+            localStorage.setItem('calixto_users', JSON.stringify(users));
+            alert('Conta criada com sucesso! Faça login.');
+            toggleAuth(true);
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('logged_user');
+            window.location.reload();
+        }
+
         // --- DATA & STATE ---
-        let carnes = JSON.parse(localStorage.getItem('calixto_data')) || [];
-        let files = JSON.parse(localStorage.getItem('calixto_files')) || [];
+        let currentUser = null;
+        let carnes = [];
+        let files = [];
         let currentFilter = 'todos';
         let searchQuery = '';
 
-        // --- CORE FUNCTIONS ---
+        function startApp() {
+            currentUser = JSON.parse(sessionStorage.getItem('logged_user'));
+            if (!currentUser) {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('user-display-name').innerText = currentUser.name;
+
+            // Load user specific data
+            carnes = JSON.parse(localStorage.getItem(`calixto_data_${currentUser.id}`)) || [];
+            files = JSON.parse(localStorage.getItem(`calixto_files_${currentUser.id}`)) || [];
+
+            updateStats();
+            renderLists();
+            renderFiles();
+            switchTab('dashboard');
+        }
+
         function saveData() {
-            localStorage.setItem('calixto_data', JSON.stringify(carnes));
-            localStorage.setItem('calixto_files', JSON.stringify(files));
+            if (!currentUser) return;
+            localStorage.setItem(`calixto_data_${currentUser.id}`, JSON.stringify(carnes));
+            localStorage.setItem(`calixto_files_${currentUser.id}`, JSON.stringify(files));
             updateStats();
             renderLists();
             renderFiles();
         }
 
+        // --- CORE FUNCTIONS ---
         function saveEntry(e) {
             e.preventDefault();
             const name = document.getElementById('entry-name').value;
@@ -833,12 +989,12 @@
         }
 
         window.onload = () => {
+            initAdmin();
+            startApp();
+            
+            // Set default dates
             document.getElementById('entry-date').valueAsDate = new Date();
             document.getElementById('entry-due-date').valueAsDate = new Date();
-            updateStats();
-            renderLists();
-            renderFiles();
-            switchTab('dashboard');
         };
     </script>
 </body>
