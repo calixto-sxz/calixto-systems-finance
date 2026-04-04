@@ -161,6 +161,9 @@
                     <button onclick="switchTab('calculadora')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-calculadora">
                         <i class="fas fa-calculator w-5 flex-shrink-0"></i> Calculadora
                     </button>
+                    <button onclick="switchTab('usuarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-usuarios">
+                        <i class="fas fa-users-cog w-5 flex-shrink-0"></i> Gerenciar Usuários
+                    </button>
                 </nav>
             </div>
 
@@ -362,6 +365,35 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Usuarios View (ADMIN ONLY) -->
+                <section id="view-usuarios" class="hidden space-y-6">
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                            <h4 class="text-xl font-bold flex items-center gap-2">
+                                <i class="fas fa-user-shield text-indigo-500"></i> Gerenciamento de Contas
+                            </h4>
+                            <button onclick="openModal('modal-add-user')" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+                                <i class="fas fa-user-plus"></i> Novo Usuário
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="border-b border-slate-700">
+                                    <tr>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Nome</th>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">E-mail</th>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Tipo</th>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <!-- JS Inject -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -441,6 +473,71 @@
         </div>
     </div>
 
+    <!-- Modal Adicionar Usuário (Admin) -->
+    <div id="modal-add-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-md rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+            <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
+                <h3 class="text-xl font-bold">Cadastrar Novo Usuário</h3>
+                <button onclick="closeModal('modal-add-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form onsubmit="adminCreateUser(event)" class="p-8 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
+                    <input type="text" id="admin-add-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                    <input type="email" id="admin-add-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
+                    <input type="password" id="admin-add-pass" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="flex items-center gap-3 px-1 py-2">
+                    <input type="checkbox" id="admin-add-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                    <label for="admin-add-is-admin" class="text-sm text-slate-300 font-medium">Permissão de Administrador</label>
+                </div>
+                <div class="pt-4 flex gap-4">
+                    <button type="button" onclick="closeModal('modal-add-user')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Usuário (Admin) -->
+    <div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-md rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+            <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
+                <h3 class="text-xl font-bold">Editar Usuário</h3>
+                <button onclick="closeModal('modal-edit-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form onsubmit="adminUpdateUser(event)" class="p-8 space-y-4">
+                <input type="hidden" id="edit-user-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
+                    <input type="text" id="edit-user-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                    <input type="email" id="edit-user-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nova Senha</label>
+                    <input type="password" id="edit-user-pass" class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Deixe em branco para manter">
+                </div>
+                <div class="flex items-center gap-3 px-1 py-2" id="edit-admin-toggle-wrapper">
+                    <input type="checkbox" id="edit-user-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                    <label for="edit-user-is-admin" class="text-sm text-slate-300 font-medium">Permissão de Administrador</label>
+                </div>
+                <div class="pt-4 flex gap-4">
+                    <button type="button" onclick="closeModal('modal-edit-user')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // --- AUTH LOGIC ---
         const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
@@ -459,14 +556,23 @@
 
         function initAdmin() {
             let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            if (!users.find(u => u.email === ADMIN_EMAIL)) {
+            let rootAdmin = users.find(u => u.email === ADMIN_EMAIL);
+            
+            if (!rootAdmin) {
                 users.push({
                     id: 'admin_root',
                     name: 'Administrador Calixto',
                     email: ADMIN_EMAIL,
-                    password: hashPassword(ADMIN_PASS)
+                    password: hashPassword(ADMIN_PASS),
+                    isAdmin: true
                 });
                 localStorage.setItem('calixto_users', JSON.stringify(users));
+            } else {
+                // Certifica-se que o root sempre é admin
+                if (rootAdmin.isAdmin !== true) {
+                    rootAdmin.isAdmin = true;
+                    localStorage.setItem('calixto_users', JSON.stringify(users));
+                }
             }
         }
 
@@ -508,7 +614,8 @@
                 id: Date.now().toString(),
                 name,
                 email,
-                password: hashPassword(pass)
+                password: hashPassword(pass),
+                isAdmin: false // Usuários comuns por padrão
             };
 
             users.push(newUser);
@@ -537,9 +644,28 @@
                 return;
             }
 
+            // Atualiza dados do usuário logado se houve mudança no localStorage
+            const allUsers = JSON.parse(localStorage.getItem('calixto_users')) || [];
+            const freshUser = allUsers.find(u => u.id === currentUser.id);
+            if (freshUser) {
+                currentUser = freshUser;
+                sessionStorage.setItem('logged_user', JSON.stringify(freshUser));
+            }
+
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
+
+            // Show admin tab if user is admin
+            if (currentUser.isAdmin) {
+                document.getElementById('nav-usuarios').classList.remove('hidden');
+            } else {
+                document.getElementById('nav-usuarios').classList.add('hidden');
+                // Se o usuário estiver na aba admin e perder a permissão, manda pro dashboard
+                if (document.getElementById('view-usuarios').classList.contains('hidden') === false) {
+                    switchTab('dashboard');
+                }
+            }
 
             // Load user specific data
             carnes = JSON.parse(localStorage.getItem(`calixto_data_${currentUser.id}`)) || [];
@@ -548,7 +674,10 @@
             updateStats();
             renderLists();
             renderFiles();
-            switchTab('dashboard');
+            renderUsersTable();
+            if (document.getElementById('view-usuarios').classList.contains('hidden')) {
+                switchTab('dashboard');
+            }
         }
 
         function saveData() {
@@ -558,6 +687,159 @@
             updateStats();
             renderLists();
             renderFiles();
+        }
+
+        // --- ADMIN FUNCTIONS ---
+        function renderUsersTable() {
+            if (!currentUser?.isAdmin) return;
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+            const tbody = document.getElementById('users-table-body');
+            
+            tbody.innerHTML = users.map(u => `
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="px-4 py-4 text-sm font-medium text-slate-200">
+                        <div class="flex items-center gap-2">
+                            ${u.name}
+                            ${u.email === ADMIN_EMAIL ? '<span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold">ROOT</span>' : ''}
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-slate-400">${u.email}</td>
+                    <td class="px-4 py-4 text-sm">
+                        <span class="status-badge ${u.isAdmin ? 'bg-indigo-500/10 text-indigo-400' : 'bg-slate-700/30 text-slate-500'}">
+                            ${u.isAdmin ? 'Administrador' : 'Comum'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="flex items-center justify-center gap-3">
+                            <button onclick="adminEditUser('${u.id}')" title="Editar Usuário" class="text-slate-400 hover:text-emerald-400 transition-colors">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${u.id !== 'admin_root' ? `
+                                <button onclick="adminDeleteUser('${u.id}')" title="Excluir Usuário" class="text-slate-400 hover:text-rose-500 transition-colors">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            ` : '<div class="w-4"></div>'}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function adminCreateUser(e) {
+            e.preventDefault();
+            const name = document.getElementById('admin-add-name').value;
+            const email = document.getElementById('admin-add-email').value;
+            const pass = document.getElementById('admin-add-pass').value;
+            const isAdmin = document.getElementById('admin-add-is-admin').checked;
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+
+            if (pass.length < 6) return alert('A senha deve ter no mínimo 6 caracteres.');
+            if (users.find(u => u.email === email)) return alert('Este e-mail já está cadastrado.');
+
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password: hashPassword(pass),
+                isAdmin: isAdmin
+            };
+
+            users.push(newUser);
+            localStorage.setItem('calixto_users', JSON.stringify(users));
+            alert('Usuário cadastrado com sucesso!');
+            closeModal('modal-add-user');
+            e.target.reset();
+            renderUsersTable();
+        }
+
+        function adminEditUser(id) {
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+
+            document.getElementById('edit-user-id').value = user.id;
+            document.getElementById('edit-user-name').value = user.name;
+            document.getElementById('edit-user-email').value = user.email;
+            document.getElementById('edit-user-pass').value = '';
+            document.getElementById('edit-user-is-admin').checked = user.isAdmin;
+            
+            // Não permitir remover admin do root
+            if (id === 'admin_root') {
+                document.getElementById('edit-admin-toggle-wrapper').classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                document.getElementById('edit-admin-toggle-wrapper').classList.remove('opacity-50', 'pointer-events-none');
+            }
+
+            openModal('modal-edit-user');
+        }
+
+        function adminUpdateUser(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-user-id').value;
+            const name = document.getElementById('edit-user-name').value;
+            const email = document.getElementById('edit-user-email').value;
+            const pass = document.getElementById('edit-user-pass').value;
+            const isAdmin = document.getElementById('edit-user-is-admin').checked;
+            
+            let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+            const userIndex = users.findIndex(u => u.id === id);
+            
+            if (userIndex !== -1) {
+                // Segurança: Pelo menos um admin deve restar
+                if (!isAdmin && id !== 'admin_root') {
+                    const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
+                    if (otherAdmins.length === 0) {
+                        return alert('Não é possível remover a permissão do único administrador do sistema.');
+                    }
+                }
+
+                // Segurança: Root é sempre Admin
+                users[userIndex].isAdmin = (id === 'admin_root') ? true : isAdmin;
+                users[userIndex].name = name;
+                users[userIndex].email = email;
+
+                if (pass.trim() !== '') {
+                    if (pass.length < 6) return alert('A nova senha deve ter no mínimo 6 caracteres.');
+                    users[userIndex].password = hashPassword(pass);
+                }
+
+                localStorage.setItem('calixto_users', JSON.stringify(users));
+                
+                // Se editou o próprio usuário, atualiza a sessão
+                if (id === currentUser.id) {
+                    sessionStorage.setItem('logged_user', JSON.stringify(users[userIndex]));
+                }
+
+                alert('Dados atualizados!');
+                closeModal('modal-edit-user');
+                startApp(); // Recarrega permissões visuais
+            }
+        }
+
+        function adminDeleteUser(id) {
+            if (id === 'admin_root') return alert('O administrador raiz não pode ser removido.');
+            
+            if (confirm('Atenção: Ao remover o usuário, o acesso dele será revogado imediatamente. Deseja prosseguir?')) {
+                let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+                
+                // Impede deletar o último admin
+                const userToDelete = users.find(u => u.id === id);
+                if (userToDelete && userToDelete.isAdmin) {
+                    const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
+                    if (otherAdmins.length === 0) {
+                        return alert('Não é possível remover o último administrador do sistema.');
+                    }
+                }
+
+                users = users.filter(u => u.id !== id);
+                localStorage.setItem('calixto_users', JSON.stringify(users));
+                renderUsersTable();
+                
+                // Se o usuário deletado for o logado (caso improvável por UI)
+                if (id === currentUser.id) {
+                    handleLogout();
+                }
+            }
         }
 
         // --- CORE FUNCTIONS ---
@@ -636,8 +918,8 @@
         }
 
         // --- FILE HANDLING ---
-        function handleFileUpload(e) {
-            const file = e.target.files[0];
+        function handleFileUpload(event_input) {
+            const file = event_input.target.files[0];
             if (!file) return;
 
             if (file.size > 3 * 1024 * 1024) {
@@ -656,7 +938,7 @@
                 };
                 files.push(newFile);
                 saveData();
-                e.target.value = '';
+                event_input.target.value = '';
             };
             reader.readAsDataURL(file);
         }
@@ -932,9 +1214,12 @@
                 'dashboard': 'Dashboard',
                 'carnes': 'Registros e Parcelas',
                 'arquivos': 'Arquivos e Recibos',
-                'calculadora': 'Calculadora Financeira'
+                'calculadora': 'Calculadora Financeira',
+                'usuarios': 'Gerenciamento de Usuários'
             };
             document.getElementById('current-tab-title').innerText = titles[tab] || 'Calixto Systems';
+
+            if (tab === 'usuarios') renderUsersTable();
         }
 
         function handleSearch(val) {
