@@ -193,7 +193,7 @@
                         <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar no sistema..." class="bg-slate-800 border-none rounded-full px-4 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 w-64 transition-all">
                         <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-xs"></i>
                     </div>
-                    <button onclick="openModal('modal-add-carne')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-2">
+                    <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-2">
                         <i class="fas fa-plus"></i> Novo Registro
                     </button>
                 </div>
@@ -430,14 +430,15 @@
         </main>
     </div>
 
-    <!-- Modal Adicionar Registro -->
+    <!-- Modal Adicionar/Editar Registro -->
     <div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
-                <h3 class="text-xl font-bold">Novo Registro Financeiro</h3>
+                <h3 id="modal-carne-title" class="text-xl font-bold">Novo Registro Financeiro</h3>
                 <button onclick="closeModal('modal-add-carne')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
             </div>
             <form id="form-carne" onsubmit="saveEntry(event)" class="p-8 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                <input type="hidden" id="edit-entry-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-full">
                         <label class="block text-sm font-medium text-slate-400 mb-2">Descrição / Nome do Cliente</label>
@@ -474,7 +475,7 @@
                 </div>
                 <div class="pt-4 flex gap-4">
                     <button type="button" onclick="closeModal('modal-add-carne')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar Registro</button>
+                    <button type="submit" id="btn-save-carne" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar Registro</button>
                 </div>
             </form>
         </div>
@@ -502,6 +503,36 @@
                 </div>
                 <button onclick="closeModal('modal-details')" class="bg-indigo-600 text-sm px-6 py-2 rounded-lg font-bold">Fechar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Parcela Individual (New Functionality) -->
+    <div id="modal-edit-installment" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+                <h3 class="font-bold">Editar Parcela</h3>
+                <button onclick="closeModal('modal-edit-installment')" class="text-slate-400 hover:text-white text-xl">&times;</button>
+            </div>
+            <form id="form-edit-installment" onsubmit="saveInstallment(event)" class="p-6 space-y-4">
+                <input type="hidden" id="edit-inst-carne-id">
+                <input type="hidden" id="edit-inst-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data de Vencimento</label>
+                    <input type="date" id="edit-inst-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Valor da Parcela (R$)</label>
+                    <input type="number" step="0.01" id="edit-inst-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                </div>
+                <div class="flex items-center gap-3 py-2">
+                    <input type="checkbox" id="edit-inst-paid" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                    <label for="edit-inst-paid" class="text-sm text-slate-300 font-medium">Parcela já paga</label>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-edit-installment')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-2.5 rounded-xl font-bold text-sm transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-600/20">Salvar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -880,8 +911,36 @@
         }
 
         // --- DASHBOARD LOGIC (ORIGINAL EXPERIENCE) ---
+        function openAddModal() {
+            document.getElementById('edit-entry-id').value = '';
+            document.getElementById('modal-carne-title').innerText = 'Novo Registro Financeiro';
+            document.getElementById('btn-save-carne').innerText = 'Salvar Registro';
+            document.getElementById('form-carne').reset();
+            openModal('modal-add-carne');
+        }
+
+        function openEditCarne(id) {
+            const c = carnes.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('edit-entry-id').value = c.id;
+            document.getElementById('modal-carne-title').innerText = 'Editar Registro Financeiro';
+            document.getElementById('btn-save-carne').innerText = 'Atualizar Registro';
+            
+            document.getElementById('entry-name').value = c.name;
+            document.getElementById('entry-observation').value = c.observation || '';
+            document.getElementById('entry-type').value = c.type;
+            document.getElementById('entry-value').value = c.originalValue;
+            document.getElementById('entry-installments').value = c.installmentsCount;
+            document.getElementById('entry-interest').value = c.interestRate;
+            document.getElementById('entry-date').value = c.startDate;
+            document.getElementById('entry-due-date').value = c.firstDueDate;
+            
+            openModal('modal-add-carne');
+        }
+
         function saveEntry(e) {
             e.preventDefault();
+            const editId = document.getElementById('edit-entry-id').value;
             const name = document.getElementById('entry-name').value;
             const observation = document.getElementById('entry-observation').value;
             const type = document.getElementById('entry-type').value.trim();
@@ -893,17 +952,53 @@
 
             const totalWithInterest = value * (1 + (interest / 100));
             const parcelValue = totalWithInterest / count;
+            
             const installments = [];
             let lastDate = new Date(dueDateInput + 'T00:00:00');
 
             for (let i = 1; i <= count; i++) {
                 const curDate = new Date(lastDate);
                 if (i > 1) curDate.setMonth(curDate.getMonth() + 1);
-                installments.push({ id: Date.now() + i, dueDate: curDate.toISOString().split('T')[0], value: parcelValue, paid: false });
+                
+                let isPaid = false;
+                if (editId) {
+                    const existing = carnes.find(x => x.id == editId);
+                    if (existing && existing.installments[i-1]) isPaid = existing.installments[i-1].paid;
+                }
+
+                installments.push({ 
+                    id: Date.now() + i, 
+                    dueDate: curDate.toISOString().split('T')[0], 
+                    value: parcelValue, 
+                    paid: isPaid 
+                });
                 lastDate = curDate;
             }
 
-            carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
+            if (editId) {
+                const idx = carnes.findIndex(c => c.id == editId);
+                if (idx !== -1) {
+                    carnes[idx] = { 
+                        ...carnes[idx], 
+                        name, observation, type, 
+                        originalValue: value, totalValue: totalWithInterest, 
+                        interestRate: interest, installmentsCount: count, 
+                        startDate, firstDueDate: dueDateInput, 
+                        installments 
+                    };
+                    addLog('Registro atualizado', name, 'info');
+                }
+            } else {
+                carnes.push({ 
+                    id: Date.now(), name, observation, type, 
+                    originalValue: value, totalValue: totalWithInterest, 
+                    interestRate: interest, installmentsCount: count, 
+                    startDate, firstDueDate: dueDateInput, 
+                    installments, createdAt: new Date().toISOString() 
+                });
+                addLog('Novo registro criado', name, 'info');
+            }
+            
             saveData();
             closeModal('modal-add-carne');
             e.target.reset();
@@ -911,6 +1006,8 @@
 
         function deleteCarne(id) {
             if (confirm('Deseja excluir este registro?')) {
+                const target = carnes.find(c => c.id === id);
+                addLog('Registro removido', target?.name || id, 'critical');
                 carnes = carnes.filter(c => c.id !== id);
                 saveData();
             }
@@ -921,6 +1018,49 @@
             if (carne) {
                 const p = carne.installments.find(i => i.id === parcelaId);
                 if (p) { p.paid = !p.paid; saveData(); showDetails(carneId); }
+            }
+        }
+
+        // Individual Installment Editing Functions
+        function openEditInstallment(carneId, parcelaId) {
+            const carne = carnes.find(c => c.id === carneId);
+            if (!carne) return;
+            const p = carne.installments.find(i => i.id === parcelaId);
+            if (!p) return;
+
+            document.getElementById('edit-inst-carne-id').value = carneId;
+            document.getElementById('edit-inst-id').value = parcelaId;
+            document.getElementById('edit-inst-date').value = p.dueDate;
+            document.getElementById('edit-inst-value').value = p.value;
+            document.getElementById('edit-inst-paid').checked = p.paid;
+
+            openModal('modal-edit-installment');
+        }
+
+        function saveInstallment(e) {
+            e.preventDefault();
+            const carneId = parseInt(document.getElementById('edit-inst-carne-id').value);
+            const parcelaId = parseInt(document.getElementById('edit-inst-id').value);
+            const newDate = document.getElementById('edit-inst-date').value;
+            const newValue = parseFloat(document.getElementById('edit-inst-value').value);
+            const isPaid = document.getElementById('edit-inst-paid').checked;
+
+            const carne = carnes.find(c => c.id === carneId);
+            if (carne) {
+                const p = carne.installments.find(i => i.id === parcelaId);
+                if (p) {
+                    p.dueDate = newDate;
+                    p.value = newValue;
+                    p.paid = isPaid;
+                    
+                    // Update the parent's totalValue based on the sum of all its installments
+                    carne.totalValue = carne.installments.reduce((sum, item) => sum + item.value, 0);
+                    
+                    addLog('Parcela editada individualmente', `${carne.name} - Venc: ${newDate}`, 'info');
+                    saveData();
+                    showDetails(carneId); // Refresh details view
+                    closeModal('modal-edit-installment');
+                }
             }
         }
 
@@ -1005,7 +1145,10 @@
                 return `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg card-hover">
                     <div class="p-5 border-b border-slate-700 flex justify-between">
                         <div class="truncate"><span class="text-[9px] uppercase font-bold text-indigo-400 block">${c.type}</span><h4 class="font-bold text-white truncate">${c.name}</h4></div>
-                        <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>
+                        <div class="flex gap-3">
+                            <button onclick="openEditCarne(${c.id})" class="text-slate-500 hover:text-indigo-400 transition-colors"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
+                        </div>
                     </div>
                     <div class="p-5 space-y-4">
                         <div class="flex justify-between items-center"><p class="text-xl font-bold text-white">${formatBRL(c.totalValue)}</p><p class="text-xs text-slate-500">${c.installmentsCount} parcelas</p></div>
@@ -1019,15 +1162,37 @@
         function showDetails(id) {
             const c = carnes.find(x => x.id === id);
             if (!c) return;
+            
+            let paidValueTotal = 0;
+            let remainingValueTotal = 0;
+            
             document.getElementById('details-title').innerText = c.name;
-            document.getElementById('details-subtitle').innerText = `${c.installmentsCount}x de ${formatBRL(c.totalValue/c.installmentsCount)}`;
+            document.getElementById('details-subtitle').innerText = `${c.installmentsCount} parcelas registradas`;
+            
             document.getElementById('installments-list').innerHTML = c.installments.map((p, i) => {
                 const st = getStatus(p.dueDate, p.paid);
+                if (p.paid) paidValueTotal += p.value;
+                else remainingValueTotal += p.value;
+                
                 return `<div class="bg-slate-900 p-4 rounded-xl flex items-center justify-between">
                     <div class="flex items-center gap-3"><span class="text-xs text-slate-500 font-bold">${i+1}</span><div><p class="text-sm font-bold text-white">${p.dueDate}</p><span class="status-badge ${st.color} text-[9px]">${st.text}</span></div></div>
-                    <div class="flex items-center gap-4"><p class="text-sm font-bold">${formatBRL(p.value)}</p><button onclick="toggleParcela(${c.id}, ${p.id})" class="w-8 h-8 rounded-lg ${p.paid?'bg-emerald-600':'bg-slate-700'} flex items-center justify-center"><i class="fas ${p.paid?'fa-check':'fa-wallet'}"></i></button></div>
+                    <div class="flex items-center gap-2">
+                        <p class="text-sm font-bold mr-2">${formatBRL(p.value)}</p>
+                        <div class="flex gap-1">
+                            <button onclick="openEditInstallment(${c.id}, ${p.id})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-400 transition-colors" title="Editar Parcela">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button onclick="toggleParcela(${c.id}, ${p.id})" class="w-8 h-8 rounded-lg ${p.paid?'bg-emerald-600':'bg-slate-700'} flex items-center justify-center transition-colors" title="${p.paid ? 'Marcar como pendente' : 'Marcar como paga'}">
+                                <i class="fas ${p.paid?'fa-check':'fa-wallet'}"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>`;
             }).join('');
+            
+            document.getElementById('details-paid-total').innerText = formatBRL(paidValueTotal);
+            document.getElementById('details-remaining-total').innerText = formatBRL(remainingValueTotal);
+            
             openModal('modal-details');
         }
 
