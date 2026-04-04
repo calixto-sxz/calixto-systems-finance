@@ -90,7 +90,7 @@
 
     <!-- Auth Section -->
     <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-slate-950">
-        <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-md modal-enter">
+        <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-md modal-enter">
             <div class="flex flex-col items-center mb-8">
                 <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
                     <i class="fas fa-shield-alt text-white text-3xl"></i>
@@ -163,6 +163,9 @@
                     </button>
                     <button onclick="switchTab('usuarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-usuarios">
                         <i class="fas fa-users-cog w-5 flex-shrink-0"></i> Gerenciar Usuários
+                    </button>
+                    <button onclick="switchTab('logs')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-logs">
+                        <i class="fas fa-list-ul w-5 flex-shrink-0"></i> Logs do Sistema
                     </button>
                 </nav>
             </div>
@@ -387,6 +390,41 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Logs View (ADMIN ONLY) -->
+                <section id="view-logs" class="hidden space-y-6">
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                            <h4 class="text-xl font-bold flex items-center gap-2">
+                                <i class="fas fa-history text-indigo-500"></i> Histórico de Atividade
+                            </h4>
+                            <div class="flex items-center gap-2">
+                                <label class="text-sm text-slate-400">Filtrar:</label>
+                                <select id="log-filter" onchange="renderLogs()" class="bg-slate-900 border-none rounded-lg text-sm px-3 py-2 text-white">
+                                    <option value="all">Todos os eventos</option>
+                                    <option value="login">Acessos (Login/Logout)</option>
+                                    <option value="user_mod">Modificações de Usuário</option>
+                                    <option value="critical">Ações Críticas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="border-b border-slate-700">
+                                    <tr>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Data/Hora</th>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Usuário</th>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Ação</th>
+                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Alvo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logs-table-body">
+                                    <!-- JS Inject -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -536,6 +574,26 @@
         const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
         const ADMIN_PASS = 'admin@123';
 
+        // --- LOG LOGIC ---
+        function addLog(action, target, type = 'info') {
+            const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [];
+            const user = JSON.parse(sessionStorage.getItem('logged_user')) || { name: 'Sistema', email: 'N/A' };
+            
+            logs.unshift({
+                id: Date.now(),
+                user: user.name,
+                userEmail: user.email,
+                action: action,
+                target: target || 'N/A',
+                timestamp: new Date().toISOString(),
+                type: type // info, user_mod, critical
+            });
+
+            // Limit logs to 1000 entries
+            if (logs.length > 1000) logs.pop();
+            localStorage.setItem('calixto_logs', JSON.stringify(logs));
+        }
+
         // Simple Hash function for passwords
         function hashPassword(pwd) {
             let hash = 0;
@@ -587,8 +645,10 @@
 
             if (user) {
                 sessionStorage.setItem('logged_user', JSON.stringify(user));
+                addLog('Login realizado', email, 'info');
                 startApp();
             } else {
+                addLog('Tentativa de login falhou', email, 'critical');
                 alert('E-mail ou senha incorretos.');
             }
         }
@@ -613,11 +673,14 @@
 
             users.push(newUser);
             localStorage.setItem('calixto_users', JSON.stringify(users));
+            addLog('Novo cadastro realizado', email, 'user_mod');
             alert('Conta criada com sucesso! Faça login.');
             toggleAuth(true);
         }
 
         function handleLogout() {
+            const user = JSON.parse(sessionStorage.getItem('logged_user'));
+            if (user) addLog('Logout realizado', user.email, 'info');
             sessionStorage.removeItem('logged_user');
             window.location.reload();
         }
@@ -649,13 +712,15 @@
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
 
-            // Show admin tab if user is admin
+            // Show admin tabs if user is admin
             if (currentUser.isAdmin) {
                 document.getElementById('nav-usuarios').classList.remove('hidden');
+                document.getElementById('nav-logs').classList.remove('hidden');
             } else {
                 document.getElementById('nav-usuarios').classList.add('hidden');
+                document.getElementById('nav-logs').classList.add('hidden');
                 // Se o usuário estiver na aba admin e perder a permissão, manda pro dashboard
-                if (document.getElementById('view-usuarios').classList.contains('hidden') === false) {
+                if (!document.getElementById('view-usuarios').classList.contains('hidden') || !document.getElementById('view-logs').classList.contains('hidden')) {
                     switchTab('dashboard');
                 }
             }
@@ -668,8 +733,9 @@
             renderLists();
             renderFiles();
             renderUsersTable();
-            if (document.getElementById('view-usuarios').classList.contains('hidden')) {
-                switchTab('dashboard');
+            renderLogs();
+            if (document.getElementById('view-usuarios').classList.contains('hidden') && document.getElementById('view-logs').classList.contains('hidden')) {
+                // Manter na aba atual a menos que seja restrita
             }
         }
 
@@ -739,6 +805,7 @@
 
             users.push(newUser);
             localStorage.setItem('calixto_users', JSON.stringify(users));
+            addLog(`Admin criou novo usuário (${isAdmin ? 'Admin' : 'Comum'})`, email, 'user_mod');
             alert('Usuário cadastrado com sucesso!');
             closeModal('modal-add-user');
             e.target.reset();
@@ -778,12 +845,20 @@
             const userIndex = users.findIndex(u => u.id === id);
             
             if (userIndex !== -1) {
+                const oldData = users[userIndex];
                 // Segurança: Pelo menos um admin deve restar
                 if (!isAdmin && id !== 'admin_root') {
                     const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
                     if (otherAdmins.length === 0) {
                         return alert('Não é possível remover a permissão do único administrador do sistema.');
                     }
+                }
+
+                // Log change of permission
+                if (oldData.isAdmin !== isAdmin) {
+                    addLog('Alteração de permissão', `${email} (Agora ${isAdmin ? 'Admin' : 'Comum'})`, 'user_mod');
+                } else {
+                    addLog('Dados de usuário editados', email, 'user_mod');
                 }
 
                 // Segurança: Root é sempre Admin
@@ -814,24 +889,68 @@
             
             if (confirm('Atenção: Ao remover o usuário, o acesso dele será revogado imediatamente. Deseja prosseguir?')) {
                 let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-                
-                // Impede deletar o último admin
                 const userToDelete = users.find(u => u.id === id);
-                if (userToDelete && userToDelete.isAdmin) {
-                    const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
-                    if (otherAdmins.length === 0) {
-                        return alert('Não é possível remover o último administrador do sistema.');
+                
+                if (userToDelete) {
+                    // Impede deletar o último admin
+                    if (userToDelete.isAdmin) {
+                        const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
+                        if (otherAdmins.length === 0) {
+                            return alert('Não é possível remover o último administrador do sistema.');
+                        }
+                    }
+
+                    addLog('Usuário excluído', userToDelete.email, 'critical');
+                    users = users.filter(u => u.id !== id);
+                    localStorage.setItem('calixto_users', JSON.stringify(users));
+                    renderUsersTable();
+                    
+                    // Se o usuário deletado for o logado (caso improvável por UI)
+                    if (id === currentUser.id) {
+                        handleLogout();
                     }
                 }
+            }
+        }
 
-                users = users.filter(u => u.id !== id);
-                localStorage.setItem('calixto_users', JSON.stringify(users));
-                renderUsersTable();
-                
-                // Se o usuário deletado for o logado (caso improvável por UI)
-                if (id === currentUser.id) {
-                    handleLogout();
-                }
+        function renderLogs() {
+            if (!currentUser?.isAdmin) return;
+            const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [];
+            const filter = document.getElementById('log-filter').value;
+            const tbody = document.getElementById('logs-table-body');
+            
+            let filteredLogs = logs;
+            if (filter === 'login') {
+                filteredLogs = logs.filter(l => l.action.toLowerCase().includes('login') || l.action.toLowerCase().includes('logout'));
+            } else if (filter === 'user_mod') {
+                filteredLogs = logs.filter(l => l.type === 'user_mod');
+            } else if (filter === 'critical') {
+                filteredLogs = logs.filter(l => l.type === 'critical');
+            }
+
+            tbody.innerHTML = filteredLogs.map(l => {
+                const date = new Date(l.timestamp).toLocaleString('pt-BR');
+                const isCritical = l.type === 'critical';
+                return `
+                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                        <td class="px-4 py-3 text-[11px] font-mono text-slate-500">${date}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <p class="font-medium text-slate-300">${l.user}</p>
+                            <p class="text-[10px] text-slate-500">${l.userEmail}</p>
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                            <span class="${isCritical ? 'text-rose-400 font-bold' : 'text-slate-200'}">
+                                ${isCritical ? '<i class="fas fa-exclamation-triangle mr-1"></i>' : ''}
+                                ${l.action}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-indigo-400 font-medium truncate max-w-[200px]" title="${l.target}">${l.target}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (filteredLogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 italic">Nenhum log encontrado para este filtro.</td></tr>';
             }
         }
 
@@ -1203,11 +1322,13 @@
                 'carnes': 'Registros e Parcelas',
                 'arquivos': 'Arquivos e Recibos',
                 'calculadora': 'Calculadora Financeira',
-                'usuarios': 'Gerenciamento de Usuários'
+                'usuarios': 'Gerenciamento de Usuários',
+                'logs': 'Histórico de Atividade'
             };
             document.getElementById('current-tab-title').innerText = titles[tab] || 'Calixto Systems';
 
             if (tab === 'usuarios') renderUsersTable();
+            if (tab === 'logs') renderLogs();
         }
 
         function handleSearch(val) {
