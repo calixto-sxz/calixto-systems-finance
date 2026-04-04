@@ -239,7 +239,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
                             <h4 class="text-xl font-bold mb-6 flex items-center gap-2">
-                                <i class="fas fa-percent text-indigo-500"></i> Porcentagem e Juros Simples
+                                <i class="fas fa-percent text-indigo-500"></i> Juros Simples
                             </h4>
                             <div class="space-y-4">
                                 <div>
@@ -256,7 +256,7 @@
                                         <input type="number" id="calc-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
                                     </div>
                                 </div>
-                                <button onclick="calculateFinance()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Resultados</button>
+                                <button onclick="calculateFinance()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Simples</button>
                                 
                                 <div id="calc-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
                                     <div class="grid grid-cols-2 gap-4">
@@ -273,10 +273,40 @@
                             </div>
                         </div>
                         
-                        <div class="bg-indigo-900/20 border border-indigo-500/30 p-8 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=400&h=300" alt="Finance" class="rounded-xl mb-6 shadow-2xl">
-                            <h4 class="text-xl font-bold mb-2">Dica Financeira</h4>
-                            <p class="text-slate-400 italic">"O controle rigoroso de datas de vencimento evita o pagamento de juros desnecessários e mantém sua saúde contábil em dia."</p>
+                        <div class="bg-indigo-900/20 border border-indigo-500/30 p-8 rounded-2xl">
+                            <h4 class="text-xl font-bold mb-6 flex items-center gap-2">
+                                <i class="fas fa-chart-line text-indigo-400"></i> Juros Compostos
+                            </h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm text-slate-400 mb-1">Valor Inicial (R$)</label>
+                                    <input type="number" id="comp-valor" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="1000.00">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm text-slate-400 mb-1">Taxa Mensal (%)</label>
+                                        <input type="number" id="comp-taxa" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-slate-400 mb-1">Tempo (meses)</label>
+                                        <input type="number" id="comp-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
+                                    </div>
+                                </div>
+                                <button onclick="calculateCompoundInterest()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Compostos</button>
+                                
+                                <div id="comp-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-xs text-slate-500">Juros Acumulados</p>
+                                            <p id="comp-res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-slate-500">Montante Final</p>
+                                            <p id="comp-res-montante" class="text-lg font-bold text-emerald-400">R$ 0,00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -777,7 +807,7 @@
             const taxa = parseFloat(document.getElementById('calc-taxa').value);
             const tempo = parseFloat(document.getElementById('calc-tempo').value);
 
-            if (!valor || !taxa || !tempo) return alert('Preencha todos os campos!');
+            if (isNaN(valor) || isNaN(taxa) || isNaN(tempo)) return alert('Preencha todos os campos!');
 
             const juros = valor * (taxa / 100) * tempo;
             const montante = valor + juros;
@@ -785,6 +815,21 @@
             document.getElementById('res-juros').innerText = formatBRL(juros);
             document.getElementById('res-montante').innerText = formatBRL(montante);
             document.getElementById('calc-result').classList.remove('hidden');
+        }
+
+        function calculateCompoundInterest() {
+            const principal = parseFloat(document.getElementById('comp-valor').value);
+            const rate = parseFloat(document.getElementById('comp-taxa').value) / 100;
+            const time = parseFloat(document.getElementById('comp-tempo').value);
+
+            if (isNaN(principal) || isNaN(rate) || isNaN(time)) return alert('Preencha todos os campos!');
+
+            const amount = principal * Math.pow((1 + rate), time);
+            const interest = amount - principal;
+
+            document.getElementById('comp-res-juros').innerText = formatBRL(interest);
+            document.getElementById('comp-res-montante').innerText = formatBRL(amount);
+            document.getElementById('comp-result').classList.remove('hidden');
         }
 
         window.onload = () => {
