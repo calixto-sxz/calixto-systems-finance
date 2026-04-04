@@ -88,30 +88,30 @@
 </head>
 <body class="custom-scrollbar bg-[#0f172a]">
 
-    <!-- Auth Section -->
-    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-slate-950">
-        <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-md modal-enter">
+    <!-- Auth Section (Restored to Original Visual Style) -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-[#0f172a]">
+        <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-md modal-enter">
             <div class="flex flex-col items-center mb-8">
                 <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
                     <i class="fas fa-shield-alt text-white text-3xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold tracking-tight">Calixto <span class="text-indigo-500">Systems</span></h1>
-                <p class="text-slate-400 text-sm mt-2" id="auth-subtitle">Entre na sua conta para continuar</p>
+                <p class="text-slate-400 text-sm mt-2" id="auth-subtitle">Acesso Restrito ao Painel</p>
             </div>
 
             <!-- Login Form -->
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
-                    <input type="email" id="login-email" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="seu@email.com">
+                    <input type="email" id="login-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="seu@email.com">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
-                    <input type="password" id="login-password" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="••••••••">
+                    <input type="password" id="login-password" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="••••••••">
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/20 mt-2">Acessar Painel</button>
                 <p class="text-center text-sm text-slate-400 mt-6">
-                    Não tem conta? <button type="button" onclick="toggleAuth(false)" class="text-indigo-400 font-bold hover:underline">Cadastre-se</button>
+                    Novo por aqui? <button type="button" onclick="toggleAuth(false)" class="text-indigo-400 font-bold hover:underline">Solicitar Acesso</button>
                 </p>
             </form>
 
@@ -119,26 +119,26 @@
             <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
-                    <input type="text" id="reg-name" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="João Silva">
+                    <input type="text" id="reg-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Nome do Responsável">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
-                    <input type="email" id="reg-email" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="exemplo@email.com">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail Corporativo</label>
+                    <input type="email" id="reg-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="exemplo@empresa.com">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
-                    <input type="password" id="reg-password" required class="w-full bg-slate-800 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Mínimo 6 caracteres">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha de Segurança</label>
+                    <input type="password" id="reg-password" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Mínimo 6 caracteres">
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 mt-2">Criar minha conta</button>
                 <p class="text-center text-sm text-slate-400 mt-6">
-                    Já possui conta? <button type="button" onclick="toggleAuth(true)" class="text-indigo-400 font-bold hover:underline">Fazer Login</button>
+                    Já possui acesso? <button type="button" onclick="toggleAuth(true)" class="text-indigo-400 font-bold hover:underline">Fazer Login</button>
                 </p>
             </form>
         </div>
     </div>
 
     <div id="main-app" class="app-container hidden">
-        <!-- Sidebar -->
+        <!-- Sidebar (Maintained Original Style) -->
         <aside class="sidebar bg-slate-900 border-r border-slate-800 hidden md:flex flex-col">
             <div class="p-6">
                 <div class="flex items-center gap-3 mb-8">
@@ -161,6 +161,7 @@
                     <button onclick="switchTab('calculadora')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-calculadora">
                         <i class="fas fa-calculator w-5 flex-shrink-0"></i> Calculadora
                     </button>
+                    <!-- Admin Tabs Integrated Seamlessly -->
                     <button onclick="switchTab('usuarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-usuarios">
                         <i class="fas fa-users-cog w-5 flex-shrink-0"></i> Gerenciar Usuários
                     </button>
@@ -172,7 +173,7 @@
 
             <div class="mt-auto p-6 space-y-4">
                 <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
-                    <p class="text-[10px] text-slate-400 mb-1">Usuário Logado</p>
+                    <p class="text-[10px] text-slate-400 mb-1">Usuário Conectado</p>
                     <p id="user-display-name" class="text-sm font-medium truncate">Carregando...</p>
                 </div>
                 <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white py-3 rounded-xl text-sm font-bold transition-all">
@@ -189,7 +190,7 @@
                 <h2 id="current-tab-title" class="text-lg font-semibold">Dashboard</h2>
                 <div class="flex items-center gap-4">
                     <div class="relative group">
-                        <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar..." class="bg-slate-800 border-none rounded-full px-4 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 w-64 transition-all">
+                        <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar no sistema..." class="bg-slate-800 border-none rounded-full px-4 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 w-64 transition-all">
                         <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-xs"></i>
                     </div>
                     <button onclick="openModal('modal-add-carne')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-2">
@@ -269,7 +270,7 @@
 
                 <!-- Arquivos View -->
                 <section id="view-arquivos" class="hidden space-y-6">
-                    <div class="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
+                    <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-xl">
                         <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-600 rounded-2xl p-10 hover:border-indigo-500 transition-colors cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
                             <div class="w-16 h-16 bg-indigo-600/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-cloud-upload-alt text-2xl text-indigo-500"></i>
@@ -362,7 +363,7 @@
                     </div>
                 </section>
 
-                <!-- Usuarios View (ADMIN ONLY) -->
+                <!-- Admin: Usuarios View -->
                 <section id="view-usuarios" class="hidden space-y-6">
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
                         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
@@ -391,7 +392,7 @@
                     </div>
                 </section>
 
-                <!-- Logs View (ADMIN ONLY) -->
+                <!-- Admin: Logs View -->
                 <section id="view-logs" class="hidden space-y-6">
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
                         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
@@ -431,7 +432,7 @@
 
     <!-- Modal Adicionar Registro -->
     <div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-2xl rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
                 <h3 class="text-xl font-bold">Novo Registro Financeiro</h3>
                 <button onclick="closeModal('modal-add-carne')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
@@ -448,7 +449,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-2">Tipo de Registro</label>
-                        <input type="text" id="entry-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo, Investimento, Aluguel...">
+                        <input type="text" id="entry-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo, Investimento...">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-2">Valor Total (R$)</label>
@@ -459,7 +460,7 @@
                         <input type="number" id="entry-installments" required min="1" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" value="1">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Taxa de Juros Mensal (%)</label>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Taxa de Juros (%)</label>
                         <input type="number" step="0.1" id="entry-interest" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" value="0">
                     </div>
                     <div>
@@ -467,7 +468,7 @@
                         <input type="date" id="entry-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Data de Vencimento</label>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Primeiro Vencimento</label>
                         <input type="date" id="entry-due-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                 </div>
@@ -481,7 +482,7 @@
 
     <!-- Modal Detalhes Parcelas -->
     <div id="modal-details" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-3xl rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="bg-slate-800 w-full max-w-3xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[90vh]">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
                 <div>
                     <h3 id="details-title" class="text-xl font-bold">Cronograma de Pagamento</h3>
@@ -504,9 +505,9 @@
         </div>
     </div>
 
-    <!-- Modal Adicionar Usuário (Admin) -->
+    <!-- Modal Adicionar Usuário (Admin Only) -->
     <div id="modal-add-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-md rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
                 <h3 class="text-xl font-bold">Cadastrar Novo Usuário</h3>
                 <button onclick="closeModal('modal-add-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
@@ -536,9 +537,9 @@
         </div>
     </div>
 
-    <!-- Modal Editar Usuário (Admin) -->
+    <!-- Modal Editar Usuário (Admin Only) -->
     <div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-md rounded-3xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
                 <h3 class="text-xl font-bold">Editar Usuário</h3>
                 <button onclick="closeModal('modal-edit-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
@@ -555,7 +556,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nova Senha</label>
-                    <input type="password" id="edit-user-pass" class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Deixe em branco para manter">
+                    <input type="password" id="edit-user-pass" class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Mantenha vazio para não alterar">
                 </div>
                 <div class="flex items-center gap-3 px-1 py-2" id="edit-admin-toggle-wrapper">
                     <input type="checkbox" id="edit-user-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
@@ -570,11 +571,10 @@
     </div>
 
     <script>
-        // --- AUTH LOGIC ---
+        // --- AUTH & SECURITY CORE ---
         const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
         const ADMIN_PASS = 'admin@123';
 
-        // --- LOG LOGIC ---
         function addLog(action, target, type = 'info') {
             const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [];
             const user = JSON.parse(sessionStorage.getItem('logged_user')) || { name: 'Sistema', email: 'N/A' };
@@ -586,15 +586,13 @@
                 action: action,
                 target: target || 'N/A',
                 timestamp: new Date().toISOString(),
-                type: type // info, user_mod, critical
+                type: type 
             });
 
-            // Limit logs to 1000 entries
             if (logs.length > 1000) logs.pop();
             localStorage.setItem('calixto_logs', JSON.stringify(logs));
         }
 
-        // Simple Hash function for passwords
         function hashPassword(pwd) {
             let hash = 0;
             for (let i = 0; i < pwd.length; i++) {
@@ -619,7 +617,6 @@
                 });
                 localStorage.setItem('calixto_users', JSON.stringify(users));
             } else {
-                // Certifica-se que o root sempre é admin
                 if (rootAdmin.isAdmin !== true) {
                     rootAdmin.isAdmin = true;
                     localStorage.setItem('calixto_users', JSON.stringify(users));
@@ -631,8 +628,8 @@
             document.getElementById('login-form').classList.toggle('hidden', !showLogin);
             document.getElementById('register-form').classList.toggle('hidden', showLogin);
             document.getElementById('auth-subtitle').innerText = showLogin ? 
-                'Entre na sua conta para continuar' : 
-                'Preencha os dados para criar sua conta';
+                'Acesso Restrito ao Painel' : 
+                'Solicitação de Acesso Administrativo';
         }
 
         function handleLogin(e) {
@@ -649,7 +646,7 @@
                 startApp();
             } else {
                 addLog('Tentativa de login falhou', email, 'critical');
-                alert('E-mail ou senha incorretos.');
+                alert('Credenciais inválidas. Verifique os dados informados.');
             }
         }
 
@@ -660,21 +657,21 @@
             const pass = document.getElementById('reg-password').value;
             const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
 
-            if (pass.length < 6) return alert('A senha deve ter no mínimo 6 caracteres.');
-            if (users.find(u => u.email === email)) return alert('Este e-mail já está cadastrado.');
+            if (pass.length < 6) return alert('A senha deve possuir pelo menos 6 caracteres.');
+            if (users.find(u => u.email === email)) return alert('E-mail já registrado no sistema.');
 
             const newUser = {
                 id: Date.now().toString(),
                 name,
                 email,
                 password: hashPassword(pass),
-                isAdmin: false // Usuários comuns por padrão
+                isAdmin: false 
             };
 
             users.push(newUser);
             localStorage.setItem('calixto_users', JSON.stringify(users));
-            addLog('Novo cadastro realizado', email, 'user_mod');
-            alert('Conta criada com sucesso! Faça login.');
+            addLog('Nova conta cadastrada', email, 'user_mod');
+            alert('Conta criada! Aguarde autorização ou faça login.');
             toggleAuth(true);
         }
 
@@ -685,7 +682,7 @@
             window.location.reload();
         }
 
-        // --- DATA & STATE ---
+        // --- APP STATE & LOGIC ---
         let currentUser = null;
         let carnes = [];
         let files = [];
@@ -700,7 +697,6 @@
                 return;
             }
 
-            // Atualiza dados do usuário logado se houve mudança no localStorage
             const allUsers = JSON.parse(localStorage.getItem('calixto_users')) || [];
             const freshUser = allUsers.find(u => u.id === currentUser.id);
             if (freshUser) {
@@ -712,20 +708,17 @@
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
 
-            // Show admin tabs if user is admin
             if (currentUser.isAdmin) {
                 document.getElementById('nav-usuarios').classList.remove('hidden');
                 document.getElementById('nav-logs').classList.remove('hidden');
             } else {
                 document.getElementById('nav-usuarios').classList.add('hidden');
                 document.getElementById('nav-logs').classList.add('hidden');
-                // Se o usuário estiver na aba admin e perder a permissão, manda pro dashboard
                 if (!document.getElementById('view-usuarios').classList.contains('hidden') || !document.getElementById('view-logs').classList.contains('hidden')) {
                     switchTab('dashboard');
                 }
             }
 
-            // Load user specific data
             carnes = JSON.parse(localStorage.getItem(`calixto_data_${currentUser.id}`)) || [];
             files = JSON.parse(localStorage.getItem(`calixto_files_${currentUser.id}`)) || [];
 
@@ -734,9 +727,6 @@
             renderFiles();
             renderUsersTable();
             renderLogs();
-            if (document.getElementById('view-usuarios').classList.contains('hidden') && document.getElementById('view-logs').classList.contains('hidden')) {
-                // Manter na aba atual a menos que seja restrita
-            }
         }
 
         function saveData() {
@@ -759,22 +749,22 @@
                     <td class="px-4 py-4 text-sm font-medium text-slate-200">
                         <div class="flex items-center gap-2">
                             ${u.name}
-                            ${u.email === ADMIN_EMAIL ? '<span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold">ROOT</span>' : ''}
+                            ${u.email === ADMIN_EMAIL ? '<span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold">PROPRIETÁRIO</span>' : ''}
                         </div>
                     </td>
                     <td class="px-4 py-4 text-sm text-slate-400">${u.email}</td>
                     <td class="px-4 py-4 text-sm">
                         <span class="status-badge ${u.isAdmin ? 'bg-indigo-500/10 text-indigo-400' : 'bg-slate-700/30 text-slate-500'}">
-                            ${u.isAdmin ? 'Administrador' : 'Comum'}
+                            ${u.isAdmin ? 'Admin' : 'Usuário'}
                         </span>
                     </td>
                     <td class="px-4 py-4 text-center">
                         <div class="flex items-center justify-center gap-3">
-                            <button onclick="adminEditUser('${u.id}')" title="Editar Usuário" class="text-slate-400 hover:text-emerald-400 transition-colors">
+                            <button onclick="adminEditUser('${u.id}')" class="text-slate-400 hover:text-emerald-400 transition-colors">
                                 <i class="fas fa-edit"></i>
                             </button>
                             ${u.id !== 'admin_root' ? `
-                                <button onclick="adminDeleteUser('${u.id}')" title="Excluir Usuário" class="text-slate-400 hover:text-rose-500 transition-colors">
+                                <button onclick="adminDeleteUser('${u.id}')" class="text-slate-400 hover:text-rose-500 transition-colors">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             ` : '<div class="w-4"></div>'}
@@ -792,21 +782,19 @@
             const isAdmin = document.getElementById('admin-add-is-admin').checked;
             const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
 
-            if (pass.length < 6) return alert('A senha deve ter no mínimo 6 caracteres.');
-            if (users.find(u => u.email === email)) return alert('Este e-mail já está cadastrado.');
+            if (pass.length < 6) return alert('Senha muito curta.');
+            if (users.find(u => u.email === email)) return alert('E-mail já existe.');
 
-            const newUser = {
+            users.push({
                 id: Date.now().toString(),
                 name,
                 email,
                 password: hashPassword(pass),
                 isAdmin: isAdmin
-            };
+            });
 
-            users.push(newUser);
             localStorage.setItem('calixto_users', JSON.stringify(users));
-            addLog(`Admin criou novo usuário (${isAdmin ? 'Admin' : 'Comum'})`, email, 'user_mod');
-            alert('Usuário cadastrado com sucesso!');
+            addLog(`Admin criou usuário: ${email}`, isAdmin ? 'Permissão Admin' : 'Permissão Comum', 'user_mod');
             closeModal('modal-add-user');
             e.target.reset();
             renderUsersTable();
@@ -823,12 +811,8 @@
             document.getElementById('edit-user-pass').value = '';
             document.getElementById('edit-user-is-admin').checked = user.isAdmin;
             
-            // Não permitir remover admin do root
-            if (id === 'admin_root') {
-                document.getElementById('edit-admin-toggle-wrapper').classList.add('opacity-50', 'pointer-events-none');
-            } else {
-                document.getElementById('edit-admin-toggle-wrapper').classList.remove('opacity-50', 'pointer-events-none');
-            }
+            if (id === 'admin_root') document.getElementById('edit-admin-toggle-wrapper').classList.add('hidden');
+            else document.getElementById('edit-admin-toggle-wrapper').classList.remove('hidden');
 
             openModal('modal-edit-user');
         }
@@ -842,74 +826,30 @@
             const isAdmin = document.getElementById('edit-user-is-admin').checked;
             
             let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            const userIndex = users.findIndex(u => u.id === id);
+            const idx = users.findIndex(u => u.id === id);
             
-            if (userIndex !== -1) {
-                const oldData = users[userIndex];
-                // Segurança: Pelo menos um admin deve restar
-                if (!isAdmin && id !== 'admin_root') {
-                    const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
-                    if (otherAdmins.length === 0) {
-                        return alert('Não é possível remover a permissão do único administrador do sistema.');
-                    }
-                }
-
-                // Log change of permission
-                if (oldData.isAdmin !== isAdmin) {
-                    addLog('Alteração de permissão', `${email} (Agora ${isAdmin ? 'Admin' : 'Comum'})`, 'user_mod');
-                } else {
-                    addLog('Dados de usuário editados', email, 'user_mod');
-                }
-
-                // Segurança: Root é sempre Admin
-                users[userIndex].isAdmin = (id === 'admin_root') ? true : isAdmin;
-                users[userIndex].name = name;
-                users[userIndex].email = email;
-
-                if (pass.trim() !== '') {
-                    if (pass.length < 6) return alert('A nova senha deve ter no mínimo 6 caracteres.');
-                    users[userIndex].password = hashPassword(pass);
-                }
+            if (idx !== -1) {
+                users[idx].name = name;
+                users[idx].email = email;
+                if (id !== 'admin_root') users[idx].isAdmin = isAdmin;
+                if (pass.trim() !== '') users[idx].password = hashPassword(pass);
 
                 localStorage.setItem('calixto_users', JSON.stringify(users));
-                
-                // Se editou o próprio usuário, atualiza a sessão
-                if (id === currentUser.id) {
-                    sessionStorage.setItem('logged_user', JSON.stringify(users[userIndex]));
-                }
-
-                alert('Dados atualizados!');
+                addLog('Usuário editado via Admin', email, 'user_mod');
                 closeModal('modal-edit-user');
-                startApp(); // Recarrega permissões visuais
+                startApp();
             }
         }
 
         function adminDeleteUser(id) {
-            if (id === 'admin_root') return alert('O administrador raiz não pode ser removido.');
-            
-            if (confirm('Atenção: Ao remover o usuário, o acesso dele será revogado imediatamente. Deseja prosseguir?')) {
+            if (id === 'admin_root') return alert('Root não pode ser excluído.');
+            if (confirm('Remover este usuário?')) {
                 let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-                const userToDelete = users.find(u => u.id === id);
-                
-                if (userToDelete) {
-                    // Impede deletar o último admin
-                    if (userToDelete.isAdmin) {
-                        const otherAdmins = users.filter(u => u.isAdmin && u.id !== id);
-                        if (otherAdmins.length === 0) {
-                            return alert('Não é possível remover o último administrador do sistema.');
-                        }
-                    }
-
-                    addLog('Usuário excluído', userToDelete.email, 'critical');
-                    users = users.filter(u => u.id !== id);
-                    localStorage.setItem('calixto_users', JSON.stringify(users));
-                    renderUsersTable();
-                    
-                    // Se o usuário deletado for o logado (caso improvável por UI)
-                    if (id === currentUser.id) {
-                        handleLogout();
-                    }
-                }
+                const target = users.find(u => u.id === id);
+                addLog('Usuário removido', target.email, 'critical');
+                users = users.filter(u => u.id !== id);
+                localStorage.setItem('calixto_users', JSON.stringify(users));
+                renderUsersTable();
             }
         }
 
@@ -919,42 +859,27 @@
             const filter = document.getElementById('log-filter').value;
             const tbody = document.getElementById('logs-table-body');
             
-            let filteredLogs = logs;
-            if (filter === 'login') {
-                filteredLogs = logs.filter(l => l.action.toLowerCase().includes('login') || l.action.toLowerCase().includes('logout'));
-            } else if (filter === 'user_mod') {
-                filteredLogs = logs.filter(l => l.type === 'user_mod');
-            } else if (filter === 'critical') {
-                filteredLogs = logs.filter(l => l.type === 'critical');
-            }
+            let filtered = logs;
+            if (filter === 'login') filtered = logs.filter(l => l.action.toLowerCase().includes('login'));
+            else if (filter === 'user_mod') filtered = logs.filter(l => l.type === 'user_mod');
+            else if (filter === 'critical') filtered = logs.filter(l => l.type === 'critical');
 
-            tbody.innerHTML = filteredLogs.map(l => {
-                const date = new Date(l.timestamp).toLocaleString('pt-BR');
-                const isCritical = l.type === 'critical';
-                return `
-                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
-                        <td class="px-4 py-3 text-[11px] font-mono text-slate-500">${date}</td>
-                        <td class="px-4 py-3 text-sm">
-                            <p class="font-medium text-slate-300">${l.user}</p>
-                            <p class="text-[10px] text-slate-500">${l.userEmail}</p>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <span class="${isCritical ? 'text-rose-400 font-bold' : 'text-slate-200'}">
-                                ${isCritical ? '<i class="fas fa-exclamation-triangle mr-1"></i>' : ''}
-                                ${l.action}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-indigo-400 font-medium truncate max-w-[200px]" title="${l.target}">${l.target}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            if (filteredLogs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 italic">Nenhum log encontrado para este filtro.</td></tr>';
-            }
+            tbody.innerHTML = filtered.map(l => `
+                <tr class="border-b border-slate-800/50 text-sm">
+                    <td class="px-4 py-3 text-[11px] font-mono text-slate-500">${new Date(l.timestamp).toLocaleString()}</td>
+                    <td class="px-4 py-3">
+                        <p class="font-medium text-slate-300">${l.user}</p>
+                        <p class="text-[10px] text-slate-500">${l.userEmail}</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="${l.type === 'critical' ? 'text-rose-400 font-bold' : 'text-slate-200'}">${l.action}</span>
+                    </td>
+                    <td class="px-4 py-3 text-indigo-400 font-medium truncate max-w-[150px]">${l.target}</td>
+                </tr>
+            `).join('');
         }
 
-        // --- CORE FUNCTIONS ---
+        // --- DASHBOARD LOGIC (ORIGINAL EXPERIENCE) ---
         function saveEntry(e) {
             e.preventDefault();
             const name = document.getElementById('entry-name').value;
@@ -968,50 +893,24 @@
 
             const totalWithInterest = value * (1 + (interest / 100));
             const parcelValue = totalWithInterest / count;
-            
             const installments = [];
             let lastDate = new Date(dueDateInput + 'T00:00:00');
 
             for (let i = 1; i <= count; i++) {
-                const currentDueDate = new Date(lastDate);
-                if (i > 1) {
-                    currentDueDate.setMonth(currentDueDate.getMonth() + 1);
-                }
-                
-                installments.push({
-                    id: Date.now() + i,
-                    dueDate: currentDueDate.toISOString().split('T')[0],
-                    value: parcelValue,
-                    paid: false
-                });
-                lastDate = currentDueDate;
+                const curDate = new Date(lastDate);
+                if (i > 1) curDate.setMonth(curDate.getMonth() + 1);
+                installments.push({ id: Date.now() + i, dueDate: curDate.toISOString().split('T')[0], value: parcelValue, paid: false });
+                lastDate = curDate;
             }
 
-            const newCarne = {
-                id: Date.now(),
-                name,
-                observation,
-                type,
-                originalValue: value,
-                totalValue: totalWithInterest,
-                interestRate: interest,
-                installmentsCount: count,
-                startDate,
-                firstDueDate: dueDateInput,
-                installments,
-                createdAt: new Date().toISOString()
-            };
-
-            carnes.push(newCarne);
+            carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
             saveData();
             closeModal('modal-add-carne');
             e.target.reset();
-            document.getElementById('entry-date').valueAsDate = new Date();
-            document.getElementById('entry-due-date').valueAsDate = new Date();
         }
 
         function deleteCarne(id) {
-            if (confirm('Deseja realmente excluir este registro?')) {
+            if (confirm('Deseja excluir este registro?')) {
                 carnes = carnes.filter(c => c.id !== id);
                 saveData();
             }
@@ -1021,375 +920,168 @@
             const carne = carnes.find(c => c.id === carneId);
             if (carne) {
                 const p = carne.installments.find(i => i.id === parcelaId);
-                if (p) {
-                    p.paid = !p.paid;
-                    saveData();
-                    showDetails(carneId);
-                }
+                if (p) { p.paid = !p.paid; saveData(); showDetails(carneId); }
             }
         }
 
-        // --- FILE HANDLING ---
-        function handleFileUpload(event_input) {
-            const file = event_input.target.files[0];
+        function handleFileUpload(ev) {
+            const file = ev.target.files[0];
             if (!file) return;
-
-            if (file.size > 3 * 1024 * 1024) {
-                alert("Arquivo muito grande. Limite de 3MB para armazenamento local.");
-                return;
-            }
-
+            if (file.size > 2 * 1024 * 1024) return alert("Arquivo muito pesado (Máx 2MB)");
             const reader = new FileReader();
-            reader.onload = function(event) {
-                const newFile = {
-                    id: Date.now(),
-                    name: file.name,
-                    type: file.type,
-                    data: event.target.result,
-                    date: new Date().toISOString()
-                };
-                files.push(newFile);
+            reader.onload = (e) => {
+                files.push({ id: Date.now(), name: file.name, type: file.type, data: e.target.result, date: new Date().toISOString() });
                 saveData();
-                event_input.target.value = '';
             };
             reader.readAsDataURL(file);
         }
 
         function deleteFile(id) {
-            if (confirm('Excluir este arquivo permanentemente?')) {
-                files = files.filter(f => f.id !== id);
-                saveData();
-            }
+            if (confirm('Excluir arquivo?')) { files = files.filter(f => f.id !== id); saveData(); }
         }
 
-        function renderFiles() {
-            const grid = document.getElementById('files-grid');
-            if (!grid) return;
-
-            grid.innerHTML = files.map(f => {
-                const isPdf = f.type === 'application/pdf';
-                const dateFmt = new Date(f.date).toLocaleDateString('pt-BR');
-                
-                return `
-                    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg card-hover group">
-                        <div class="h-40 bg-slate-900 flex items-center justify-center overflow-hidden relative">
-                            ${isPdf ? 
-                                `<i class="fas fa-file-pdf text-5xl text-rose-500"></i>` : 
-                                `<img src="${f.data}" class="w-full h-full object-cover">`
-                            }
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                                <a href="${f.data}" download="${f.name}" class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white hover:bg-indigo-500">
-                                    <i class="fas fa-download"></i>
-                                </a>
-                                <button onclick="deleteFile(${f.id})" class="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center text-white hover:bg-rose-500">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <p class="text-sm font-bold text-white truncate" title="${f.name}">${f.name}</p>
-                            <p class="text-[10px] text-slate-500 uppercase mt-1">${dateFmt} • ${isPdf ? 'PDF' : 'Imagem'}</p>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            if (files.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 italic">Nenhum comprovante enviado ainda.</div>`;
-            }
-        }
-
-        // --- UTILS ---
-        const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+        const formatBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         
         function getStatus(dateStr, isPaid) {
-            if (isPaid) return { text: 'PAGO', color: 'bg-emerald-500/20 text-emerald-400', icon: 'fa-check-circle' };
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            const due = new Date(dateStr + 'T00:00:00');
-            due.setHours(0,0,0,0);
-
-            if (due < today) return { text: 'ATRASADO', color: 'bg-rose-500/20 text-rose-400', icon: 'fa-exclamation-circle' };
-            if (due.getTime() === today.getTime()) return { text: 'VENCE HOJE', color: 'bg-amber-500/20 text-amber-400', icon: 'fa-clock' };
-            return { text: 'EM DIA', color: 'bg-blue-500/20 text-blue-400', icon: 'fa-calendar' };
+            if (isPaid) return { text: 'PAGO', color: 'bg-emerald-500/20 text-emerald-400' };
+            const today = new Date().setHours(0,0,0,0);
+            const due = new Date(dateStr + 'T00:00:00').setHours(0,0,0,0);
+            if (due < today) return { text: 'ATRASADO', color: 'bg-rose-500/20 text-rose-400' };
+            if (due === today) return { text: 'VENCE HOJE', color: 'bg-amber-500/20 text-amber-400' };
+            return { text: 'PENDENTE', color: 'bg-blue-500/20 text-blue-400' };
         }
 
-        // --- UI RENDERING ---
         function updateStats() {
-            const totalReceber = carnes.reduce((acc, c) => acc + c.totalValue, 0);
-            
-            let totalRecebido = 0;
-            let totalAberto = 0;
-            
-            carnes.forEach(c => {
-                c.installments.forEach(p => {
-                    if (p.paid) totalRecebido += p.value;
-                    else totalAberto += p.value;
-                });
-            });
+            let recebido = 0, aberto = 0;
+            carnes.forEach(c => c.installments.forEach(p => p.paid ? recebido += p.value : aberto += p.value));
+            document.getElementById('stat-total-receber').innerText = formatBRL(recebido + aberto);
+            document.getElementById('stat-total-recebido').innerText = formatBRL(recebido);
+            document.getElementById('stat-total-aberto').innerText = formatBRL(aberto);
 
-            document.getElementById('stat-total-receber').innerText = formatBRL(totalReceber);
-            document.getElementById('stat-total-recebido').innerText = formatBRL(totalRecebido);
-            document.getElementById('stat-total-aberto').innerText = formatBRL(totalAberto);
+            const pendentes = [];
+            carnes.forEach(c => c.installments.forEach(p => { if(!p.paid) pendentes.push({...p, name: c.name})}));
+            pendentes.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-            const allInstallments = [];
-            carnes.forEach(c => {
-                c.installments.forEach(p => {
-                    if (!p.paid) allInstallments.push({ ...p, parentName: c.name, startDate: c.startDate });
-                });
-            });
+            document.getElementById('upcoming-list').innerHTML = pendentes.slice(0, 5).map(p => {
+                const st = getStatus(p.dueDate, false);
+                return `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between">
+                    <div><p class="font-bold text-sm text-white truncate">${p.name}</p><p class="text-[10px] text-slate-500">${p.dueDate}</p></div>
+                    <div class="text-right"><p class="font-bold text-indigo-400">${formatBRL(p.value)}</p><span class="status-badge ${st.color}">${st.text}</span></div>
+                </div>`;
+            }).join('') || '<p class="text-slate-500 text-sm">Sem pendências.</p>';
 
-            allInstallments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-            const upcomingHtml = allInstallments.slice(0, 5).map(p => {
-                const status = getStatus(p.dueDate, false);
-                const dueFmt = new Date(p.dueDate + 'T00:00:00').toLocaleDateString('pt-BR');
-                return `
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between card-hover">
-                        <div class="min-w-0">
-                            <p class="font-bold text-sm text-white truncate">${p.parentName}</p>
-                            <p class="text-xs text-slate-400">Venc: ${dueFmt}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0 ml-4">
-                            <p class="font-bold text-indigo-400">${formatBRL(p.value)}</p>
-                            <span class="status-badge ${status.color}">${status.text}</span>
-                        </div>
+            const categories = {};
+            carnes.forEach(c => { categories[c.type] = (categories[c.type] || 0) + c.totalValue; });
+            document.getElementById('category-stats').innerHTML = Object.keys(categories).map(t => `
+                <div class="space-y-1">
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-slate-300 font-medium">${t}</span>
+                        <span class="text-slate-400">${formatBRL(categories[t])}</span>
                     </div>
-                `;
-            }).join('');
-            document.getElementById('upcoming-list').innerHTML = upcomingHtml || '<p class="text-slate-500 text-sm">Nenhuma parcela pendente.</p>';
-
-            const typesStats = {};
-            carnes.forEach(c => {
-                const t = c.type || 'Sem Categoria';
-                if (!typesStats[t]) typesStats[t] = { count: 0, total: 0 };
-                typesStats[t].count++;
-                typesStats[t].total += c.totalValue;
-            });
-
-            const categoryHtml = Object.keys(typesStats).map(t => {
-                const data = typesStats[t];
-                const percentage = carnes.length > 0 ? (data.count / carnes.length) * 100 : 0;
-                return `
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="capitalize text-slate-300 font-medium truncate pr-2">${t}</span>
-                            <span class="text-slate-400 whitespace-nowrap">${formatBRL(data.total)}</span>
-                        </div>
-                        <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-indigo-500 h-full" style="width: ${percentage}%"></div>
-                        </div>
+                    <div class="w-full bg-slate-700 h-1 rounded-full overflow-hidden">
+                        <div class="bg-indigo-500 h-full" style="width: 70%"></div>
                     </div>
-                `;
-            }).join('');
-            document.getElementById('category-stats').innerHTML = categoryHtml || '<p class="text-slate-500 text-xs">Nenhum dado registrado.</p>';
+                </div>
+            `).join('') || '<p class="text-slate-500 text-xs">Vazio.</p>';
             
-            updateDynamicFilters(Object.keys(typesStats));
-        }
-
-        function updateDynamicFilters(types) {
-            const filterContainer = document.getElementById('dynamic-filters');
-            if(!filterContainer) return;
-            const currentFilterBtn = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter === 'todos' ? 'bg-indigo-600' : 'bg-slate-800'} text-sm font-medium filter-btn whitespace-nowrap" data-type="todos">Todos</button>`;
-            
-            const dynamicBtns = types.map(t => {
-                const active = currentFilter === t;
-                return `<button onclick="filterType('${t}')" class="px-4 py-2 rounded-lg ${active ? 'bg-indigo-600' : 'bg-slate-800'} text-sm font-medium filter-btn whitespace-nowrap" data-type="${t}">${t}</button>`;
-            }).join('');
-            
-            filterContainer.innerHTML = currentFilterBtn + dynamicBtns;
+            const types = [...new Set(carnes.map(c => c.type))];
+            const filterDiv = document.getElementById('dynamic-filters');
+            filterDiv.innerHTML = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter==='todos'?'bg-indigo-600':'bg-slate-800'} text-sm font-medium">Todos</button>` + 
+                types.map(t => `<button onclick="filterType('${t}')" class="px-4 py-2 rounded-lg ${currentFilter===t?'bg-indigo-600':'bg-slate-800'} text-sm font-medium capitalize">${t}</button>`).join('');
         }
 
         function renderLists() {
             const grid = document.getElementById('carnes-grid');
             if(!grid) return;
-            const sortBy = document.getElementById('sort-carnes').value;
-
-            let filtered = carnes.filter(c => {
-                const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchesType = currentFilter === 'todos' || c.type === currentFilter;
-                return matchesSearch && matchesType;
-            });
-
-            if (sortBy === 'newest') filtered.sort((a, b) => b.id - a.id);
-            else if (sortBy === 'value-desc') filtered.sort((a, b) => b.totalValue - a.totalValue);
-            else if (sortBy === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+            const sort = document.getElementById('sort-carnes').value;
+            let filtered = carnes.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) && (currentFilter==='todos' || c.type===currentFilter));
+            
+            if (sort === 'newest') filtered.sort((a,b) => b.id - a.id);
+            else if (sort === 'value-desc') filtered.sort((a,b) => b.totalValue - a.totalValue);
+            else if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
 
             grid.innerHTML = filtered.map(c => {
-                const paidCount = c.installments.filter(i => i.paid).length;
-                const progress = (paidCount / c.installmentsCount) * 100;
-                return `
-                    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg card-hover">
-                        <div class="p-5 border-b border-slate-700 flex justify-between items-start">
-                            <div class="min-w-0">
-                                <span class="text-[10px] uppercase font-bold tracking-widest text-indigo-400 block truncate">${c.type}</span>
-                                <h4 class="font-bold text-lg truncate text-white">${c.name}</h4>
-                            </div>
-                            <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500 transition-colors flex-shrink-0 ml-2">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                        <div class="p-5 space-y-4">
-                            <div class="flex justify-between items-end gap-2">
-                                <div class="min-w-0">
-                                    <p class="text-xs text-slate-500">Valor Total</p>
-                                    <p class="text-xl font-bold text-white truncate">${formatBRL(c.totalValue)}</p>
-                                </div>
-                                <div class="text-right flex-shrink-0">
-                                    <p class="text-xs text-slate-500">${c.installmentsCount} parcelas</p>
-                                    <p class="text-sm font-medium text-slate-300">${formatBRL(c.totalValue / c.installmentsCount)}/mês</p>
-                                </div>
-                            </div>
-                            <div class="space-y-1">
-                                <div class="flex justify-between text-xs">
-                                    <span class="text-slate-400">Progresso</span>
-                                    <span class="text-indigo-400 font-bold">${paidCount}/${c.installmentsCount}</span>
-                                </div>
-                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-indigo-500 h-full transition-all duration-500" style="width: ${progress}%"></div>
-                                </div>
-                            </div>
-                            <button onclick="showDetails(${c.id})" class="w-full bg-slate-700 hover:bg-slate-600 py-2.5 rounded-xl text-sm font-bold transition-all text-white">
-                                Ver Parcelas
-                            </button>
-                        </div>
+                const paid = c.installments.filter(i => i.paid).length;
+                return `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg card-hover">
+                    <div class="p-5 border-b border-slate-700 flex justify-between">
+                        <div class="truncate"><span class="text-[9px] uppercase font-bold text-indigo-400 block">${c.type}</span><h4 class="font-bold text-white truncate">${c.name}</h4></div>
+                        <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>
                     </div>
-                `;
-            }).join('');
+                    <div class="p-5 space-y-4">
+                        <div class="flex justify-between items-center"><p class="text-xl font-bold text-white">${formatBRL(c.totalValue)}</p><p class="text-xs text-slate-500">${c.installmentsCount} parcelas</p></div>
+                        <div class="w-full bg-slate-900 h-1.5 rounded-full"><div class="bg-indigo-500 h-full" style="width: ${(paid/c.installmentsCount)*100}%"></div></div>
+                        <button onclick="showDetails(${c.id})" class="w-full bg-slate-700 hover:bg-indigo-600 py-2 rounded-lg text-xs font-bold transition-all">Ver Detalhes</button>
+                    </div>
+                </div>`;
+            }).join('') || '<div class="col-span-full text-center py-12 text-slate-500">Nenhum registro encontrado.</div>';
         }
 
         function showDetails(id) {
-            const carne = carnes.find(c => c.id === id);
-            if (!carne) return;
-
-            document.getElementById('details-title').innerText = carne.name;
-            document.getElementById('details-subtitle').innerHTML = `
-                <p>${carne.installmentsCount} parcelas de ${formatBRL(carne.totalValue/carne.installmentsCount)} | Tipo: ${carne.type}</p>
-                ${carne.observation ? `<p class="mt-1 text-xs italic text-slate-500">Obs: ${carne.observation}</p>` : ''}
-            `;
-            
-            let paidTotal = 0;
-            let remainingTotal = 0;
-
-            const listHtml = carne.installments.map((p, idx) => {
-                const status = getStatus(p.dueDate, p.paid);
-                if (p.paid) paidTotal += p.value; else remainingTotal += p.value;
-                
-                const dueFmt = new Date(p.dueDate + 'T00:00:00').toLocaleDateString('pt-BR');
-                
-                return `
-                    <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl flex items-center justify-between">
-                        <div class="flex items-center gap-4 min-w-0">
-                            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500 flex-shrink-0">${idx + 1}</div>
-                            <div class="min-w-0">
-                                <p class="text-sm font-bold text-slate-200">Vencimento: ${dueFmt}</p>
-                                <span class="status-badge ${status.color} mt-1 inline-block">${status.text}</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-6 flex-shrink-0 ml-4">
-                            <p class="font-bold text-slate-300">${formatBRL(p.value)}</p>
-                            <button onclick="toggleParcela(${carne.id}, ${p.id})" class="w-10 h-10 rounded-xl ${p.paid ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'} flex items-center justify-center transition-all hover:scale-105 shadow-lg">
-                                <i class="fas ${p.paid ? 'fa-check' : 'fa-wallet'}"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
+            const c = carnes.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('details-title').innerText = c.name;
+            document.getElementById('details-subtitle').innerText = `${c.installmentsCount}x de ${formatBRL(c.totalValue/c.installmentsCount)}`;
+            document.getElementById('installments-list').innerHTML = c.installments.map((p, i) => {
+                const st = getStatus(p.dueDate, p.paid);
+                return `<div class="bg-slate-900 p-4 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3"><span class="text-xs text-slate-500 font-bold">${i+1}</span><div><p class="text-sm font-bold text-white">${p.dueDate}</p><span class="status-badge ${st.color} text-[9px]">${st.text}</span></div></div>
+                    <div class="flex items-center gap-4"><p class="text-sm font-bold">${formatBRL(p.value)}</p><button onclick="toggleParcela(${c.id}, ${p.id})" class="w-8 h-8 rounded-lg ${p.paid?'bg-emerald-600':'bg-slate-700'} flex items-center justify-center"><i class="fas ${p.paid?'fa-check':'fa-wallet'}"></i></button></div>
+                </div>`;
             }).join('');
-
-            document.getElementById('installments-list').innerHTML = listHtml;
-            document.getElementById('details-paid-total').innerText = formatBRL(paidTotal);
-            document.getElementById('details-remaining-total').innerText = formatBRL(remainingTotal);
             openModal('modal-details');
         }
 
-        function switchTab(tab) {
+        function renderFiles() {
+            document.getElementById('files-grid').innerHTML = files.map(f => `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden group">
+                <div class="h-32 bg-slate-900 flex items-center justify-center relative">
+                    ${f.type.includes('pdf') ? '<i class="fas fa-file-pdf text-4xl text-rose-500"></i>' : `<img src="${f.data}" class="w-full h-full object-cover">`}
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-all">
+                        <a href="${f.data}" download="${f.name}" class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-xs"><i class="fas fa-download"></i></a>
+                        <button onclick="deleteFile(${f.id})" class="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center text-xs"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <div class="p-3"><p class="text-[11px] font-bold text-white truncate">${f.name}</p></div>
+            </div>`).join('');
+        }
+
+        function switchTab(t) {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.querySelectorAll('.nav-link').forEach(l => {
-                l.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-500/20');
-                l.classList.add('text-slate-400');
-            });
-
-            const activeTab = document.getElementById(`view-${tab}`);
-            if(activeTab) activeTab.classList.remove('hidden');
-            
-            const activeNav = document.getElementById(`nav-${tab}`);
-            if(activeNav) {
-                activeNav.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-500/20');
-                activeNav.classList.remove('text-slate-400');
-            }
-            
-            const titles = {
-                'dashboard': 'Dashboard',
-                'carnes': 'Registros e Parcelas',
-                'arquivos': 'Arquivos e Recibos',
-                'calculadora': 'Calculadora Financeira',
-                'usuarios': 'Gerenciamento de Usuários',
-                'logs': 'Histórico de Atividade'
-            };
-            document.getElementById('current-tab-title').innerText = titles[tab] || 'Calixto Systems';
-
-            if (tab === 'usuarios') renderUsersTable();
-            if (tab === 'logs') renderLogs();
+            document.getElementById(`view-${t}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-indigo-600', 'text-white'));
+            document.getElementById(`nav-${t}`).classList.add('bg-indigo-600', 'text-white');
+            document.getElementById('current-tab-title').innerText = t.charAt(0).toUpperCase() + t.slice(1);
+            if (t==='usuarios') renderUsersTable();
+            if (t==='logs') renderLogs();
         }
 
-        function handleSearch(val) {
-            searchQuery = val;
-            renderLists();
-        }
-
-        function filterType(type) {
-            currentFilter = type;
-            renderLists();
-            updateStats();
-        }
-
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if(modal) modal.classList.remove('hidden');
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if(modal) modal.classList.add('hidden');
-        }
+        function handleSearch(v) { searchQuery = v; renderLists(); }
+        function filterType(t) { currentFilter = t; renderLists(); updateStats(); }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function calculateFinance() {
-            const valor = parseFloat(document.getElementById('calc-valor').value);
-            const taxa = parseFloat(document.getElementById('calc-taxa').value);
-            const tempo = parseFloat(document.getElementById('calc-tempo').value);
-
-            if (isNaN(valor) || isNaN(taxa) || isNaN(tempo)) return alert('Preencha todos os campos!');
-
-            const juros = valor * (taxa / 100) * tempo;
-            const montante = valor + juros;
-
-            document.getElementById('res-juros').innerText = formatBRL(juros);
-            document.getElementById('res-montante').innerText = formatBRL(montante);
+            const v = parseFloat(document.getElementById('calc-valor').value);
+            const tx = parseFloat(document.getElementById('calc-taxa').value);
+            const t = parseFloat(document.getElementById('calc-tempo').value);
+            if (!v || !tx || !t) return;
+            const j = v * (tx/100) * t;
+            document.getElementById('res-juros').innerText = formatBRL(j);
+            document.getElementById('res-montante').innerText = formatBRL(v + j);
             document.getElementById('calc-result').classList.remove('hidden');
         }
 
         function calculateCompoundInterest() {
-            const principal = parseFloat(document.getElementById('comp-valor').value);
-            const rate = parseFloat(document.getElementById('comp-taxa').value) / 100;
-            const time = parseFloat(document.getElementById('comp-tempo').value);
-
-            if (isNaN(principal) || isNaN(rate) || isNaN(time)) return alert('Preencha todos os campos!');
-
-            const amount = principal * Math.pow((1 + rate), time);
-            const interest = amount - principal;
-
-            document.getElementById('comp-res-juros').innerText = formatBRL(interest);
-            document.getElementById('comp-res-montante').innerText = formatBRL(amount);
+            const p = parseFloat(document.getElementById('comp-valor').value);
+            const r = parseFloat(document.getElementById('comp-taxa').value)/100;
+            const t = parseFloat(document.getElementById('comp-tempo').value);
+            if (!p || !r || !t) return;
+            const m = p * Math.pow((1+r), t);
+            document.getElementById('comp-res-juros').innerText = formatBRL(m - p);
+            document.getElementById('comp-res-montante').innerText = formatBRL(m);
             document.getElementById('comp-result').classList.remove('hidden');
         }
 
-        window.onload = () => {
-            initAdmin();
-            startApp();
-            
-            // Set default dates
-            document.getElementById('entry-date').valueAsDate = new Date();
-            document.getElementById('entry-due-date').valueAsDate = new Date();
-        };
+        window.onload = () => { initAdmin(); startApp(); };
     </script>
 </body>
 </html>
