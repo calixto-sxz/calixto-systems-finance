@@ -253,7 +253,7 @@
                         <div class="space-y-4">
                             <h4 class="text-lg font-medium">Distribuição por Tipo</h4>
                             <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                                <div id="category-stats" class="space-y-4"></div>
+                                <div id="category-stats" class="grid grid-cols-1 gap-3"></div>
                             </div>
                         </div>
                     </div>
@@ -848,8 +848,31 @@
                     <div class="text-right flex-shrink-0"><p class="font-bold text-indigo-400 text-xs sm:text-sm">${formatBRL(p.value)}</p><span class="status-badge ${st.color} text-[9px]">${st.text}</span></div>
                 </div>`;
             }).join('') || '<p class="text-slate-500 text-sm">Sem pendências.</p>';
-            const categories = {}; carnes.forEach(c => { categories[c.type] = (categories[c.type] || 0) + c.totalValue; });
-            document.getElementById('category-stats').innerHTML = Object.keys(categories).map(t => `<div class="space-y-1"><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-300 font-medium">${t}</span><span class="text-slate-400">${formatBRL(categories[t])}</span></div><div class="w-full bg-slate-700 h-1 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full" style="width: 70%"></div></div></div>`).join('') || '<p class="text-slate-500 text-xs">Vazio.</p>';
+            
+            // Render Distribuição por Tipo as modern KPI Cards
+            const categories = {};
+            let grandTotal = 0;
+            carnes.forEach(c => { 
+                categories[c.type] = (categories[c.type] || 0) + c.totalValue; 
+                grandTotal += c.totalValue;
+            });
+
+            document.getElementById('category-stats').innerHTML = Object.keys(categories).map(t => {
+                const value = categories[t];
+                const percentage = grandTotal > 0 ? ((value / grandTotal) * 100).toFixed(1) : 0;
+                return `
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 hover:border-indigo-500/40 transition-all group">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${t}</span>
+                        <span class="text-[10px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-md">${percentage}%</span>
+                    </div>
+                    <div class="text-lg font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">${formatBRL(value)}</div>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-indigo-500 h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                    </div>
+                </div>`;
+            }).join('') || '<p class="text-slate-500 text-xs text-center py-4">Nenhum dado categorizado.</p>';
+
             const types = [...new Set(carnes.map(c => c.type))];
             const filterDiv = document.getElementById('dynamic-filters');
             filterDiv.innerHTML = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter==='todos'?'bg-indigo-600':'bg-slate-800'} text-sm font-medium">Todos</button>` + types.map(t => `<button onclick="filterType('${t}')" class="px-4 py-2 rounded-lg ${currentFilter===t?'bg-indigo-600':'bg-slate-800'} text-sm font-medium capitalize">${t}</button>`).join('');
