@@ -7,6 +7,9 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%236366f1'/><path d='M7 22l5-5 4 2 9-9m0 0h-5m5 0v5' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Biblioteca para Exportação PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -59,6 +62,10 @@
         .toast-success { border-color: #10b981; }
         .toast-error   { border-color: #ef4444; }
         .toast-info    { border-color: #6366f1; }
+
+        /* Estilos Novos Contábil */
+        .contabil-border-accent { border-left: 4px solid #6366f1; }
+        .contabil-row-hover:hover { background-color: rgba(99, 102, 241, 0.05); }
     </style>
 </head>
 <body class="custom-scrollbar bg-[#0f172a]">
@@ -114,7 +121,7 @@
 
 <div id="main-app" class="app-container hidden">
     <aside id="sidebar-menu" class="sidebar bg-slate-900 border-r border-slate-800 fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex flex-col">
-        <div class="p-6">
+        <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
             <div class="flex items-center justify-between mb-8">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -127,12 +134,29 @@
                 </button>
             </div>
             <nav class="space-y-1">
+                <p class="text-[10px] font-bold text-slate-500 uppercase px-4 mb-2 tracking-widest">Principal</p>
                 <button onclick="switchTab('dashboard')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-dashboard">
                     <i class="fas fa-th-large w-5 flex-shrink-0"></i> Dashboard
                 </button>
                 <button onclick="switchTab('carnes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-carnes">
                     <i class="fas fa-file-invoice-dollar w-5 flex-shrink-0"></i> Registros e Parcelas
                 </button>
+                
+                <p class="text-[10px] font-bold text-slate-500 uppercase px-4 mt-6 mb-2 tracking-widest">Contabilidade</p>
+                <button onclick="switchTab('contabil-clientes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-contabil-clientes">
+                    <i class="fas fa-building w-5 flex-shrink-0"></i> Clientes / Empresas
+                </button>
+                <button onclick="switchTab('contabil-obrigacoes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-contabil-obrigacoes">
+                    <i class="fas fa-tasks w-5 flex-shrink-0"></i> Obrigações Fiscais
+                </button>
+                <button onclick="switchTab('contabil-honorarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-contabil-honorarios">
+                    <i class="fas fa-hand-holding-usd w-5 flex-shrink-0"></i> Honorários
+                </button>
+                <button onclick="switchTab('contabil-fluxo')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-contabil-fluxo">
+                    <i class="fas fa-exchange-alt w-5 flex-shrink-0"></i> Fluxo de Caixa
+                </button>
+
+                <p class="text-[10px] font-bold text-slate-500 uppercase px-4 mt-6 mb-2 tracking-widest">Ferramentas</p>
                 <button onclick="switchTab('arquivos')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-arquivos">
                     <i class="fas fa-folder-open w-5 flex-shrink-0"></i> Arquivos e Recibos
                 </button>
@@ -148,6 +172,9 @@
             </nav>
         </div>
         <div class="mt-auto p-6 space-y-4">
+            <button onclick="contabil_openBackupModal()" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-400 py-3 rounded-xl text-sm font-medium transition-all">
+                <i class="fas fa-database"></i> Backup / Restaurar
+            </button>
             <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
                 <p class="text-[10px] text-slate-400 mb-1">Usuário Conectado</p>
                 <p id="user-display-name" class="text-sm font-medium truncate">Carregando...</p>
@@ -172,10 +199,10 @@
                     <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-[10px] sm:text-xs"></i>
                 </div>
                 <button onclick="exportarCSV()" class="flex-shrink-0 bg-slate-700 hover:bg-slate-600 text-white px-2 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
-                    <i class="fas fa-file-csv"></i> <span class="inline">Exportar CSV</span>
+                    <i class="fas fa-file-csv"></i> <span class="inline">CSV</span>
                 </button>
                 <button onclick="openAddModal()" class="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
-                    <i class="fas fa-plus"></i> <span class="hidden xs:inline">Novo Registro</span>
+                    <i class="fas fa-plus"></i> <span class="hidden xs:inline">Novo</span>
                 </button>
             </div>
         </header>
@@ -308,6 +335,80 @@
                 </div>
             </section>
 
+            <!-- NOVAS SEÇÕES CONTÁBEIS -->
+            <section id="view-contabil-clientes" class="hidden space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold">Clientes e Empresas</h3>
+                    <button onclick="contabil_openClientModal()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Novo Cliente
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="contabil-clients-list"></div>
+            </section>
+
+            <section id="view-contabil-obrigacoes" class="hidden space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold">Obrigações Fiscais</h3>
+                    <button onclick="contabil_openObligationModal()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i class="fas fa-file-invoice"></i> Lançar Guia
+                    </button>
+                </div>
+                <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-900/50 border-b border-slate-700">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Tipo/Guia</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Cliente</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Vencimento</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Valor</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Status</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contabil-obligations-table"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="view-contabil-honorarios" class="hidden space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold">Gestão de Honorários</h3>
+                    <button onclick="contabil_openHonorarioModal()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i class="fas fa-hand-holding-usd"></i> Registrar Cobrança
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="contabil-honorarios-list"></div>
+            </section>
+
+            <section id="view-contabil-fluxo" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl">
+                        <p class="text-xs font-bold uppercase text-emerald-500">Entradas (Honorários/Receitas)</p>
+                        <h4 id="fluxo-total-entrada" class="text-2xl font-bold mt-1 text-white">R$ 0,00</h4>
+                    </div>
+                    <div class="bg-rose-500/10 border border-rose-500/20 p-6 rounded-2xl">
+                        <p class="text-xs font-bold uppercase text-rose-500">Saídas (Despesas/Impostos)</p>
+                        <h4 id="fluxo-total-saida" class="text-2xl font-bold mt-1 text-white">R$ 0,00</h4>
+                    </div>
+                    <div class="bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-2xl">
+                        <p class="text-xs font-bold uppercase text-indigo-500">Saldo Projetado</p>
+                        <h4 id="fluxo-total-saldo" class="text-2xl font-bold mt-1 text-white">R$ 0,00</h4>
+                    </div>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex items-center justify-between mb-6">
+                        <h4 class="font-bold">Extrato Consolidado</h4>
+                        <div class="flex gap-2">
+                            <button onclick="contabil_exportRelatorioPDF()" class="bg-rose-600/20 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-bold border border-rose-600/30">
+                                <i class="fas fa-file-pdf mr-1"></i> Exportar Relatório
+                            </button>
+                            <input type="month" id="fluxo-filtro-mes" onchange="contabil_renderFluxo()" class="bg-slate-900 border-none rounded-lg text-xs px-3 py-1.5 text-white">
+                        </div>
+                    </div>
+                    <div id="contabil-fluxo-extrato" class="space-y-2"></div>
+                </div>
+            </section>
+
             <section id="view-usuarios" class="hidden space-y-6">
                 <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
@@ -365,7 +466,7 @@
     </main>
 </div>
 
-<!-- Modals -->
+<!-- Modals Existentes -->
 <div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
         <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
@@ -378,6 +479,9 @@
                 <div class="col-span-full">
                     <label class="block text-sm font-medium text-slate-400 mb-2">Descrição / Nome do Cliente</label>
                     <input type="text" id="entry-name" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo João da Silva">
+                </div>
+                <div class="col-span-full" id="contabil-injection-point">
+                    <!-- Injeção JS de Centro de Custo e Cliente Link via Script -->
                 </div>
                 <div class="col-span-full">
                     <label class="block text-sm font-medium text-slate-400 mb-2">Observação</label>
@@ -435,6 +539,120 @@
             </div>
             <button onclick="closeModal('modal-details')" class="w-full sm:w-auto bg-indigo-600 text-sm px-6 py-2 rounded-lg font-bold">Fechar</button>
         </div>
+    </div>
+</div>
+
+<!-- MODALS NOVOS CONTÁBEIS -->
+<div id="contabil-modal-client" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl modal-enter">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+            <h3 id="client-modal-title" class="font-bold">Novo Cliente / Empresa</h3>
+            <button onclick="closeModal('contabil-modal-client')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form id="form-contabil-client" onsubmit="contabil_saveClient(event)" class="p-6 space-y-4">
+            <input type="hidden" id="client-id">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Razão Social / Nome</label>
+                    <input type="text" id="client-name" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">CPF / CNPJ</label>
+                    <input type="text" id="client-doc" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Telefone</label>
+                    <input type="text" id="client-phone" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">E-mail</label>
+                    <input type="email" id="client-email" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            <div class="flex gap-4 mt-6">
+                <button type="button" onclick="closeModal('contabil-modal-client')" class="flex-1 bg-slate-700 py-3 rounded-xl font-bold">Cancelar</button>
+                <button type="submit" class="flex-1 bg-indigo-600 py-3 rounded-xl font-bold">Salvar Cliente</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="contabil-modal-obligation" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl modal-enter">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+            <h3 class="font-bold">Lançar Obrigação Fiscal</h3>
+            <button onclick="closeModal('contabil-modal-obligation')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form id="form-contabil-obligation" onsubmit="contabil_saveObligation(event)" class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Guia</label>
+                    <select id="ob-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm">
+                        <option value="DAS">DAS (Simples Nacional)</option>
+                        <option value="DARF">DARF (IRRF/PIS/COFINS)</option>
+                        <option value="GPS">GPS (INSS)</option>
+                        <option value="FGTS">FGTS</option>
+                        <option value="ISS">ISS (Prefeitura)</option>
+                        <option value="OUTRO">Outros</option>
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Cliente Vinculado</label>
+                    <select id="ob-client" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Valor (R$)</label>
+                    <input type="number" step="0.01" id="ob-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Vencimento</label>
+                    <input type="date" id="ob-due" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 py-3 rounded-xl font-bold mt-4">Salvar Guia</button>
+        </form>
+    </div>
+</div>
+
+<div id="contabil-modal-honorario" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl modal-enter">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+            <h3 class="font-bold">Lançar Honorário</h3>
+            <button onclick="closeModal('contabil-modal-honorario')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form id="form-contabil-honorario" onsubmit="contabil_saveHonorario(event)" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Cliente</label>
+                <select id="h-client" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm"></select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Referência (Mês/Ano)</label>
+                <input type="month" id="h-ref" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Valor (R$)</label>
+                <input type="number" step="0.01" id="h-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 py-3 rounded-xl font-bold mt-4">Confirmar Cobrança</button>
+        </form>
+    </div>
+</div>
+
+<div id="contabil-modal-backup" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter p-8 text-center">
+        <i class="fas fa-database text-indigo-500 text-5xl mb-4"></i>
+        <h3 class="text-xl font-bold mb-2">Segurança dos Dados</h3>
+        <p class="text-slate-400 text-sm mb-6">Exporte todos os seus dados contábeis e financeiros em um arquivo seguro ou restaure um backup existente.</p>
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="contabil_exportBackup()" class="bg-indigo-600 py-3 rounded-xl font-bold flex flex-col items-center gap-1">
+                <i class="fas fa-file-export"></i> <span class="text-xs">Exportar JSON</span>
+            </button>
+            <button onclick="document.getElementById('import-file').click()" class="bg-slate-700 py-3 rounded-xl font-bold flex flex-col items-center gap-1">
+                <i class="fas fa-file-import"></i> <span class="text-xs">Restaurar</span>
+            </button>
+            <input type="file" id="import-file" class="hidden" accept=".json" onchange="contabil_importBackup(event)">
+        </div>
+        <button onclick="closeModal('contabil-modal-backup')" class="mt-6 text-slate-500 hover:text-white text-sm">Fechar Janela</button>
     </div>
 </div>
 
@@ -545,18 +763,12 @@
         return hash.toString();
     }
 
-    /**
-     * Safe localStorage read: if the stored value cannot be parsed as JSON
-     * (e.g. leftover AES-GCM base64 from a previous version) return null
-     * instead of crashing.
-     */
     function safeGet(key) {
         try {
             const raw = localStorage.getItem(key);
             if (!raw) return null;
             return JSON.parse(raw);
         } catch (e) {
-            // Value is corrupt / from old encrypted format – remove it
             localStorage.removeItem(key);
             return null;
         }
@@ -602,20 +814,14 @@
 
     function initAdmin() {
         let users = safeGet('calixto_users') || [];
-
-        // If safeGet returned null the key was corrupt – users is now []
-        // Ensure the root admin always exists with the correct hash
         const adminHash = hashPassword(ADMIN_PASS);
         const idx = users.findIndex(u => u.email === ADMIN_EMAIL);
-
         if (idx === -1) {
             users.push({ id: 'admin_root', name: 'Administrador Calixto', email: ADMIN_EMAIL, password: adminHash, isAdmin: true });
         } else {
-            // Fix password in case it was stored with a different algorithm
             users[idx].password = adminHash;
             users[idx].isAdmin  = true;
         }
-
         safeSet('calixto_users', users);
     }
 
@@ -689,6 +895,9 @@
         carnes = safeGet(`calixto_data_${currentUser.id}`)  || [];
         files  = safeGet(`calixto_files_${currentUser.id}`) || [];
 
+        // Inicializa Módulo Contábil
+        contabil_init();
+
         updateStats(); renderLists(); renderFiles(); renderUsersTable(); renderLogs();
     }
 
@@ -706,11 +915,13 @@
         document.getElementById('modal-carne-title').innerText = 'Novo Registro';
         document.getElementById('btn-save-carne').innerText = 'Salvar Registro';
         document.getElementById('form-carne').reset();
+        contabil_injectFields(); // Injeta campos contábeis se disponíveis
         openModal('modal-add-carne');
     }
 
     function openEditCarne(id) {
         const c = carnes.find(x => x.id === id); if (!c) return;
+        openAddModal();
         document.getElementById('edit-entry-id').value      = c.id;
         document.getElementById('entry-name').value         = c.name;
         document.getElementById('entry-observation').value  = c.observation || '';
@@ -720,7 +931,10 @@
         document.getElementById('entry-interest').value     = c.interestRate;
         document.getElementById('entry-date').value         = c.startDate;
         document.getElementById('entry-due-date').value     = c.firstDueDate;
-        openModal('modal-add-carne');
+        
+        // Carrega campos injetados se existirem no objeto
+        if(c.contabil_centro) document.getElementById('contabil-sel-centro').value = c.contabil_centro;
+        if(c.contabil_client_id) document.getElementById('contabil-sel-client-link').value = c.contabil_client_id;
     }
 
     function saveEntry(e) {
@@ -734,6 +948,11 @@
         const interest     = parseFloat(document.getElementById('entry-interest').value) || 0;
         const startDate    = document.getElementById('entry-date').value;
         const dueDateInput = document.getElementById('entry-due-date').value;
+        
+        // Novos campos contábeis
+        const contabil_centro = document.getElementById('contabil-sel-centro')?.value || 'Nenhum';
+        const contabil_client_id = document.getElementById('contabil-sel-client-link')?.value || '';
+
         const totalWithInterest = value * (1 + (interest / 100));
         const parcelValue       = totalWithInterest / count;
         const installments = [];
@@ -746,11 +965,18 @@
             installments.push({ id: Date.now() + i, dueDate: curDate.toISOString().split('T')[0], value: parcelValue, paid: isPaid });
             lastDate = curDate;
         }
+        
+        const entryData = { 
+            name, observation, type, originalValue: value, totalValue: totalWithInterest, 
+            interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, 
+            installments, contabil_centro, contabil_client_id 
+        };
+
         if (editId) {
             const idx = carnes.findIndex(c => c.id == editId);
-            if (idx !== -1) carnes[idx] = { ...carnes[idx], name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments };
+            if (idx !== -1) carnes[idx] = { ...carnes[idx], ...entryData };
         } else {
-            carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
+            carnes.push({ ...entryData, id: Date.now(), createdAt: new Date().toISOString() });
         }
         saveData();
         closeModal('modal-add-carne');
@@ -956,17 +1182,42 @@
 
     // ── Navigation ────────────────────────────────────────────────────────────
 
-    const TAB_LABELS = { dashboard: 'Dashboard', carnes: 'Registros e Parcelas', arquivos: 'Arquivos e Recibos', calculadora: 'Calculadora', usuarios: 'Gerenciar Usuários', logs: 'Logs do Sistema' };
+    const TAB_LABELS = { 
+        dashboard: 'Dashboard', 
+        carnes: 'Registros e Parcelas', 
+        arquivos: 'Arquivos e Recibos', 
+        calculadora: 'Calculadora', 
+        usuarios: 'Gerenciar Usuários', 
+        logs: 'Logs do Sistema',
+        'contabil-clientes': 'Clientes e Empresas',
+        'contabil-obrigacoes': 'Obrigações Fiscais',
+        'contabil-honorarios': 'Honorários Contábeis',
+        'contabil-fluxo': 'Fluxo de Caixa Contábil'
+    };
 
     function switchTab(t) {
         document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-        document.getElementById(`view-${t}`).classList.remove('hidden');
+        const target = document.getElementById(`view-${t}`);
+        if(target) target.classList.remove('hidden');
+        
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-indigo-600', 'text-white'));
-        const btn = document.getElementById(`nav-${t}`); if (btn) btn.classList.add('bg-indigo-600', 'text-white');
+        const btn = document.getElementById(`nav-${t}`); 
+        if (btn) btn.classList.add('bg-indigo-600', 'text-white');
+        
         document.getElementById('current-tab-title').innerText = TAB_LABELS[t] || t;
+        
+        // Gatilhos específicos por aba
         if (t === 'usuarios') renderUsersTable();
         if (t === 'logs')     renderLogs();
-        if (window.innerWidth < 768) { const s = document.getElementById('sidebar-menu'); if (!s.classList.contains('-translate-x-full')) toggleMobileMenu(); }
+        if (t === 'contabil-clientes') contabil_renderClients();
+        if (t === 'contabil-obrigacoes') contabil_renderObligations();
+        if (t === 'contabil-honorarios') contabil_renderHonorarios();
+        if (t === 'contabil-fluxo') contabil_renderFluxo();
+        
+        if (window.innerWidth < 768) { 
+            const s = document.getElementById('sidebar-menu'); 
+            if (!s.classList.contains('-translate-x-full')) toggleMobileMenu(); 
+        }
     }
 
     // ── Search ────────────────────────────────────────────────────────────────
@@ -974,7 +1225,7 @@
     function handleSearch(v) {
         searchQuery = v;
         const term = (v || '').toLowerCase();
-        ['upcoming-list','carnes-grid','files-grid','users-table-body','logs-table-body'].forEach(id => {
+        ['upcoming-list','carnes-grid','files-grid','users-table-body','logs-table-body','contabil-clients-list','contabil-obligations-table'].forEach(id => {
             const c = document.getElementById(id); if (!c) return;
             for (const item of c.children) item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
         });
@@ -1136,6 +1387,471 @@
         link.click();
         addLog('Exportação CSV realizada', 'registros.csv', 'info');
         showToast('Relatório CSV exportado', 'success');
+    }
+
+    // ==========================================================================
+    // MÓDULO CONTÁBIL - NOVAS FUNCIONALIDADES
+    // ==========================================================================
+    
+    let contabil_clientes = [];
+    let contabil_obrigacoes = [];
+    let contabil_honorarios = [];
+    let contabil_logs = [];
+
+    function contabil_init() {
+        if(!currentUser) return;
+        contabil_clientes = safeGet(`contabil_cli_${currentUser.id}`) || [];
+        contabil_obrigacoes = safeGet(`contabil_obr_${currentUser.id}`) || [];
+        contabil_honorarios = safeGet(`contabil_hon_${currentUser.id}`) || [];
+        contabil_logs = safeGet(`contabil_log_${currentUser.id}`) || [];
+        
+        // Configura filtros de data padrão
+        const mesInput = document.getElementById('fluxo-filtro-mes');
+        if(mesInput && !mesInput.value) {
+            const now = new Date();
+            mesInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        }
+    }
+
+    function contabil_saveData() {
+        safeSet(`contabil_cli_${currentUser.id}`, contabil_clientes);
+        safeSet(`contabil_obr_${currentUser.id}`, contabil_obrigacoes);
+        safeSet(`contabil_hon_${currentUser.id}`, contabil_honorarios);
+        safeSet(`contabil_log_${currentUser.id}`, contabil_logs);
+    }
+
+    // --- Clientes ---
+    function contabil_openClientModal(id = null) {
+        document.getElementById('form-contabil-client').reset();
+        document.getElementById('client-id').value = '';
+        document.getElementById('client-modal-title').innerText = 'Novo Cliente / Empresa';
+        if(id) {
+            const cli = contabil_clientes.find(c => c.id == id);
+            if(cli) {
+                document.getElementById('client-id').value = cli.id;
+                document.getElementById('client-name').value = cli.name;
+                document.getElementById('client-doc').value = cli.doc;
+                document.getElementById('client-phone').value = cli.phone;
+                document.getElementById('client-email').value = cli.email;
+                document.getElementById('client-modal-title').innerText = 'Editar Cliente';
+            }
+        }
+        openModal('contabil-modal-client');
+    }
+
+    function contabil_saveClient(e) {
+        e.preventDefault();
+        const id = document.getElementById('client-id').value;
+        const data = {
+            name: document.getElementById('client-name').value,
+            doc: document.getElementById('client-doc').value,
+            phone: document.getElementById('client-phone').value,
+            email: document.getElementById('client-email').value
+        };
+        if(id) {
+            const idx = contabil_clientes.findIndex(c => c.id == id);
+            contabil_clientes[idx] = { ...contabil_clientes[idx], ...data };
+        } else {
+            contabil_clientes.push({ ...data, id: Date.now() });
+        }
+        contabil_saveData();
+        closeModal('contabil-modal-client');
+        contabil_renderClients();
+        showToast('Cliente atualizado');
+    }
+
+    function contabil_renderClients() {
+        const list = document.getElementById('contabil-clients-list');
+        list.innerHTML = contabil_clientes.map(c => `
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 contabil-border-accent relative group">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="font-bold text-white text-lg">${c.name}</h4>
+                        <p class="text-xs text-slate-500">${c.doc || 'Sem documento'}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="contabil_openClientModal(${c.id})" class="text-slate-500 hover:text-indigo-400"><i class="fas fa-edit"></i></button>
+                        <button onclick="contabil_deleteClient(${c.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <div class="space-y-1 mb-4">
+                    <p class="text-xs text-slate-400 flex items-center gap-2"><i class="fas fa-phone w-4"></i> ${c.phone || '-'}</p>
+                    <p class="text-xs text-slate-400 flex items-center gap-2"><i class="fas fa-envelope w-4"></i> ${c.email || '-'}</p>
+                </div>
+                <button onclick="contabil_viewClientDashboard(${c.id})" class="w-full bg-slate-900/50 hover:bg-indigo-600/20 py-2 rounded-xl text-xs font-bold text-indigo-400 transition-all">Painel do Cliente</button>
+            </div>
+        `).join('') || '<p class="col-span-full text-center py-10 text-slate-500">Nenhum cliente cadastrado.</p>';
+    }
+
+    function contabil_deleteClient(id) {
+        if(confirm('Excluir cliente? Isto não removerá os lançamentos vinculados.')) {
+            contabil_clientes = contabil_clientes.filter(c => c.id != id);
+            contabil_saveData();
+            contabil_renderClients();
+        }
+    }
+
+    // --- Obrigações ---
+    function contabil_openObligationModal() {
+        const sel = document.getElementById('ob-client');
+        sel.innerHTML = contabil_clientes.map(c => `<option value="${c.id}">${c.name}</option>`).join('') || '<option value="">Cadastre um cliente primeiro</option>';
+        document.getElementById('form-contabil-obligation').reset();
+        openModal('contabil-modal-obligation');
+    }
+
+    function contabil_saveObligation(e) {
+        e.preventDefault();
+        const obj = {
+            id: Date.now(),
+            type: document.getElementById('ob-type').value,
+            clientId: document.getElementById('ob-client').value,
+            value: parseFloat(document.getElementById('ob-value').value),
+            due: document.getElementById('ob-due').value,
+            paid: false
+        };
+        contabil_obrigacoes.push(obj);
+        contabil_saveData();
+        closeModal('contabil-modal-obligation');
+        contabil_renderObligations();
+        showToast('Guia lançada com sucesso');
+    }
+
+    function contabil_renderObligations() {
+        const table = document.getElementById('contabil-obligations-table');
+        table.innerHTML = contabil_obrigacoes.sort((a,b) => new Date(a.due) - new Date(b.due)).map(o => {
+            const cli = contabil_clientes.find(c => c.id == o.clientId);
+            const status = getStatus(o.due, o.paid);
+            return `
+                <tr class="contabil-row-hover border-b border-slate-800/50">
+                    <td class="px-6 py-4"><span class="font-bold text-white">${o.type}</span></td>
+                    <td class="px-6 py-4 text-xs text-slate-400">${cli ? cli.name : 'N/A'}</td>
+                    <td class="px-6 py-4 text-xs font-mono">${o.due}</td>
+                    <td class="px-6 py-4 font-bold text-sm">${formatBRL(o.value)}</td>
+                    <td class="px-6 py-4 text-center"><span class="status-badge ${status.color}">${status.text}</span></td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center gap-3">
+                            <button onclick="contabil_toggleObligation(${o.id})" class="text-slate-500 hover:text-emerald-500"><i class="fas ${o.paid ? 'fa-check-double' : 'fa-check'}"></i></button>
+                            <button onclick="contabil_deleteObligation(${o.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('') || '<tr><td colspan="6" class="text-center py-10 text-slate-500 text-xs">Sem obrigações pendentes.</td></tr>';
+    }
+
+    function contabil_toggleObligation(id) {
+        const o = contabil_obrigacoes.find(x => x.id == id);
+        if(o) { o.paid = !o.paid; contabil_saveData(); contabil_renderObligations(); }
+    }
+
+    function contabil_deleteObligation(id) {
+        if(confirm('Excluir esta obrigação?')) {
+            contabil_obrigacoes = contabil_obrigacoes.filter(o => o.id != id);
+            contabil_saveData(); contabil_renderObligations();
+        }
+    }
+
+    // --- Honorários ---
+    function contabil_openHonorarioModal() {
+        const sel = document.getElementById('h-client');
+        sel.innerHTML = contabil_clientes.map(c => `<option value="${c.id}">${c.name}</option>`).join('') || '<option value="">Cadastre um cliente primeiro</option>';
+        document.getElementById('form-contabil-honorario').reset();
+        openModal('contabil-modal-honorario');
+    }
+
+    function contabil_saveHonorario(e) {
+        e.preventDefault();
+        const obj = {
+            id: Date.now(),
+            clientId: document.getElementById('h-client').value,
+            ref: document.getElementById('h-ref').value,
+            value: parseFloat(document.getElementById('h-value').value),
+            paid: false
+        };
+        contabil_honorarios.push(obj);
+        contabil_saveData();
+        closeModal('contabil-modal-honorario');
+        contabil_renderHonorarios();
+        showToast('Honorário lançado');
+    }
+
+    function contabil_renderHonorarios() {
+        const list = document.getElementById('contabil-honorarios-list');
+        list.innerHTML = contabil_honorarios.map(h => {
+            const cli = contabil_clientes.find(c => c.id == h.clientId);
+            return `
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500">
+                            <i class="fas fa-receipt text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white">${cli ? cli.name : 'N/A'}</h4>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Referência: ${h.ref}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-bold ${h.paid ? 'text-emerald-400' : 'text-white'}">${formatBRL(h.value)}</p>
+                        <button onclick="contabil_toggleHonorario(${h.id})" class="text-[10px] font-bold uppercase ${h.paid ? 'text-slate-500' : 'text-indigo-400 hover:underline'}">
+                            ${h.paid ? 'Recebido ✓' : 'Marcar como Recebido'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('') || '<p class="col-span-full text-center py-10 text-slate-500 text-xs">Nenhum honorário registrado.</p>';
+    }
+
+    function contabil_toggleHonorario(id) {
+        const h = contabil_honorarios.find(x => x.id == id);
+        if(h) { h.paid = !h.paid; contabil_saveData(); contabil_renderHonorarios(); }
+    }
+
+    // --- Fluxo de Caixa ---
+    function contabil_renderFluxo() {
+        const mesFiltro = document.getElementById('fluxo-filtro-mes').value; // Formato YYYY-MM
+        const extrato = document.getElementById('contabil-fluxo-extrato');
+        
+        let totalEntrada = 0;
+        let totalSaida = 0;
+        let htmlItems = [];
+
+        // 1. Honorários como entrada
+        contabil_honorarios.forEach(h => {
+            if(h.ref === mesFiltro) {
+                totalEntrada += h.value;
+                const cli = contabil_clientes.find(c => c.id == h.clientId);
+                htmlItems.push(`
+                    <div class="bg-slate-900/40 p-3 rounded-lg flex items-center justify-between border-l-4 border-emerald-500">
+                        <div class="text-xs">
+                            <span class="text-emerald-500 font-bold">ENTRADA</span>
+                            <p class="text-white font-medium">Honorário: ${cli ? cli.name : 'N/A'}</p>
+                        </div>
+                        <span class="text-emerald-400 font-bold">${formatBRL(h.value)}</span>
+                    </div>
+                `);
+            }
+        });
+
+        // 2. Obrigações como saída
+        contabil_obrigacoes.forEach(o => {
+            if(o.due.substring(0, 7) === mesFiltro) {
+                totalSaida += o.value;
+                const cli = contabil_clientes.find(c => c.id == o.clientId);
+                htmlItems.push(`
+                    <div class="bg-slate-900/40 p-3 rounded-lg flex items-center justify-between border-l-4 border-rose-500">
+                        <div class="text-xs">
+                            <span class="text-rose-500 font-bold">SAÍDA</span>
+                            <p class="text-white font-medium">Guia ${o.type}: ${cli ? cli.name : 'N/A'}</p>
+                        </div>
+                        <span class="text-rose-400 font-bold">${formatBRL(o.value)}</span>
+                    </div>
+                `);
+            }
+        });
+
+        // 3. Lançamentos manuais (Centro de Custo)
+        carnes.forEach(c => {
+            if(c.startDate.substring(0, 7) === mesFiltro) {
+                const isDespesa = (c.contabil_centro === 'Despesa' || c.contabil_centro === 'Impostos');
+                if(isDespesa) totalSaida += c.totalValue; else totalEntrada += c.totalValue;
+                
+                htmlItems.push(`
+                    <div class="bg-slate-900/40 p-3 rounded-lg flex items-center justify-between border-l-4 ${isDespesa ? 'border-rose-500' : 'border-emerald-500'}">
+                        <div class="text-xs">
+                            <span class="${isDespesa ? 'text-rose-500' : 'text-emerald-500'} font-bold">${isDespesa ? 'SAÍDA' : 'ENTRADA'}</span>
+                            <p class="text-white font-medium">${c.name} (${c.contabil_centro})</p>
+                        </div>
+                        <span class="${isDespesa ? 'text-rose-400' : 'text-emerald-400'} font-bold">${formatBRL(c.totalValue)}</span>
+                    </div>
+                `);
+            }
+        });
+
+        document.getElementById('fluxo-total-entrada').innerText = formatBRL(totalEntrada);
+        document.getElementById('fluxo-total-saida').innerText = formatBRL(totalSaida);
+        document.getElementById('fluxo-total-saldo').innerText = formatBRL(totalEntrada - totalSaida);
+        
+        extrato.innerHTML = htmlItems.join('') || '<p class="text-center py-10 text-slate-500 text-xs italic">Nenhuma movimentação para este período.</p>';
+    }
+
+    // --- Injeção de Campos Contábeis ---
+    function contabil_injectFields() {
+        const container = document.getElementById('contabil-injection-point');
+        if(!container) return;
+        
+        const clientOptions = contabil_clientes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        
+        container.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/30 p-4 rounded-xl border border-slate-700/50 mb-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Centro de Custo</label>
+                    <select id="contabil-sel-centro" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none">
+                        <option value="Receita">Receita</option>
+                        <option value="Despesa">Despesa</option>
+                        <option value="Impostos">Impostos</option>
+                        <option value="Nenhum" selected>Nenhum / Outros</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Vincular a Cliente</label>
+                    <select id="contabil-sel-client-link" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none">
+                        <option value="">Nenhum</option>
+                        ${clientOptions}
+                    </select>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- PDF Export ---
+    function contabil_exportRelatorioPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const mes = document.getElementById('fluxo-filtro-mes').value;
+        
+        doc.setFontSize(18);
+        doc.text(`Relatório Financeiro Contábil - ${mes}`, 14, 20);
+        doc.setFontSize(10);
+        doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 26);
+
+        const data = [];
+        // Coleta itens (lógica similar ao renderFluxo)
+        contabil_honorarios.filter(h => h.ref === mes).forEach(h => {
+            const cli = contabil_clientes.find(c => c.id == h.clientId);
+            data.push(['ENTRADA', `Honorário: ${cli?.name || 'N/A'}`, formatBRL(h.value)]);
+        });
+        contabil_obrigacoes.filter(o => o.due.substring(0, 7) === mes).forEach(o => {
+            const cli = contabil_clientes.find(c => c.id == o.clientId);
+            data.push(['SAÍDA', `Obrigação ${o.type}: ${cli?.name || 'N/A'}`, formatBRL(o.value)]);
+        });
+
+        doc.autoTable({
+            startY: 35,
+            head: [['Fluxo', 'Descrição', 'Valor']],
+            body: data,
+            theme: 'striped',
+            headStyles: { fillColor: [99, 102, 241] }
+        });
+
+        doc.save(`relatorio_${mes}.pdf`);
+        showToast('PDF gerado com sucesso!');
+    }
+
+    // --- Backup & Restore ---
+    function contabil_openBackupModal() {
+        openModal('contabil-modal-backup');
+    }
+
+    function contabil_exportBackup() {
+        const fullData = {};
+        for (let i = 0; i < localStorage.length; i++){
+            const key = localStorage.key(i);
+            if(key.includes('calixto') || key.includes('contabil')) {
+                fullData[key] = localStorage.getItem(key);
+            }
+        }
+        const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `backup_calixto_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        showToast('Backup exportado!');
+    }
+
+    function contabil_importBackup(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if(confirm('Isso irá sobrescrever todos os seus dados atuais. Continuar?')) {
+                    Object.keys(data).forEach(key => {
+                        localStorage.setItem(key, data[key]);
+                    });
+                    showToast('Restauração concluída!');
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            } catch(err) {
+                alert('Arquivo de backup inválido.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // --- Dashboard Cliente (Painel Consolidado) ---
+    // Injeção de modal de dashboard de cliente dinamicamente se necessário
+    function contabil_viewClientDashboard(clientId) {
+        const cli = contabil_clientes.find(c => c.id == clientId);
+        if(!cli) return;
+        
+        const clientCarnes = carnes.filter(c => c.contabil_client_id == clientId);
+        const clientObs = contabil_obrigacoes.filter(o => o.clientId == clientId);
+        const clientHon = contabil_honorarios.filter(h => h.clientId == clientId);
+        
+        let html = `
+            <div class="space-y-6 max-h-[70vh] overflow-y-auto p-2 custom-scrollbar">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900/50 p-4 rounded-xl">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Registros Financeiros</p>
+                        <p class="text-xl font-bold text-white">${clientCarnes.length}</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-4 rounded-xl">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Guias Fiscais</p>
+                        <p class="text-xl font-bold text-white">${clientObs.length}</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="text-sm font-bold text-indigo-400 mb-3 uppercase">Histórico de Honorários</h5>
+                    <div class="space-y-2">
+                        ${clientHon.map(h => `
+                            <div class="flex justify-between text-xs p-2 bg-slate-900 rounded border border-slate-700">
+                                <span>Ref: ${h.ref}</span>
+                                <span class="font-bold ${h.paid ? 'text-emerald-400' : 'text-rose-400'}">${formatBRL(h.value)}</span>
+                            </div>
+                        `).join('') || '<p class="text-xs text-slate-500 italic">Sem honorários.</p>'}
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-sm font-bold text-indigo-400 mb-3 uppercase">Próximos Vencimentos de Guias</h5>
+                    <div class="space-y-2">
+                        ${clientObs.filter(o => !o.paid).map(o => `
+                            <div class="flex justify-between text-xs p-2 bg-slate-900 rounded border border-slate-700">
+                                <span>${o.type}</span>
+                                <span class="font-bold text-rose-400">${o.due}</span>
+                            </div>
+                        `).join('') || '<p class="text-xs text-slate-500 italic">Tudo em dia.</p>'}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const existingModal = document.getElementById('contabil-modal-client-dash');
+        if(existingModal) existingModal.remove();
+
+        const dashModal = document.createElement('div');
+        dashModal.id = 'contabil-modal-client-dash';
+        dashModal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4';
+        dashModal.innerHTML = `
+            <div class="bg-slate-800 w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl modal-enter">
+                <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-white">${cli.name}</h3>
+                        <p class="text-xs text-slate-400">Resumo Contábil</p>
+                    </div>
+                    <button onclick="this.closest('#contabil-modal-client-dash').remove()" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+                </div>
+                <div class="p-6">
+                    ${html}
+                </div>
+                <div class="px-6 py-4 border-t border-slate-700 text-right">
+                    <button onclick="this.closest('#contabil-modal-client-dash').remove()" class="bg-indigo-600 px-6 py-2 rounded-xl text-sm font-bold">Fechar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(dashModal);
     }
 
     // ── Boot ──────────────────────────────────────────────────────────────────
