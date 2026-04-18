@@ -84,9 +84,54 @@
             min-width: 0;
             position: relative;
         }
+
+        /* Toast Styles */
+        #toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+
+        .toast-item {
+            background: #1e293b;
+            border-left: 4px solid transparent;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 280px;
+            max-width: 400px;
+            pointer-events: auto;
+            animation: toastSlideIn 0.3s ease-out forwards, toastFadeOut 0.3s ease-out forwards 2.7s;
+        }
+
+        @keyframes toastSlideIn {
+            from { opacity: 0; transform: translateX(100%) translateY(0); }
+            to { opacity: 1; transform: translateX(0) translateY(0); }
+        }
+
+        @keyframes toastFadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+
+        .toast-success { border-color: #10b981; }
+        .toast-error { border-color: #ef4444; }
+        .toast-info { border-color: #6366f1; }
     </style>
 </head>
 <body class="custom-scrollbar bg-[#0f172a]">
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
     <!-- Auth Section -->
     <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-[#0f172a]">
@@ -198,15 +243,15 @@
                     <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-white p-2">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h2 id="current-tab-title" class="text-base md:text-lg font-semibold truncate hidden sm:block">Dashboard</h2>
+                    <h2 id="current-tab-title" class="text-base md:text-lg font-semibold truncate sm:block">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-2 md:gap-4 flex-1 justify-end">
                     <div class="relative group flex-1 max-w-[160px] sm:max-w-xs">
                         <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar..." class="w-full bg-slate-800 border-none rounded-full px-4 py-1.5 text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500 transition-all">
                         <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-[10px] sm:text-xs"></i>
                     </div>
-                    <button onclick="exportarCSV()" class="flex-shrink-0 bg-slate-700 hover:bg-slate-600 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
-                        <i class="fas fa-file-csv"></i> <span class="hidden xs:inline">Exportar CSV</span>
+                    <button onclick="exportarCSV()" class="flex-shrink-0 bg-slate-700 hover:bg-slate-600 text-white px-2 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
+                        <i class="fas fa-file-csv"></i> <span class="inline">Exportar CSV</span>
                     </button>
                     <button onclick="openAddModal()" class="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
                         <i class="fas fa-plus"></i> <span class="hidden xs:inline">Novo Registro</span>
@@ -314,7 +359,10 @@
                                         <input type="number" id="calc-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
                                     </div>
                                 </div>
-                                <button onclick="calculateFinance()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Simples</button>
+                                <div class="flex gap-3">
+                                    <button onclick="calculateFinance()" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Simples</button>
+                                    <button onclick="clearCalculator('simple')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all mt-4">Limpar</button>
+                                </div>
                                 <div id="calc-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div><p class="text-xs text-slate-500">Juros Totais</p><p id="res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p></div>
@@ -342,7 +390,10 @@
                                         <input type="number" id="comp-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
                                     </div>
                                 </div>
-                                <button onclick="calculateCompoundInterest()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Compostos</button>
+                                <div class="flex gap-3">
+                                    <button onclick="calculateCompoundInterest()" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Compostos</button>
+                                    <button onclick="clearCalculator('compound')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all mt-4">Limpar</button>
+                                </div>
                                 <div id="comp-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div><p class="text-xs text-slate-500">Juros Acumulados</p><p id="comp-res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p></div>
@@ -590,6 +641,29 @@
         const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
         const ADMIN_PASS = 'admin@123';
 
+        // Toast Notification System
+        function showToast(mensagem, tipo = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-check-circle';
+            if (tipo === 'error') icon = 'fa-exclamation-circle';
+            if (tipo === 'info') icon = 'fa-info-circle';
+
+            toast.className = `toast-item toast-${tipo}`;
+            toast.innerHTML = `
+                <i class="fas ${icon} text-lg"></i>
+                <span class="text-sm font-medium">${mensagem}</span>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto-remove after animation
+            setTimeout(() => {
+                toast.remove();
+            }, 3300);
+        }
+
         function toggleMobileMenu() {
             const sidebar = document.getElementById('sidebar-menu');
             const overlay = document.getElementById('sidebar-overlay');
@@ -749,10 +823,18 @@
             } else {
                 carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
             }
-            saveData(); closeModal('modal-add-carne');
+            saveData(); 
+            closeModal('modal-add-carne');
+            showToast("Registro salvo com sucesso ✓", "success");
         }
 
-        function deleteCarne(id) { if (confirm('Excluir registro?')) { carnes = carnes.filter(c => c.id !== id); saveData(); } }
+        function deleteCarne(id) { 
+            if (confirm('Excluir registro?')) { 
+                carnes = carnes.filter(c => c.id !== id); 
+                saveData(); 
+                showToast("Registro excluído com sucesso", "info");
+            } 
+        }
 
         function toggleParcela(carneId, parcelaId) {
             const carne = carnes.find(c => c.id === carneId);
@@ -782,7 +864,10 @@
                     p.value = parseFloat(document.getElementById('edit-inst-value').value);
                     p.paid = document.getElementById('edit-inst-paid').checked;
                     carne.totalValue = carne.installments.reduce((sum, item) => sum + item.value, 0);
-                    saveData(); showDetails(carneId); closeModal('modal-edit-installment');
+                    saveData(); 
+                    showDetails(carneId); 
+                    closeModal('modal-edit-installment');
+                    showToast("Parcela atualizada", "success");
                 }
             }
         }
@@ -791,11 +876,21 @@
             const file = ev.target.files[0]; if (!file) return;
             if (file.size > 2 * 1024 * 1024) return alert("Máx 2MB");
             const reader = new FileReader();
-            reader.onload = (e) => { files.push({ id: Date.now(), name: file.name, type: file.type, data: e.target.result, date: new Date().toISOString() }); saveData(); };
+            reader.onload = (e) => { 
+                files.push({ id: Date.now(), name: file.name, type: file.type, data: e.target.result, date: new Date().toISOString() }); 
+                saveData(); 
+                showToast("Comprovante enviado", "success");
+            };
             reader.readAsDataURL(file);
         }
 
-        function deleteFile(id) { if (confirm('Excluir arquivo?')) { files = files.filter(f => f.id !== id); saveData(); } }
+        function deleteFile(id) { 
+            if (confirm('Excluir arquivo?')) { 
+                files = files.filter(f => f.id !== id); 
+                saveData(); 
+                showToast("Arquivo excluído", "info");
+            } 
+        }
 
         function startRenameFile(id) {
             const f = files.find(file => file.id === id);
@@ -1015,6 +1110,21 @@
             document.getElementById('comp-result').classList.remove('hidden');
         }
 
+        // New function to clear calculator fields
+        function clearCalculator(type) {
+            if (type === 'simple') {
+                document.getElementById('calc-valor').value = '';
+                document.getElementById('calc-taxa').value = '';
+                document.getElementById('calc-tempo').value = '';
+                document.getElementById('calc-result').classList.add('hidden');
+            } else if (type === 'compound') {
+                document.getElementById('comp-valor').value = '';
+                document.getElementById('comp-taxa').value = '';
+                document.getElementById('comp-tempo').value = '';
+                document.getElementById('comp-result').classList.add('hidden');
+            }
+        }
+
         function renderUsersTable() {
             if (!currentUser?.isAdmin) return;
             const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
@@ -1101,6 +1211,7 @@
             document.body.removeChild(link);
             
             addLog('Exportação CSV realizada', 'registros.csv', 'info');
+            showToast("Relatório CSV exportado", "success");
         }
 
         window.onload = () => { 
