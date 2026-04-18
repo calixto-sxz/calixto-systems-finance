@@ -944,7 +944,36 @@
             }
         }
 
-        function handleSearch(v) { searchQuery = v; renderLists(); }
+        function handleSearch(v) { 
+            searchQuery = v;
+            const term = (v || '').toLowerCase();
+            const searchableContainers = ['upcoming-list', 'carnes-grid', 'files-grid', 'users-table-body', 'logs-table-body'];
+            
+            searchableContainers.forEach(id => {
+                const container = document.getElementById(id);
+                if (container) {
+                    const items = container.children;
+                    for (let i = 0; i < items.length; i++) {
+                        const item = items[i];
+                        const text = item.innerText.toLowerCase();
+                        if (text.includes(term)) {
+                            item.style.display = "";
+                        } else {
+                            item.style.display = "none";
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Listener to keep search functional when dynamic content changes
+        const contentObserver = new MutationObserver(() => {
+            const currentSearch = document.getElementById('global-search').value;
+            if (currentSearch) {
+                handleSearch(currentSearch);
+            }
+        });
+
         function filterType(t) { currentFilter = t; renderLists(); updateStats(); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -1051,7 +1080,15 @@
             addLog('Exportação CSV realizada', 'registros.csv', 'info');
         }
 
-        window.onload = () => { initAdmin(); startApp(); };
+        window.onload = () => { 
+            initAdmin(); 
+            startApp();
+            // Connect observer to watch for page/tab changes and re-apply search filter
+            const contentCont = document.getElementById('content-container');
+            if (contentCont) {
+                contentObserver.observe(contentCont, { childList: true, subtree: true });
+            }
+        };
     </script>
 </body>
 </html>
