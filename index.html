@@ -237,7 +237,7 @@
         <!-- Main Content Area -->
         <main class="main-content">
             
-            <!-- Top Bar -->
+            <!-- Top Bar (Optimized for Mobile) -->
             <header class="h-16 border-b border-slate-800 flex items-center justify-between px-4 md:px-8 bg-slate-900/50 backdrop-blur-md flex-shrink-0 gap-2">
                 <div class="flex items-center gap-2">
                     <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-white p-2">
@@ -469,6 +469,7 @@
     </div>
 
     <!-- Modals -->
+    <!-- Modal Adicionar/Editar Registro -->
     <div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
@@ -519,6 +520,7 @@
         </div>
     </div>
 
+    <!-- Modal Detalhes Parcelas (Optimized padding for mobile) -->
     <div id="modal-details" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
         <div class="bg-slate-800 w-full max-w-3xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[95vh]">
             <div class="px-4 sm:px-8 py-4 sm:py-6 border-b border-slate-700 flex items-center justify-between">
@@ -541,6 +543,7 @@
         </div>
     </div>
 
+    <!-- Modal Editar Parcela -->
     <div id="modal-edit-installment" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
@@ -636,105 +639,68 @@
 
     <script>
         const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
-        const MASTER_S = "calixto_secure_v2_2024_internal";
+        const ADMIN_PASS = 'admin@123';
 
-        // --- Security Layer: Encryption & Hashing ---
-
-        async function hashPassword(pwd) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(pwd);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function djb2(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash = hash & hash; }
-            return hash.toString();
-        }
-
-        async function getEncryptionKey() {
-            const encoder = new TextEncoder();
-            const keyMaterial = await crypto.subtle.importKey("raw", encoder.encode(MASTER_S), "PBKDF2", false, ["deriveKey"]);
-            return await crypto.subtle.deriveKey(
-                { name: "PBKDF2", salt: encoder.encode("system-salt-elite"), iterations: 100000, hash: "SHA-256" },
-                keyMaterial,
-                { name: "AES-GCM", length: 256 },
-                false,
-                ["encrypt", "decrypt"]
-            );
-        }
-
-        async function salvarDado(chave, valor) {
-            try {
-                const key = await getEncryptionKey();
-                const iv = crypto.getRandomValues(new Uint8Array(12));
-                const encoder = new TextEncoder();
-                const encodedData = encoder.encode(JSON.stringify(valor));
-                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encodedData);
-                const combined = new Uint8Array(iv.length + encrypted.byteLength);
-                combined.set(iv);
-                combined.set(new Uint8Array(encrypted), iv.length);
-                const base64 = btoa(String.fromCharCode.apply(null, combined));
-                localStorage.setItem(chave, base64);
-            } catch (e) { console.error("Erro ao salvar dados:", e); }
-        }
-
-        async function lerDado(chave) {
-            try {
-                const raw = localStorage.getItem(chave);
-                if (!raw) return null;
-                const binary = atob(raw);
-                const bytes = new Uint8Array(binary.length);
-                for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-                const iv = bytes.slice(0, 12);
-                const data = bytes.slice(12);
-                const key = await getEncryptionKey();
-                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
-                return JSON.parse(new TextDecoder().decode(decrypted));
-            } catch (e) { return null; }
-        }
-
-        // --- Core Application Logic ---
-
+        // Toast Notification System
         function showToast(mensagem, tipo = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            let icon = tipo === 'error' ? 'fa-exclamation-circle' : (tipo === 'info' ? 'fa-info-circle' : 'fa-check-circle');
+            
+            let icon = 'fa-check-circle';
+            if (tipo === 'error') icon = 'fa-exclamation-circle';
+            if (tipo === 'info') icon = 'fa-info-circle';
+
             toast.className = `toast-item toast-${tipo}`;
-            toast.innerHTML = `<i class="fas ${icon} text-lg"></i><span class="text-sm font-medium">${mensagem}</span>`;
+            toast.innerHTML = `
+                <i class="fas ${icon} text-lg"></i>
+                <span class="text-sm font-medium">${mensagem}</span>
+            `;
+
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3300);
+
+            // Auto-remove after animation
+            setTimeout(() => {
+                toast.remove();
+            }, 3300);
         }
 
         function toggleMobileMenu() {
             const sidebar = document.getElementById('sidebar-menu');
             const overlay = document.getElementById('sidebar-overlay');
             const isOpen = !sidebar.classList.contains('-translate-x-full');
-            if (isOpen) { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
-            else { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
+
+            if (isOpen) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
         }
 
-        async function addLog(action, target, type = 'info') {
-            const logs = await lerDado('calixto_logs') || [];
+        function addLog(action, target, type = 'info') {
+            const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [];
             const user = JSON.parse(sessionStorage.getItem('logged_user')) || { name: 'Sistema', email: 'N/A' };
             logs.unshift({ id: Date.now(), user: user.name, userEmail: user.email, action, target: target || 'N/A', timestamp: new Date().toISOString(), type });
             if (logs.length > 1000) logs.pop();
-            await salvarDado('calixto_logs', logs);
+            localStorage.setItem('calixto_logs', JSON.stringify(logs));
         }
 
-        async function initAdmin() {
-            let users = await lerDado('calixto_users') || [];
+        function hashPassword(pwd) {
+            let hash = 0;
+            for (let i = 0; i < pwd.length; i++) { hash = ((hash << 5) - hash) + pwd.charCodeAt(i); hash = hash & hash; }
+            return hash.toString();
+        }
+
+        function initAdmin() {
+            let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
             let rootAdmin = users.find(u => u.email === ADMIN_EMAIL);
-            // Hash de 'admin@123' em SHA-256 pré-calculado para evitar texto puro
-            const adminHash = '62078ca60e44ebc402d242417757917835848e1b64e525a4d137c8ee5706596e';
             if (!rootAdmin) {
-                users.push({ id: 'admin_root', name: 'Administrador Calixto', email: ADMIN_EMAIL, password: adminHash, isAdmin: true });
-                await salvarDado('calixto_users', users);
+                users.push({ id: 'admin_root', name: 'Administrador Calixto', email: ADMIN_EMAIL, password: hashPassword(ADMIN_PASS), isAdmin: true });
+                localStorage.setItem('calixto_users', JSON.stringify(users));
             } else if (!rootAdmin.isAdmin) {
                 rootAdmin.isAdmin = true;
-                await salvarDado('calixto_users', users);
+                localStorage.setItem('calixto_users', JSON.stringify(users));
             }
         }
 
@@ -744,56 +710,33 @@
             document.getElementById('auth-subtitle').innerText = showLogin ? 'Acesso Restrito ao Painel' : 'Solicitação de Acesso Administrativo';
         }
 
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
-            const users = await lerDado('calixto_users') || [];
-            const user = users.find(u => u.email === email);
-            
-            if (user) {
-                const enteredHash = await hashPassword(pass);
-                let valid = false;
-
-                // Migração automática de djb2 para SHA-256
-                if (!isNaN(user.password) && user.password === djb2(pass)) {
-                    user.password = enteredHash;
-                    await salvarDado('calixto_users', users);
-                    valid = true;
-                } else if (user.password === enteredHash) {
-                    valid = true;
-                }
-
-                if (valid) {
-                    sessionStorage.setItem('logged_user', JSON.stringify(user));
-                    await addLog('Login realizado', email, 'info');
-                    startApp();
-                    return;
-                }
-            }
-            
-            await addLog('Tentativa de login falhou', email, 'critical');
-            alert('Credenciais inválidas.');
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
+            const user = users.find(u => u.email === email && u.password === hashPassword(pass));
+            if (user) { sessionStorage.setItem('logged_user', JSON.stringify(user)); addLog('Login realizado', email, 'info'); startApp(); }
+            else { addLog('Tentativa de login falhou', email, 'critical'); alert('Credenciais inválidas.'); }
         }
 
-        async function handleRegister(e) {
+        function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-password').value;
-            const users = await lerDado('calixto_users') || [];
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
             if (pass.length < 6) return alert('Senha muito curta.');
             if (users.find(u => u.email === email)) return alert('E-mail já registrado.');
-            
-            users.push({ id: Date.now().toString(), name, email, password: await hashPassword(pass), isAdmin: false });
-            await salvarDado('calixto_users', users);
-            await addLog('Nova conta cadastrada', email, 'user_mod');
+            users.push({ id: Date.now().toString(), name, email, password: hashPassword(pass), isAdmin: false });
+            localStorage.setItem('calixto_users', JSON.stringify(users));
+            addLog('Nova conta cadastrada', email, 'user_mod');
             alert('Conta criada!'); toggleAuth(true);
         }
 
-        async function handleLogout() {
+        function handleLogout() {
             const user = JSON.parse(sessionStorage.getItem('logged_user'));
-            if (user) await addLog('Logout realizado', user.email, 'info');
+            if (user) addLog('Logout realizado', user.email, 'info');
             sessionStorage.removeItem('logged_user');
             window.location.reload();
         }
@@ -804,36 +747,29 @@
         let currentFilter = 'todos';
         let searchQuery = '';
 
-        async function startApp() {
+        function startApp() {
             currentUser = JSON.parse(sessionStorage.getItem('logged_user'));
             if (!currentUser) {
                 document.getElementById('auth-screen').classList.remove('hidden');
                 document.getElementById('main-app').classList.add('hidden');
                 return;
             }
-            const allUsers = await lerDado('calixto_users') || [];
+            const allUsers = JSON.parse(localStorage.getItem('calixto_users')) || [];
             const freshUser = allUsers.find(u => u.id === currentUser.id);
             if (freshUser) { currentUser = freshUser; sessionStorage.setItem('logged_user', JSON.stringify(freshUser)); }
-            
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
-            
-            if (currentUser.isAdmin) { 
-                document.getElementById('nav-usuarios').classList.remove('hidden'); 
-                document.getElementById('nav-logs').classList.remove('hidden'); 
-            }
-            
-            carnes = await lerDado(`calixto_data_${currentUser.id}`) || [];
-            files = await lerDado(`calixto_files_${currentUser.id}`) || [];
-            
+            if (currentUser.isAdmin) { document.getElementById('nav-usuarios').classList.remove('hidden'); document.getElementById('nav-logs').classList.remove('hidden'); }
+            carnes = JSON.parse(localStorage.getItem(`calixto_data_${currentUser.id}`)) || [];
+            files = JSON.parse(localStorage.getItem(`calixto_files_${currentUser.id}`)) || [];
             updateStats(); renderLists(); renderFiles(); renderUsersTable(); renderLogs();
         }
 
-        async function saveData() {
+        function saveData() {
             if (!currentUser) return;
-            await salvarDado(`calixto_data_${currentUser.id}`, carnes);
-            await salvarDado(`calixto_files_${currentUser.id}`, files);
+            localStorage.setItem(`calixto_data_${currentUser.id}`, JSON.stringify(carnes));
+            localStorage.setItem(`calixto_files_${currentUser.id}`, JSON.stringify(files));
             updateStats(); renderLists(); renderFiles();
         }
 
@@ -859,7 +795,7 @@
             openModal('modal-add-carne');
         }
 
-        async function saveEntry(e) {
+        function saveEntry(e) {
             e.preventDefault();
             const editId = document.getElementById('edit-entry-id').value;
             const name = document.getElementById('entry-name').value;
@@ -883,26 +819,26 @@
             }
             if (editId) {
                 const idx = carnes.findIndex(c => c.id == editId);
-                if (idx !== -1) carnes[idx] = { ...carnes[idx], name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments };
+                if (idx !== -1) { carnes[idx] = { ...carnes[idx], name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments }; }
             } else {
                 carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
             }
-            await saveData(); 
+            saveData(); 
             closeModal('modal-add-carne');
             showToast("Registro salvo com sucesso ✓", "success");
         }
 
-        async function deleteCarne(id) { 
+        function deleteCarne(id) { 
             if (confirm('Excluir registro?')) { 
                 carnes = carnes.filter(c => c.id !== id); 
-                await saveData(); 
+                saveData(); 
                 showToast("Registro excluído com sucesso", "info");
             } 
         }
 
-        async function toggleParcela(carneId, parcelaId) {
+        function toggleParcela(carneId, parcelaId) {
             const carne = carnes.find(c => c.id === carneId);
-            if (carne) { const p = carne.installments.find(i => i.id === parcelaId); if (p) { p.paid = !p.paid; await saveData(); showDetails(carneId); } }
+            if (carne) { const p = carne.installments.find(i => i.id === parcelaId); if (p) { p.paid = !p.paid; saveData(); showDetails(carneId); } }
         }
 
         function openEditInstallment(carneId, parcelaId) {
@@ -916,7 +852,7 @@
             openModal('modal-edit-installment');
         }
 
-        async function saveInstallment(e) {
+        function saveInstallment(e) {
             e.preventDefault();
             const carneId = parseInt(document.getElementById('edit-inst-carne-id').value);
             const parcelaId = parseInt(document.getElementById('edit-inst-id').value);
@@ -928,7 +864,7 @@
                     p.value = parseFloat(document.getElementById('edit-inst-value').value);
                     p.paid = document.getElementById('edit-inst-paid').checked;
                     carne.totalValue = carne.installments.reduce((sum, item) => sum + item.value, 0);
-                    await saveData(); 
+                    saveData(); 
                     showDetails(carneId); 
                     closeModal('modal-edit-installment');
                     showToast("Parcela atualizada", "success");
@@ -936,40 +872,52 @@
             }
         }
 
-        async function handleFileUpload(ev) {
+        function handleFileUpload(ev) {
             const file = ev.target.files[0]; if (!file) return;
             if (file.size > 2 * 1024 * 1024) return alert("Máx 2MB");
             const reader = new FileReader();
-            reader.onload = async (e) => { 
+            reader.onload = (e) => { 
                 files.push({ id: Date.now(), name: file.name, type: file.type, data: e.target.result, date: new Date().toISOString() }); 
-                await saveData(); 
+                saveData(); 
                 showToast("Comprovante enviado", "success");
             };
             reader.readAsDataURL(file);
         }
 
-        async function deleteFile(id) { 
+        function deleteFile(id) { 
             if (confirm('Excluir arquivo?')) { 
                 files = files.filter(f => f.id !== id); 
-                await saveData(); 
+                saveData(); 
                 showToast("Arquivo excluído", "info");
             } 
         }
 
         function startRenameFile(id) {
-            const f = files.find(file => file.id === id); if (!f) return;
-            const container = document.getElementById(`file-name-container-${id}`); if (!container) return;
+            const f = files.find(file => file.id === id);
+            if (!f) return;
+            const container = document.getElementById(`file-name-container-${id}`);
+            if (!container) return;
             container.innerHTML = `<input type="text" id="input-rename-${id}" class="w-full bg-slate-900 border border-indigo-500 rounded text-[9px] sm:text-[11px] px-1 text-white outline-none" value="${f.name}" onblur="finishRenameFile(${id})" onkeydown="if(event.key==='Enter') finishRenameFile(${id})">`;
-            const input = document.getElementById(`input-rename-${id}`); input.focus(); input.select();
+            const input = document.getElementById(`input-rename-${id}`);
+            input.focus();
+            input.select();
         }
 
-        async function finishRenameFile(id) {
-            const input = document.getElementById(`input-rename-${id}`); if (!input) return;
+        function finishRenameFile(id) {
+            const input = document.getElementById(`input-rename-${id}`);
+            if (!input) return;
             const newName = input.value.trim();
             const f = files.find(file => file.id === id);
             if (f && newName !== "") {
-                if (f.name !== newName) { f.name = newName; await saveData(); } else renderFiles();
-            } else renderFiles();
+                if (f.name !== newName) {
+                    f.name = newName;
+                    saveData();
+                } else {
+                    renderFiles();
+                }
+            } else {
+                renderFiles();
+            }
         }
 
         const formatBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -996,13 +944,27 @@
                 </div>`;
             }).join('') || '<p class="text-slate-500 text-sm">Sem pendências.</p>';
             
-            const categories = {}; let grandTotal = 0; carnes.forEach(c => { categories[c.type] = (categories[c.type] || 0) + c.totalValue; grandTotal += c.totalValue; });
+            // Render Distribuição por Tipo as modern KPI Cards
+            const categories = {};
+            let grandTotal = 0;
+            carnes.forEach(c => { 
+                categories[c.type] = (categories[c.type] || 0) + c.totalValue; 
+                grandTotal += c.totalValue;
+            });
+
             document.getElementById('category-stats').innerHTML = Object.keys(categories).map(t => {
-                const value = categories[t], p = grandTotal > 0 ? ((value / grandTotal) * 100).toFixed(1) : 0;
-                return `<div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 hover:border-indigo-500/40 transition-all group">
-                    <div class="flex justify-between items-start mb-1"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${t}</span><span class="text-[10px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-md">${p}%</span></div>
+                const value = categories[t];
+                const percentage = grandTotal > 0 ? ((value / grandTotal) * 100).toFixed(1) : 0;
+                return `
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 hover:border-indigo-500/40 transition-all group">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${t}</span>
+                        <span class="text-[10px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-md">${percentage}%</span>
+                    </div>
                     <div class="text-lg font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">${formatBRL(value)}</div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full rounded-full transition-all duration-700" style="width: ${p}%"></div></div>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-indigo-500 h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                    </div>
                 </div>`;
             }).join('') || '<p class="text-slate-500 text-xs text-center py-4">Nenhum dado categorizado.</p>';
 
@@ -1039,16 +1001,19 @@
 
         function showDetails(id) {
             const c = carnes.find(x => x.id === id); if (!c) return;
-            let pV = 0, rV = 0;
+            let paidValueTotal = 0, remainingValueTotal = 0;
             document.getElementById('details-title').innerText = c.name;
             document.getElementById('details-subtitle').innerText = `${c.installmentsCount} parcelas`;
             document.getElementById('installments-list').innerHTML = c.installments.map((p, i) => {
                 const st = getStatus(p.dueDate, p.paid);
-                if (p.paid) pV += p.value; else rV += p.value;
+                if (p.paid) paidValueTotal += p.value; else remainingValueTotal += p.value;
                 return `<div class="bg-slate-900 p-3 sm:p-4 rounded-xl flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                         <span class="text-xs text-slate-500 font-bold flex-shrink-0">${i+1}</span>
-                        <div class="min-w-0"><p class="text-xs sm:text-sm font-bold text-white truncate">${p.dueDate}</p><span class="status-badge ${st.color} text-[8px] sm:text-[9px]">${st.text}</span></div>
+                        <div class="min-w-0">
+                            <p class="text-xs sm:text-sm font-bold text-white truncate">${p.dueDate}</p>
+                            <span class="status-badge ${st.color} text-[8px] sm:text-[9px]">${st.text}</span>
+                        </div>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
                         <p class="text-xs sm:text-sm font-bold mr-1">${formatBRL(p.value)}</p>
@@ -1059,8 +1024,8 @@
                     </div>
                 </div>`;
             }).join('');
-            document.getElementById('details-paid-total').innerText = formatBRL(pV);
-            document.getElementById('details-remaining-total').innerText = formatBRL(rV);
+            document.getElementById('details-paid-total').innerText = formatBRL(paidValueTotal);
+            document.getElementById('details-remaining-total').innerText = formatBRL(remainingValueTotal);
             openModal('modal-details');
         }
 
@@ -1068,13 +1033,15 @@
             document.getElementById('files-grid').innerHTML = files.map(f => `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden group">
                 <div class="h-24 sm:h-32 bg-slate-900 flex items-center justify-center relative">
                     ${f.type.includes('pdf') ? '<i class="fas fa-file-pdf text-2xl sm:text-4xl text-rose-500"></i>' : `<img src="${f.data}" class="w-full h-full object-cover">`}
-                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-all">
-                        <a href="${f.data}" download="${f.name}" class="w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center text-[10px]"><i class="fas fa-download"></i></a>
-                        <button onclick="startRenameFile(${f.id})" class="w-7 h-7 bg-amber-600 rounded-full flex items-center justify-center text-[10px]"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteFile(${f.id})" class="w-7 h-7 bg-rose-600 rounded-full flex items-center justify-center text-[10px]"><i class="fas fa-trash"></i></button>
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 sm:gap-3 transition-all">
+                        <a href="${f.data}" download="${f.name}" class="w-7 h-7 sm:w-8 sm:h-8 bg-indigo-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-download"></i></a>
+                        <button onclick="startRenameFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-rose-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-                <div class="p-2 sm:p-3" id="file-name-container-${f.id}"><p class="text-[9px] sm:text-[11px] font-bold text-white truncate">${f.name}</p></div>
+                <div class="p-2 sm:p-3" id="file-name-container-${f.id}">
+                    <p class="text-[9px] sm:text-[11px] font-bold text-white truncate">${f.name}</p>
+                </div>
             </div>`).join('');
         }
 
@@ -1085,17 +1052,45 @@
             const btn = document.getElementById(`nav-${t}`); if (btn) btn.classList.add('bg-indigo-600', 'text-white');
             document.getElementById('current-tab-title').innerText = t.charAt(0).toUpperCase() + t.slice(1);
             if (t==='usuarios') renderUsersTable(); if (t==='logs') renderLogs();
-            if (window.innerWidth < 768) { const s = document.getElementById('sidebar-menu'); if (!s.classList.contains('-translate-x-full')) toggleMobileMenu(); }
+            
+            // Close mobile menu if it was open
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar-menu');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileMenu();
+                }
+            }
         }
 
         function handleSearch(v) { 
-            searchQuery = v; const term = (v || '').toLowerCase();
-            ['upcoming-list', 'carnes-grid', 'files-grid', 'users-table-body', 'logs-table-body'].forEach(id => {
-                const c = document.getElementById(id); if (c) {
-                    for (let item of c.children) item.style.display = item.innerText.toLowerCase().includes(term) ? "" : "none";
+            searchQuery = v;
+            const term = (v || '').toLowerCase();
+            const searchableContainers = ['upcoming-list', 'carnes-grid', 'files-grid', 'users-table-body', 'logs-table-body'];
+            
+            searchableContainers.forEach(id => {
+                const container = document.getElementById(id);
+                if (container) {
+                    const items = container.children;
+                    for (let i = 0; i < items.length; i++) {
+                        const item = items[i];
+                        const text = item.innerText.toLowerCase();
+                        if (text.includes(term)) {
+                            item.style.display = "";
+                        } else {
+                            item.style.display = "none";
+                        }
+                    }
                 }
             });
         }
+        
+        // Listener to keep search functional when dynamic content changes
+        const contentObserver = new MutationObserver(() => {
+            const currentSearch = document.getElementById('global-search').value;
+            if (currentSearch) {
+                handleSearch(currentSearch);
+            }
+        });
 
         function filterType(t) { currentFilter = t; renderLists(); updateStats(); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -1115,28 +1110,38 @@
             document.getElementById('comp-result').classList.remove('hidden');
         }
 
+        // New function to clear calculator fields
         function clearCalculator(type) {
-            const ids = type === 'simple' ? ['calc-valor', 'calc-taxa', 'calc-tempo', 'calc-result'] : ['comp-valor', 'comp-taxa', 'comp-tempo', 'comp-result'];
-            ids.forEach((id, idx) => idx < 3 ? document.getElementById(id).value = '' : document.getElementById(id).classList.add('hidden'));
+            if (type === 'simple') {
+                document.getElementById('calc-valor').value = '';
+                document.getElementById('calc-taxa').value = '';
+                document.getElementById('calc-tempo').value = '';
+                document.getElementById('calc-result').classList.add('hidden');
+            } else if (type === 'compound') {
+                document.getElementById('comp-valor').value = '';
+                document.getElementById('comp-taxa').value = '';
+                document.getElementById('comp-tempo').value = '';
+                document.getElementById('comp-result').classList.add('hidden');
+            }
         }
 
-        async function renderUsersTable() {
+        function renderUsersTable() {
             if (!currentUser?.isAdmin) return;
-            const users = await lerDado('calixto_users') || [];
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
             document.getElementById('users-table-body').innerHTML = users.map(u => `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"><td class="px-4 py-4 text-sm font-medium text-slate-200">${u.name} ${u.email === ADMIN_EMAIL ? '<span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold ml-1">ADMIN</span>' : ''}</td><td class="px-4 py-4 text-sm text-slate-400">${u.email}</td><td class="px-4 py-4 text-sm"><span class="status-badge ${u.isAdmin ? 'bg-indigo-500/10 text-indigo-400' : 'bg-slate-700/30 text-slate-500'}">${u.isAdmin ? 'Admin' : 'User'}</span></td><td class="px-4 py-4 text-center"><div class="flex items-center justify-center gap-3"><button onclick="adminEditUser('${u.id}')" class="text-slate-400 hover:text-emerald-400"><i class="fas fa-edit"></i></button>${u.id !== 'admin_root' ? `<button onclick="adminDeleteUser('${u.id}')" class="text-slate-400 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>` : ''}</div></td></tr>`).join('');
         }
 
-        async function adminCreateUser(e) {
+        function adminCreateUser(e) {
             e.preventDefault();
             const name = document.getElementById('admin-add-name').value, email = document.getElementById('admin-add-email').value, pass = document.getElementById('admin-add-pass').value, isAdmin = document.getElementById('admin-add-is-admin').checked;
-            const users = await lerDado('calixto_users') || [];
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
             if (pass.length < 6 || users.find(u => u.email === email)) return alert('Erro nos dados.');
-            users.push({ id: Date.now().toString(), name, email, password: await hashPassword(pass), isAdmin });
-            await salvarDado('calixto_users', users); renderUsersTable(); closeModal('modal-add-user');
+            users.push({ id: Date.now().toString(), name, email, password: hashPassword(pass), isAdmin });
+            localStorage.setItem('calixto_users', JSON.stringify(users)); renderUsersTable(); closeModal('modal-add-user');
         }
 
-        async function adminEditUser(id) {
-            const users = await lerDado('calixto_users') || [], user = users.find(u => u.id === id); if (!user) return;
+        function adminEditUser(id) {
+            const users = JSON.parse(localStorage.getItem('calixto_users')) || [], user = users.find(u => u.id === id); if (!user) return;
             document.getElementById('edit-user-id').value = user.id; document.getElementById('edit-user-name').value = user.name;
             document.getElementById('edit-user-email').value = user.email; document.getElementById('edit-user-pass').value = '';
             document.getElementById('edit-user-is-admin').checked = user.isAdmin;
@@ -1144,23 +1149,23 @@
             openModal('modal-edit-user');
         }
 
-        async function adminUpdateUser(e) {
+        function adminUpdateUser(e) {
             e.preventDefault();
             const id = document.getElementById('edit-user-id').value, name = document.getElementById('edit-user-name').value, email = document.getElementById('edit-user-email').value, pass = document.getElementById('edit-user-pass').value, isAdmin = document.getElementById('edit-user-is-admin').checked;
-            let users = await lerDado('calixto_users') || [];
+            let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
             const idx = users.findIndex(u => u.id === id);
             if (idx !== -1) {
                 users[idx].name = name; users[idx].email = email; if (id !== 'admin_root') users[idx].isAdmin = isAdmin;
-                if (pass.trim() !== '') users[idx].password = await hashPassword(pass);
-                await salvarDado('calixto_users', users); startApp(); closeModal('modal-edit-user');
+                if (pass.trim() !== '') users[idx].password = hashPassword(pass);
+                localStorage.setItem('calixto_users', JSON.stringify(users)); startApp(); closeModal('modal-edit-user');
             }
         }
 
-        async function adminDeleteUser(id) { if (id !== 'admin_root' && confirm('Remover usuário?')) { let users = await lerDado('calixto_users') || []; users = users.filter(u => u.id !== id); await salvarDado('calixto_users', users); renderUsersTable(); } }
+        function adminDeleteUser(id) { if (id !== 'admin_root' && confirm('Remover usuário?')) { let users = JSON.parse(localStorage.getItem('calixto_users')) || []; users = users.filter(u => u.id !== id); localStorage.setItem('calixto_users', JSON.stringify(users)); renderUsersTable(); } }
 
-        async function renderLogs() {
+        function renderLogs() {
             if (!currentUser?.isAdmin) return;
-            const logs = await lerDado('calixto_logs') || [], filter = document.getElementById('log-filter').value;
+            const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [], filter = document.getElementById('log-filter').value;
             let filtered = logs;
             if (filter === 'login') filtered = logs.filter(l => l.action.toLowerCase().includes('login'));
             else if (filter === 'user_mod') filtered = logs.filter(l => l.type === 'user_mod');
@@ -1168,24 +1173,54 @@
             document.getElementById('logs-table-body').innerHTML = filtered.map(l => `<tr class="border-b border-slate-800/50 text-xs"><td class="px-4 py-3 text-[10px] font-mono text-slate-500">${new Date(l.timestamp).toLocaleString()}</td><td class="px-4 py-3"><p class="font-medium text-slate-300">${l.user}</p></td><td class="px-4 py-3"><span class="${l.type === 'critical' ? 'text-rose-400 font-bold' : 'text-slate-200'}">${l.action}</span></td><td class="px-4 py-3 text-indigo-400 truncate max-w-[100px]">${l.target}</td></tr>`).join('');
         }
 
-        async function exportarCSV() {
-            if (!carnes || carnes.length === 0) return alert('Nenhum registro encontrado.');
+        function exportarCSV() {
+            if (!carnes || carnes.length === 0) {
+                alert('Nenhum registro encontrado para exportar.');
+                return;
+            }
+
             const headers = ['ID', 'Nome/Cliente', 'Tipo', 'Valor Original', 'Valor Total', 'Qtd Parcelas', 'Taxa Juros (%)', 'Data Inicio', 'Primeiro Vencimento', 'Observacao', 'Data Criacao'];
-            const rows = carnes.map(c => [c.id, `"${c.name.replace(/"/g, '""')}"`, `"${c.type.replace(/"/g, '""')}"`, c.originalValue, c.totalValue, c.installmentsCount, c.interestRate, c.startDate, c.firstDueDate, `"${(c.observation || '').replace(/"/g, '""')}"`, c.createdAt]);
-            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'registros.csv'; link.click();
-            await addLog('Exportação CSV realizada', 'registros.csv', 'info');
+            const rows = carnes.map(c => [
+                c.id,
+                `"${c.name.replace(/"/g, '""')}"`,
+                `"${c.type.replace(/"/g, '""')}"`,
+                c.originalValue,
+                c.totalValue,
+                c.installmentsCount,
+                c.interestRate,
+                c.startDate,
+                c.firstDueDate,
+                `"${(c.observation || '').replace(/"/g, '""')}"`,
+                c.createdAt
+            ]);
+
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(r => r.join(','))
+            ].join('\n');
+
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'registros.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            addLog('Exportação CSV realizada', 'registros.csv', 'info');
             showToast("Relatório CSV exportado", "success");
         }
 
-        window.onload = async () => { 
-            await initAdmin(); 
-            await startApp();
+        window.onload = () => { 
+            initAdmin(); 
+            startApp();
+            // Connect observer to watch for page/tab changes and re-apply search filter
             const contentCont = document.getElementById('content-container');
             if (contentCont) {
-                new MutationObserver(() => { if (document.getElementById('global-search').value) handleSearch(document.getElementById('global-search').value); })
-                .observe(contentCont, { childList: true, subtree: true });
+                contentObserver.observe(contentCont, { childList: true, subtree: true });
             }
         };
     </script>
