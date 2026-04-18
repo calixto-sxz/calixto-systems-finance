@@ -797,6 +797,34 @@
 
         function deleteFile(id) { if (confirm('Excluir arquivo?')) { files = files.filter(f => f.id !== id); saveData(); } }
 
+        function startRenameFile(id) {
+            const f = files.find(file => file.id === id);
+            if (!f) return;
+            const container = document.getElementById(`file-name-container-${id}`);
+            if (!container) return;
+            container.innerHTML = `<input type="text" id="input-rename-${id}" class="w-full bg-slate-900 border border-indigo-500 rounded text-[9px] sm:text-[11px] px-1 text-white outline-none" value="${f.name}" onblur="finishRenameFile(${id})" onkeydown="if(event.key==='Enter') finishRenameFile(${id})">`;
+            const input = document.getElementById(`input-rename-${id}`);
+            input.focus();
+            input.select();
+        }
+
+        function finishRenameFile(id) {
+            const input = document.getElementById(`input-rename-${id}`);
+            if (!input) return;
+            const newName = input.value.trim();
+            const f = files.find(file => file.id === id);
+            if (f && newName !== "") {
+                if (f.name !== newName) {
+                    f.name = newName;
+                    saveData();
+                } else {
+                    renderFiles();
+                }
+            } else {
+                renderFiles();
+            }
+        }
+
         const formatBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         function getStatus(dateStr, isPaid) {
             if (isPaid) return { text: 'PAGO', color: 'bg-emerald-500/20 text-emerald-400' };
@@ -889,10 +917,13 @@
                     ${f.type.includes('pdf') ? '<i class="fas fa-file-pdf text-2xl sm:text-4xl text-rose-500"></i>' : `<img src="${f.data}" class="w-full h-full object-cover">`}
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 sm:gap-3 transition-all">
                         <a href="${f.data}" download="${f.name}" class="w-7 h-7 sm:w-8 sm:h-8 bg-indigo-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-download"></i></a>
+                        <button onclick="startRenameFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-edit"></i></button>
                         <button onclick="deleteFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-rose-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-                <div class="p-2 sm:p-3"><p class="text-[9px] sm:text-[11px] font-bold text-white truncate">${f.name}</p></div>
+                <div class="p-2 sm:p-3" id="file-name-container-${f.id}">
+                    <p class="text-[9px] sm:text-[11px] font-bold text-white truncate">${f.name}</p>
+                </div>
             </div>`).join('');
         }
 
