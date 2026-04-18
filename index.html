@@ -205,6 +205,9 @@
                         <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar..." class="w-full bg-slate-800 border-none rounded-full px-4 py-1.5 text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500 transition-all">
                         <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-[10px] sm:text-xs"></i>
                     </div>
+                    <button onclick="exportarCSV()" class="flex-shrink-0 bg-slate-700 hover:bg-slate-600 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
+                        <i class="fas fa-file-csv"></i> <span class="hidden xs:inline">Exportar CSV</span>
+                    </button>
                     <button onclick="openAddModal()" class="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
                         <i class="fas fa-plus"></i> <span class="hidden xs:inline">Novo Registro</span>
                     </button>
@@ -565,7 +568,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
-                    <input type="email" id="edit-user-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+                    <input type="email" id="edit-user-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nova Senha</label>
@@ -975,6 +978,46 @@
             else if (filter === 'user_mod') filtered = logs.filter(l => l.type === 'user_mod');
             else if (filter === 'critical') filtered = logs.filter(l => l.type === 'critical');
             document.getElementById('logs-table-body').innerHTML = filtered.map(l => `<tr class="border-b border-slate-800/50 text-xs"><td class="px-4 py-3 text-[10px] font-mono text-slate-500">${new Date(l.timestamp).toLocaleString()}</td><td class="px-4 py-3"><p class="font-medium text-slate-300">${l.user}</p></td><td class="px-4 py-3"><span class="${l.type === 'critical' ? 'text-rose-400 font-bold' : 'text-slate-200'}">${l.action}</span></td><td class="px-4 py-3 text-indigo-400 truncate max-w-[100px]">${l.target}</td></tr>`).join('');
+        }
+
+        function exportarCSV() {
+            if (!carnes || carnes.length === 0) {
+                alert('Nenhum registro encontrado para exportar.');
+                return;
+            }
+
+            const headers = ['ID', 'Nome/Cliente', 'Tipo', 'Valor Original', 'Valor Total', 'Qtd Parcelas', 'Taxa Juros (%)', 'Data Inicio', 'Primeiro Vencimento', 'Observacao', 'Data Criacao'];
+            const rows = carnes.map(c => [
+                c.id,
+                `"${c.name.replace(/"/g, '""')}"`,
+                `"${c.type.replace(/"/g, '""')}"`,
+                c.originalValue,
+                c.totalValue,
+                c.installmentsCount,
+                c.interestRate,
+                c.startDate,
+                c.firstDueDate,
+                `"${(c.observation || '').replace(/"/g, '""')}"`,
+                c.createdAt
+            ]);
+
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(r => r.join(','))
+            ].join('\n');
+
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'registros.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            addLog('Exportação CSV realizada', 'registros.csv', 'info');
         }
 
         window.onload = () => { initAdmin(); startApp(); };
