@@ -24,1205 +24,1128 @@
             padding: 0;
         }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 10px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
 
-        .status-badge {
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        .status-badge { padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
 
-        .card-hover {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        }
+        .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
 
-        .stat-value {
-            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-            word-break: break-word;
-            line-height: 1.2;
-        }
+        .stat-value { font-size: clamp(1.1rem, 2.5vw, 1.5rem); word-break: break-word; line-height: 1.2; }
 
-        .modal-enter {
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        .modal-enter { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
+        .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        .sidebar { width: 16rem; flex-shrink: 0; z-index: 50; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
 
-        .sidebar {
-            width: 16rem;
-            flex-shrink: 0;
-            z-index: 50;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            position: relative;
-        }
-
-        /* Toast Styles */
         #toast-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            pointer-events: none;
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+            display: flex; flex-direction: column; gap: 0.75rem; pointer-events: none;
         }
-
         .toast-item {
-            background: #1e293b;
-            border-left: 4px solid transparent;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            min-width: 280px;
-            max-width: 400px;
-            pointer-events: auto;
+            background: #1e293b; border-left: 4px solid transparent; color: white;
+            padding: 1rem 1.5rem; border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 0.75rem;
+            min-width: 280px; max-width: 400px; pointer-events: auto;
             animation: toastSlideIn 0.3s ease-out forwards, toastFadeOut 0.3s ease-out forwards 2.7s;
         }
-
-        @keyframes toastSlideIn {
-            from { opacity: 0; transform: translateX(100%) translateY(0); }
-            to { opacity: 1; transform: translateX(0) translateY(0); }
-        }
-
-        @keyframes toastFadeOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.95); }
-        }
-
+        @keyframes toastSlideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastFadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
         .toast-success { border-color: #10b981; }
-        .toast-error { border-color: #ef4444; }
-        .toast-info { border-color: #6366f1; }
+        .toast-error   { border-color: #ef4444; }
+        .toast-info    { border-color: #6366f1; }
     </style>
 </head>
 <body class="custom-scrollbar bg-[#0f172a]">
 
-    <!-- Toast Container -->
-    <div id="toast-container"></div>
+<div id="toast-container"></div>
 
-    <!-- Auth Section -->
-    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-[#0f172a]">
-        <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-md modal-enter">
-            <div class="flex flex-col items-center mb-8">
-                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
-                    <i class="fas fa-shield-alt text-white text-3xl"></i>
-                </div>
-                <h1 class="text-2xl font-bold tracking-tight">Calixto <span class="text-indigo-500">Systems</span></h1>
-                <p class="text-slate-400 text-sm mt-2" id="auth-subtitle">Acesso Restrito ao Painel</p>
+<!-- Auth Section -->
+<div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-[#0f172a]">
+    <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-md modal-enter">
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
+                <i class="fas fa-shield-alt text-white text-3xl"></i>
             </div>
-
-            <!-- Login Form -->
-            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
-                    <input type="email" id="login-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="seu@email.com">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
-                    <input type="password" id="login-password" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="••••••••">
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/20 mt-2">Acessar Painel</button>
-                <p class="text-center text-sm text-slate-400 mt-6">
-                    Novo por aqui? <button type="button" onclick="toggleAuth(false)" class="text-indigo-400 font-bold hover:underline">Solicitar Acesso</button>
-                </p>
-            </form>
-
-            <!-- Register Form -->
-            <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
-                    <input type="text" id="reg-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Nome do Responsável">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail Corporativo</label>
-                    <input type="email" id="reg-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="exemplo@empresa.com">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha de Segurança</label>
-                    <input type="password" id="reg-password" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Mínimo 6 caracteres">
-                </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 mt-2">Criar minha conta</button>
-                <p class="text-center text-sm text-slate-400 mt-6">
-                    Já possui acesso? <button type="button" onclick="toggleAuth(true)" class="text-indigo-400 font-bold hover:underline">Fazer Login</button>
-                </p>
-            </form>
+            <h1 class="text-2xl font-bold tracking-tight">Calixto <span class="text-indigo-500">Systems</span></h1>
+            <p class="text-slate-400 text-sm mt-2" id="auth-subtitle">Acesso Restrito ao Painel</p>
         </div>
-    </div>
-
-    <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
-
-    <div id="main-app" class="app-container hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar-menu" class="sidebar bg-slate-900 border-r border-slate-800 fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex flex-col">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                            <i class="fas fa-chart-line text-white text-xl"></i>
-                        </div>
-                        <h1 class="text-xl font-bold tracking-tight">Calixto <span class="text-indigo-500">Systems</span></h1>
-                    </div>
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 hover:text-white">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-
-                <nav class="space-y-1">
-                    <button onclick="switchTab('dashboard')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-dashboard">
-                        <i class="fas fa-th-large w-5 flex-shrink-0"></i> Dashboard
-                    </button>
-                    <button onclick="switchTab('carnes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-carnes">
-                        <i class="fas fa-file-invoice-dollar w-5 flex-shrink-0"></i> Registros e Parcelas
-                    </button>
-                    <button onclick="switchTab('arquivos')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-arquivos">
-                        <i class="fas fa-folder-open w-5 flex-shrink-0"></i> Arquivos e Recibos
-                    </button>
-                    <button onclick="switchTab('calculadora')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-calculadora">
-                        <i class="fas fa-calculator w-5 flex-shrink-0"></i> Calculadora
-                    </button>
-                    <button onclick="switchTab('usuarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-usuarios">
-                        <i class="fas fa-users-cog w-5 flex-shrink-0"></i> Gerenciar Usuários
-                    </button>
-                    <button onclick="switchTab('logs')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-logs">
-                        <i class="fas fa-list-ul w-5 flex-shrink-0"></i> Logs do Sistema
-                    </button>
-                </nav>
+        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                <input type="email" id="login-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="seu@email.com">
             </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
+                <input type="password" id="login-password" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/20 mt-2">Acessar Painel</button>
+            <p class="text-center text-sm text-slate-400 mt-6">
+                Novo por aqui? <button type="button" onclick="toggleAuth(false)" class="text-indigo-400 font-bold hover:underline">Solicitar Acesso</button>
+            </p>
+        </form>
+        <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
+                <input type="text" id="reg-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Nome do Responsável">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail Corporativo</label>
+                <input type="email" id="reg-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="exemplo@empresa.com">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha de Segurança</label>
+                <input type="password" id="reg-password" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white transition-all" placeholder="Mínimo 6 caracteres">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 mt-2">Criar minha conta</button>
+            <p class="text-center text-sm text-slate-400 mt-6">
+                Já possui acesso? <button type="button" onclick="toggleAuth(true)" class="text-indigo-400 font-bold hover:underline">Fazer Login</button>
+            </p>
+        </form>
+    </div>
+</div>
 
-            <div class="mt-auto p-6 space-y-4">
-                <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
-                    <p class="text-[10px] text-slate-400 mb-1">Usuário Conectado</p>
-                    <p id="user-display-name" class="text-sm font-medium truncate">Carregando...</p>
+<div id="sidebar-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
+
+<div id="main-app" class="app-container hidden">
+    <aside id="sidebar-menu" class="sidebar bg-slate-900 border-r border-slate-800 fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex flex-col">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">Calixto <span class="text-indigo-500">Systems</span></h1>
                 </div>
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white py-3 rounded-xl text-sm font-bold transition-all">
-                    <i class="fas fa-sign-out-alt"></i> Sair do Sistema
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-        </aside>
+            <nav class="space-y-1">
+                <button onclick="switchTab('dashboard')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-dashboard">
+                    <i class="fas fa-th-large w-5 flex-shrink-0"></i> Dashboard
+                </button>
+                <button onclick="switchTab('carnes')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-carnes">
+                    <i class="fas fa-file-invoice-dollar w-5 flex-shrink-0"></i> Registros e Parcelas
+                </button>
+                <button onclick="switchTab('arquivos')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-arquivos">
+                    <i class="fas fa-folder-open w-5 flex-shrink-0"></i> Arquivos e Recibos
+                </button>
+                <button onclick="switchTab('calculadora')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-calculadora">
+                    <i class="fas fa-calculator w-5 flex-shrink-0"></i> Calculadora
+                </button>
+                <button onclick="switchTab('usuarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-usuarios">
+                    <i class="fas fa-users-cog w-5 flex-shrink-0"></i> Gerenciar Usuários
+                </button>
+                <button onclick="switchTab('logs')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm hidden" id="nav-logs">
+                    <i class="fas fa-list-ul w-5 flex-shrink-0"></i> Logs do Sistema
+                </button>
+            </nav>
+        </div>
+        <div class="mt-auto p-6 space-y-4">
+            <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
+                <p class="text-[10px] text-slate-400 mb-1">Usuário Conectado</p>
+                <p id="user-display-name" class="text-sm font-medium truncate">Carregando...</p>
+            </div>
+            <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white py-3 rounded-xl text-sm font-bold transition-all">
+                <i class="fas fa-sign-out-alt"></i> Sair do Sistema
+            </button>
+        </div>
+    </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            
-            <!-- Top Bar (Optimized for Mobile) -->
-            <header class="h-16 border-b border-slate-800 flex items-center justify-between px-4 md:px-8 bg-slate-900/50 backdrop-blur-md flex-shrink-0 gap-2">
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-white p-2">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h2 id="current-tab-title" class="text-base md:text-lg font-semibold truncate sm:block">Dashboard</h2>
+    <main class="main-content">
+        <header class="h-16 border-b border-slate-800 flex items-center justify-between px-4 md:px-8 bg-slate-900/50 backdrop-blur-md flex-shrink-0 gap-2">
+            <div class="flex items-center gap-2">
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-white p-2">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 id="current-tab-title" class="text-base md:text-lg font-semibold truncate sm:block">Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-2 md:gap-4 flex-1 justify-end">
+                <div class="relative group flex-1 max-w-[160px] sm:max-w-xs">
+                    <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar..." class="w-full bg-slate-800 border-none rounded-full px-4 py-1.5 text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-[10px] sm:text-xs"></i>
                 </div>
-                <div class="flex items-center gap-2 md:gap-4 flex-1 justify-end">
-                    <div class="relative group flex-1 max-w-[160px] sm:max-w-xs">
-                        <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Buscar..." class="w-full bg-slate-800 border-none rounded-full px-4 py-1.5 text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500 transition-all">
-                        <i class="fas fa-search absolute right-3 top-2.5 text-slate-500 text-[10px] sm:text-xs"></i>
+                <button onclick="exportarCSV()" class="flex-shrink-0 bg-slate-700 hover:bg-slate-600 text-white px-2 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
+                    <i class="fas fa-file-csv"></i> <span class="inline">Exportar CSV</span>
+                </button>
+                <button onclick="openAddModal()" class="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
+                    <i class="fas fa-plus"></i> <span class="hidden xs:inline">Novo Registro</span>
+                </button>
+            </div>
+        </header>
+
+        <div id="content-container" class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-slate-900">
+
+            <section id="view-dashboard" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                        <p class="text-slate-400 text-sm mb-1 truncate">Expectativa Bruta</p>
+                        <h3 id="stat-total-receber" class="stat-value font-bold text-white">R$ 0,00</h3>
+                        <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1"><i class="fas fa-clock"></i> Total a receber</div>
                     </div>
-                    <button onclick="exportarCSV()" class="flex-shrink-0 bg-slate-700 hover:bg-slate-600 text-white px-2 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
-                        <i class="fas fa-file-csv"></i> <span class="inline">Exportar CSV</span>
-                    </button>
-                    <button onclick="openAddModal()" class="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center gap-2">
-                        <i class="fas fa-plus"></i> <span class="hidden xs:inline">Novo Registro</span>
-                    </button>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                        <p class="text-slate-400 text-sm mb-1 truncate">Já Recebido</p>
+                        <h3 id="stat-total-recebido" class="stat-value font-bold text-emerald-400">R$ 0,00</h3>
+                        <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1"><i class="fas fa-check-circle"></i> Capital retornado</div>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
+                        <p class="text-slate-400 text-sm mb-1 truncate">Total em Aberto</p>
+                        <h3 id="stat-total-aberto" class="stat-value font-bold text-rose-400">R$ 0,00</h3>
+                        <div class="mt-2 text-xs text-rose-400 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Pendente</div>
+                    </div>
                 </div>
-            </header>
-
-            <!-- Scrollable Content -->
-            <div id="content-container" class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-slate-900">
-                
-                <!-- Dashboard View -->
-                <section id="view-dashboard" class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                            <p class="text-slate-400 text-sm mb-1 truncate">Expectativa Bruta</p>
-                            <h3 id="stat-total-receber" class="stat-value font-bold text-white">R$ 0,00</h3>
-                            <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
-                                <i class="fas fa-clock"></i> Total a receber
-                            </div>
-                        </div>
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                            <p class="text-slate-400 text-sm mb-1 truncate">Já Recebido</p>
-                            <h3 id="stat-total-recebido" class="stat-value font-bold text-emerald-400">R$ 0,00</h3>
-                            <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> Capital retornado
-                            </div>
-                        </div>
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                            <p class="text-slate-400 text-sm mb-1 truncate">Total em Aberto</p>
-                            <h3 id="stat-total-aberto" class="stat-value font-bold text-rose-400">R$ 0,00</h3>
-                            <div class="mt-2 text-xs text-rose-400 flex items-center gap-1">
-                                <i class="fas fa-exclamation-triangle"></i> Pendente
-                            </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-4">
+                        <h4 class="text-lg font-medium flex items-center gap-2"><i class="fas fa-calendar-alt text-indigo-500"></i> Vencimentos Próximos</h4>
+                        <div id="upcoming-list" class="space-y-3"></div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-medium">Distribuição por Tipo</h4>
+                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                            <div id="category-stats" class="grid grid-cols-1 gap-3"></div>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 space-y-4">
-                            <h4 class="text-lg font-medium flex items-center gap-2">
-                                <i class="fas fa-calendar-alt text-indigo-500"></i> Vencimentos Próximos
-                            </h4>
-                            <div id="upcoming-list" class="space-y-3"></div>
+            <section id="view-carnes" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div id="dynamic-filters" class="flex gap-2 overflow-x-auto pb-2 w-full custom-scrollbar">
+                        <button onclick="filterType('todos')" class="px-4 py-2 rounded-lg bg-indigo-600 text-sm font-medium filter-btn" data-type="todos">Todos</button>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <label class="text-sm text-slate-400 whitespace-nowrap">Ordenar:</label>
+                        <select id="sort-carnes" onchange="renderLists()" class="flex-1 sm:flex-none bg-slate-800 border-none rounded-lg text-sm px-3 py-2 text-white">
+                            <option value="newest">Mais recentes</option>
+                            <option value="value-desc">Maior valor</option>
+                            <option value="name">Nome</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="carnes-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+            </section>
+
+            <section id="view-arquivos" class="hidden space-y-6">
+                <div class="bg-slate-800 p-4 sm:p-8 rounded-2xl border border-slate-700 shadow-xl">
+                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-600 rounded-2xl p-6 sm:p-10 hover:border-indigo-500 transition-colors cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-600/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-cloud-upload-alt text-xl sm:text-2xl text-indigo-500"></i>
                         </div>
+                        <p class="text-base sm:text-lg font-bold text-white">Upload de Comprovantes</p>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1 text-center">Selecione imagens ou documentos PDF</p>
+                        <input type="file" id="file-upload-input" class="hidden" accept="image/*,application/pdf" onchange="handleFileUpload(event)">
+                    </div>
+                </div>
+                <div id="files-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"></div>
+            </section>
+
+            <section id="view-calculadora" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-700">
+                        <h4 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-percent text-indigo-500"></i> Juros Simples</h4>
                         <div class="space-y-4">
-                            <h4 class="text-lg font-medium">Distribuição por Tipo</h4>
-                            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                                <div id="category-stats" class="grid grid-cols-1 gap-3"></div>
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Valor Principal (R$)</label>
+                                <input type="number" id="calc-valor" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="1000.00">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-slate-400 mb-1">Taxa (%)</label>
+                                    <input type="number" id="calc-taxa" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="5">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-slate-400 mb-1">Tempo (meses)</label>
+                                    <input type="number" id="calc-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="calculateFinance()" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Simples</button>
+                                <button onclick="clearCalculator('simple')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all mt-4">Limpar</button>
+                            </div>
+                            <div id="calc-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><p class="text-xs text-slate-500">Juros Totais</p><p id="res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p></div>
+                                    <div><p class="text-xs text-slate-500">Montante Final</p><p id="res-montante" class="text-lg font-bold text-emerald-400">R$ 0,00</p></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
-
-                <!-- Carnês View -->
-                <section id="view-carnes" class="hidden space-y-6">
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div id="dynamic-filters" class="flex gap-2 overflow-x-auto pb-2 w-full custom-scrollbar">
-                            <button onclick="filterType('todos')" class="px-4 py-2 rounded-lg bg-indigo-600 text-sm font-medium filter-btn" data-type="todos">Todos</button>
+                    <div class="bg-indigo-900/20 border border-indigo-500/30 p-6 sm:p-8 rounded-2xl">
+                        <h4 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-chart-line text-indigo-400"></i> Juros Compostos</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Valor Inicial (R$)</label>
+                                <input type="number" id="comp-valor" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="1000.00">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-slate-400 mb-1">Taxa Mensal (%)</label>
+                                    <input type="number" id="comp-taxa" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="2">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-slate-400 mb-1">Tempo (meses)</label>
+                                    <input type="number" id="comp-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="calculateCompoundInterest()" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Compostos</button>
+                                <button onclick="clearCalculator('compound')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all mt-4">Limpar</button>
+                            </div>
+                            <div id="comp-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><p class="text-xs text-slate-500">Juros Acumulados</p><p id="comp-res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p></div>
+                                    <div><p class="text-xs text-slate-500">Montante Final</p><p id="comp-res-montante" class="text-lg font-bold text-emerald-400">R$ 0,00</p></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <label class="text-sm text-slate-400 whitespace-nowrap">Ordenar:</label>
-                            <select id="sort-carnes" onchange="renderLists()" class="flex-1 sm:flex-none bg-slate-800 border-none rounded-lg text-sm px-3 py-2 text-white">
-                                <option value="newest">Mais recentes</option>
-                                <option value="value-desc">Maior valor</option>
-                                <option value="name">Nome</option>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-usuarios" class="hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                        <h4 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-user-shield text-indigo-500"></i> Gerenciamento de Contas</h4>
+                        <button onclick="openModal('modal-add-user')" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+                            <i class="fas fa-user-plus"></i> Novo Usuário
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="border-b border-slate-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Nome</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">E-mail</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Tipo</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-logs" class="hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                        <h4 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-history text-indigo-500"></i> Histórico de Atividade</h4>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-slate-400">Filtrar:</label>
+                            <select id="log-filter" onchange="renderLogs()" class="bg-slate-900 border-none rounded-lg text-sm px-3 py-2 text-white">
+                                <option value="all">Todos os eventos</option>
+                                <option value="login">Acessos (Login/Logout)</option>
+                                <option value="user_mod">Modificações de Usuário</option>
+                                <option value="critical">Ações Críticas</option>
                             </select>
                         </div>
                     </div>
-                    <div id="carnes-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
-                </section>
-
-                <!-- Arquivos View -->
-                <section id="view-arquivos" class="hidden space-y-6">
-                    <div class="bg-slate-800 p-4 sm:p-8 rounded-2xl border border-slate-700 shadow-xl">
-                        <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-600 rounded-2xl p-6 sm:p-10 hover:border-indigo-500 transition-colors cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
-                            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-600/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <i class="fas fa-cloud-upload-alt text-xl sm:text-2xl text-indigo-500"></i>
-                            </div>
-                            <p class="text-base sm:text-lg font-bold text-white">Upload de Comprovantes</p>
-                            <p class="text-xs sm:text-sm text-slate-400 mt-1 text-center">Selecione imagens ou documentos PDF</p>
-                            <input type="file" id="file-upload-input" class="hidden" accept="image/*,application/pdf" onchange="handleFileUpload(event)">
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="border-b border-slate-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Data/Hora</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Usuário</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Ação</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Alvo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body"></tbody>
+                        </table>
                     </div>
-                    <div id="files-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"></div>
-                </section>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
 
-                <!-- Calculadora View -->
-                <section id="view-calculadora" class="hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-700">
-                            <h4 class="text-xl font-bold mb-6 flex items-center gap-2">
-                                <i class="fas fa-percent text-indigo-500"></i> Juros Simples
-                            </h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm text-slate-400 mb-1">Valor Principal (R$)</label>
-                                    <input type="number" id="calc-valor" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="1000.00">
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm text-slate-400 mb-1">Taxa (%)</label>
-                                        <input type="number" id="calc-taxa" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="5">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm text-slate-400 mb-1">Tempo (meses)</label>
-                                        <input type="number" id="calc-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
-                                    </div>
-                                </div>
-                                <div class="flex gap-3">
-                                    <button onclick="calculateFinance()" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Simples</button>
-                                    <button onclick="clearCalculator('simple')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all mt-4">Limpar</button>
-                                </div>
-                                <div id="calc-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div><p class="text-xs text-slate-500">Juros Totais</p><p id="res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p></div>
-                                        <div><p class="text-xs text-slate-500">Montante Final</p><p id="res-montante" class="text-lg font-bold text-emerald-400">R$ 0,00</p></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-indigo-900/20 border border-indigo-500/30 p-6 sm:p-8 rounded-2xl">
-                            <h4 class="text-xl font-bold mb-6 flex items-center gap-2">
-                                <i class="fas fa-chart-line text-indigo-400"></i> Juros Compostos
-                            </h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm text-slate-400 mb-1">Valor Inicial (R$)</label>
-                                    <input type="number" id="comp-valor" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="1000.00">
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm text-slate-400 mb-1">Taxa Mensal (%)</label>
-                                        <input type="number" id="comp-taxa" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="2">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm text-slate-400 mb-1">Tempo (meses)</label>
-                                        <input type="number" id="comp-tempo" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="12">
-                                    </div>
-                                </div>
-                                <div class="flex gap-3">
-                                    <button onclick="calculateCompoundInterest()" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all mt-4">Calcular Juros Compostos</button>
-                                    <button onclick="clearCalculator('compound')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all mt-4">Limpar</button>
-                                </div>
-                                <div id="comp-result" class="mt-8 p-6 bg-slate-900 rounded-xl hidden">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div><p class="text-xs text-slate-500">Juros Acumulados</p><p id="comp-res-juros" class="text-lg font-bold text-rose-400">R$ 0,00</p></div>
-                                        <div><p class="text-xs text-slate-500">Montante Final</p><p id="comp-res-montante" class="text-lg font-bold text-emerald-400">R$ 0,00</p></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Admin: Usuarios View -->
-                <section id="view-usuarios" class="hidden space-y-6">
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                            <h4 class="text-xl font-bold flex items-center gap-2">
-                                <i class="fas fa-user-shield text-indigo-500"></i> Gerenciamento de Contas
-                            </h4>
-                            <button onclick="openModal('modal-add-user')" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
-                                <i class="fas fa-user-plus"></i> Novo Usuário
-                            </button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="border-b border-slate-700">
-                                    <tr>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Nome</th>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">E-mail</th>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Tipo</th>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase text-center">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="users-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Admin: Logs View -->
-                <section id="view-logs" class="hidden space-y-6">
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                            <h4 class="text-xl font-bold flex items-center gap-2">
-                                <i class="fas fa-history text-indigo-500"></i> Histórico de Atividade
-                            </h4>
-                            <div class="flex items-center gap-2">
-                                <label class="text-sm text-slate-400">Filtrar:</label>
-                                <select id="log-filter" onchange="renderLogs()" class="bg-slate-900 border-none rounded-lg text-sm px-3 py-2 text-white">
-                                    <option value="all">Todos os eventos</option>
-                                    <option value="login">Acessos (Login/Logout)</option>
-                                    <option value="user_mod">Modificações de Usuário</option>
-                                    <option value="critical">Ações Críticas</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="border-b border-slate-700">
-                                    <tr>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Data/Hora</th>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Usuário</th>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Ação</th>
-                                        <th class="px-4 py-3 text-xs font-bold text-slate-400 uppercase">Alvo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="logs-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
+<!-- Modals -->
+<div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
+            <h3 id="modal-carne-title" class="text-xl font-bold">Novo Registro Financeiro</h3>
+            <button onclick="closeModal('modal-add-carne')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form id="form-carne" onsubmit="saveEntry(event)" class="p-8 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
+            <input type="hidden" id="edit-entry-id">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="col-span-full">
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Descrição / Nome do Cliente</label>
+                    <input type="text" id="entry-name" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo João da Silva">
+                </div>
+                <div class="col-span-full">
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Observação</label>
+                    <textarea id="entry-observation" rows="3" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" placeholder="Ex: Detalhes adicionais..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Tipo de Registro</label>
+                    <input type="text" id="entry-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo, Investimento...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Valor Total (R$)</label>
+                    <input type="number" step="0.01" id="entry-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0,00">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Número de Parcelas</label>
+                    <input type="number" id="entry-installments" required min="1" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" value="1">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Taxa de Juros (%)</label>
+                    <input type="number" step="0.1" id="entry-interest" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" value="0">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Data de Início</label>
+                    <input type="date" id="entry-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Primeiro Vencimento</label>
+                    <input type="date" id="entry-due-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
             </div>
-        </main>
+            <div class="pt-4 flex gap-4">
+                <button type="button" onclick="closeModal('modal-add-carne')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
+                <button type="submit" id="btn-save-carne" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar Registro</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <!-- Modals -->
-    <!-- Modal Adicionar/Editar Registro -->
-    <div id="modal-add-carne" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
-            <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
-                <h3 id="modal-carne-title" class="text-xl font-bold">Novo Registro Financeiro</h3>
-                <button onclick="closeModal('modal-add-carne')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+<div id="modal-details" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-slate-800 w-full max-w-3xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[95vh]">
+        <div class="px-4 sm:px-8 py-4 sm:py-6 border-b border-slate-700 flex items-center justify-between">
+            <div>
+                <h3 id="details-title" class="text-lg sm:text-xl font-bold truncate max-w-[200px] sm:max-w-none">Cronograma</h3>
+                <div id="details-subtitle" class="text-xs text-slate-400"></div>
             </div>
-            <form id="form-carne" onsubmit="saveEntry(event)" class="p-8 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
-                <input type="hidden" id="edit-entry-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-full">
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Descrição / Nome do Cliente</label>
-                        <input type="text" id="entry-name" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo João da Silva">
-                    </div>
-                    <div class="col-span-full">
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Observação</label>
-                        <textarea id="entry-observation" rows="3" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" placeholder="Ex: Detalhes adicionais..."></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Tipo de Registro</label>
-                        <input type="text" id="entry-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo, Investimento...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Valor Total (R$)</label>
-                        <input type="number" step="0.01" id="entry-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0,00">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Número de Parcelas</label>
-                        <input type="number" id="entry-installments" required min="1" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" value="1">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Taxa de Juros (%)</label>
-                        <input type="number" step="0.1" id="entry-interest" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" value="0">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Data de Início</label>
-                        <input type="date" id="entry-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Primeiro Vencimento</label>
-                        <input type="date" id="entry-due-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-                </div>
-                <div class="pt-4 flex gap-4">
-                    <button type="button" onclick="closeModal('modal-add-carne')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
-                    <button type="submit" id="btn-save-carne" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar Registro</button>
-                </div>
-            </form>
+            <button onclick="closeModal('modal-details')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <div class="p-4 sm:p-8 flex-1 overflow-y-auto custom-scrollbar">
+            <div id="installments-list" class="space-y-3"></div>
+        </div>
+        <div class="px-4 sm:px-8 py-4 bg-slate-900/50 border-t border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex gap-4 w-full sm:w-auto justify-around sm:justify-start">
+                <div class="text-xs text-slate-400">Total Pago: <span id="details-paid-total" class="text-emerald-400 font-bold text-sm block sm:inline">R$ 0,00</span></div>
+                <div class="text-xs text-slate-400">Restante: <span id="details-remaining-total" class="text-rose-400 font-bold text-sm block sm:inline">R$ 0,00</span></div>
+            </div>
+            <button onclick="closeModal('modal-details')" class="w-full sm:w-auto bg-indigo-600 text-sm px-6 py-2 rounded-lg font-bold">Fechar</button>
         </div>
     </div>
+</div>
 
-    <!-- Modal Detalhes Parcelas (Optimized padding for mobile) -->
-    <div id="modal-details" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-slate-800 w-full max-w-3xl rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[95vh]">
-            <div class="px-4 sm:px-8 py-4 sm:py-6 border-b border-slate-700 flex items-center justify-between">
-                <div>
-                    <h3 id="details-title" class="text-lg sm:text-xl font-bold truncate max-w-[200px] sm:max-w-none">Cronograma</h3>
-                    <div id="details-subtitle" class="text-xs text-slate-400"></div>
-                </div>
-                <button onclick="closeModal('modal-details')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
-            </div>
-            <div class="p-4 sm:p-8 flex-1 overflow-y-auto custom-scrollbar">
-                <div id="installments-list" class="space-y-3"></div>
-            </div>
-            <div class="px-4 sm:px-8 py-4 bg-slate-900/50 border-t border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex gap-4 w-full sm:w-auto justify-around sm:justify-start">
-                    <div class="text-xs text-slate-400">Total Pago: <span id="details-paid-total" class="text-emerald-400 font-bold text-sm block sm:inline">R$ 0,00</span></div>
-                    <div class="text-xs text-slate-400">Restante: <span id="details-remaining-total" class="text-rose-400 font-bold text-sm block sm:inline">R$ 0,00</span></div>
-                </div>
-                <button onclick="closeModal('modal-details')" class="w-full sm:w-auto bg-indigo-600 text-sm px-6 py-2 rounded-lg font-bold">Fechar</button>
-            </div>
+<div id="modal-edit-installment" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+            <h3 class="font-bold">Editar Parcela</h3>
+            <button onclick="closeModal('modal-edit-installment')" class="text-slate-400 hover:text-white text-xl">&times;</button>
         </div>
-    </div>
-
-    <!-- Modal Editar Parcela -->
-    <div id="modal-edit-installment" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-                <h3 class="font-bold">Editar Parcela</h3>
-                <button onclick="closeModal('modal-edit-installment')" class="text-slate-400 hover:text-white text-xl">&times;</button>
+        <form id="form-edit-installment" onsubmit="saveInstallment(event)" class="p-6 space-y-4">
+            <input type="hidden" id="edit-inst-carne-id">
+            <input type="hidden" id="edit-inst-id">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data de Vencimento</label>
+                <input type="date" id="edit-inst-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
             </div>
-            <form id="form-edit-installment" onsubmit="saveInstallment(event)" class="p-6 space-y-4">
-                <input type="hidden" id="edit-inst-carne-id">
-                <input type="hidden" id="edit-inst-id">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data de Vencimento</label>
-                    <input type="date" id="edit-inst-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Valor (R$)</label>
-                    <input type="number" step="0.01" id="edit-inst-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
-                </div>
-                <div class="flex items-center gap-3 py-2">
-                    <input type="checkbox" id="edit-inst-paid" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
-                    <label for="edit-inst-paid" class="text-sm text-slate-300 font-medium">Parcela paga</label>
-                </div>
-                <div class="pt-2 flex gap-3">
-                    <button type="button" onclick="closeModal('modal-edit-installment')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-2.5 rounded-xl font-bold text-sm transition-all">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2.5 rounded-xl font-bold text-sm transition-all">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Admin: Modals -->
-    <div id="modal-add-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
-            <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
-                <h3 class="text-xl font-bold">Cadastrar Novo Usuário</h3>
-                <button onclick="closeModal('modal-add-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Valor (R$)</label>
+                <input type="number" step="0.01" id="edit-inst-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
             </div>
-            <form onsubmit="adminCreateUser(event)" class="p-8 space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
-                    <input type="text" id="admin-add-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
-                    <input type="email" id="admin-add-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
-                    <input type="password" id="admin-add-pass" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Mínimo 6 caracteres">
-                </div>
-                <div class="flex items-center gap-3 px-1 py-2">
-                    <input type="checkbox" id="admin-add-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
-                    <label for="admin-add-is-admin" class="text-sm text-slate-300 font-medium">Permissão Admin</label>
-                </div>
-                <div class="pt-4 flex gap-4">
-                    <button type="button" onclick="closeModal('modal-add-user')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
-            <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
-                <h3 class="text-xl font-bold">Editar Usuário</h3>
-                <button onclick="closeModal('modal-edit-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+            <div class="flex items-center gap-3 py-2">
+                <input type="checkbox" id="edit-inst-paid" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                <label for="edit-inst-paid" class="text-sm text-slate-300 font-medium">Parcela paga</label>
             </div>
-            <form onsubmit="adminUpdateUser(event)" class="p-8 space-y-4">
-                <input type="hidden" id="edit-user-id">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
-                    <input type="text" id="edit-user-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
-                    <input type="email" id="edit-user-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nova Senha</label>
-                    <input type="password" id="edit-user-pass" class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Mantenha vazio para não alterar">
-                </div>
-                <div class="flex items-center gap-3 px-1 py-2" id="edit-admin-toggle-wrapper">
-                    <input type="checkbox" id="edit-user-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
-                    <label for="edit-user-is-admin" class="text-sm text-slate-300 font-medium">Permissão Admin</label>
-                </div>
-                <div class="pt-4 flex gap-4">
-                    <button type="button" onclick="closeModal('modal-edit-user')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all">Atualizar</button>
-                </div>
-            </form>
-        </div>
+            <div class="pt-2 flex gap-3">
+                <button type="button" onclick="closeModal('modal-edit-installment')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-2.5 rounded-xl font-bold text-sm transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2.5 rounded-xl font-bold text-sm transition-all">Salvar</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script>
-        const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
-        const ADMIN_PASS = 'admin@123';
+<div id="modal-add-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
+            <h3 class="text-xl font-bold">Cadastrar Novo Usuário</h3>
+            <button onclick="closeModal('modal-add-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form onsubmit="adminCreateUser(event)" class="p-8 space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
+                <input type="text" id="admin-add-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                <input type="email" id="admin-add-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Senha</label>
+                <input type="password" id="admin-add-pass" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Mínimo 6 caracteres">
+            </div>
+            <div class="flex items-center gap-3 px-1 py-2">
+                <input type="checkbox" id="admin-add-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                <label for="admin-add-is-admin" class="text-sm text-slate-300 font-medium">Permissão Admin</label>
+            </div>
+            <div class="pt-4 flex gap-4">
+                <button type="button" onclick="closeModal('modal-add-user')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-        // Toast Notification System
-        function showToast(mensagem, tipo = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            let icon = 'fa-check-circle';
-            if (tipo === 'error') icon = 'fa-exclamation-circle';
-            if (tipo === 'info') icon = 'fa-info-circle';
+<div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl modal-enter overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-700 flex items-center justify-between">
+            <h3 class="text-xl font-bold">Editar Usuário</h3>
+            <button onclick="closeModal('modal-edit-user')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form onsubmit="adminUpdateUser(event)" class="p-8 space-y-4">
+            <input type="hidden" id="edit-user-id">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nome Completo</label>
+                <input type="text" id="edit-user-name" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">E-mail</label>
+                <input type="email" id="edit-user-email" required class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase mb-2 ml-1">Nova Senha</label>
+                <input type="password" id="edit-user-pass" class="w-full bg-slate-900 border-slate-700 border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none text-white" placeholder="Mantenha vazio para não alterar">
+            </div>
+            <div class="flex items-center gap-3 px-1 py-2" id="edit-admin-toggle-wrapper">
+                <input type="checkbox" id="edit-user-is-admin" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                <label for="edit-user-is-admin" class="text-sm text-slate-300 font-medium">Permissão Admin</label>
+            </div>
+            <div class="pt-4 flex gap-4">
+                <button type="button" onclick="closeModal('modal-edit-user')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl font-bold transition-all">Atualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            toast.className = `toast-item toast-${tipo}`;
-            toast.innerHTML = `
-                <i class="fas ${icon} text-lg"></i>
-                <span class="text-sm font-medium">${mensagem}</span>
-            `;
+<script>
+    const ADMIN_EMAIL = 'calixto.engenharia.computador@gmail.com';
+    const ADMIN_PASS  = 'admin@123';
 
-            container.appendChild(toast);
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
-            // Auto-remove after animation
-            setTimeout(() => {
-                toast.remove();
-            }, 3300);
+    function hashPassword(pwd) {
+        let hash = 0;
+        for (let i = 0; i < pwd.length; i++) {
+            hash = ((hash << 5) - hash) + pwd.charCodeAt(i);
+            hash = hash & hash;
+        }
+        return hash.toString();
+    }
+
+    /**
+     * Safe localStorage read: if the stored value cannot be parsed as JSON
+     * (e.g. leftover AES-GCM base64 from a previous version) return null
+     * instead of crashing.
+     */
+    function safeGet(key) {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return null;
+            return JSON.parse(raw);
+        } catch (e) {
+            // Value is corrupt / from old encrypted format – remove it
+            localStorage.removeItem(key);
+            return null;
+        }
+    }
+
+    function safeSet(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+
+    function showToast(mensagem, tipo = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        const icon = tipo === 'error' ? 'fa-exclamation-circle' : tipo === 'info' ? 'fa-info-circle' : 'fa-check-circle';
+        toast.className = `toast-item toast-${tipo}`;
+        toast.innerHTML = `<i class="fas ${icon} text-lg"></i><span class="text-sm font-medium">${mensagem}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3300);
+    }
+
+    // ── Mobile menu ───────────────────────────────────────────────────────────
+
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('sidebar-menu');
+        const overlay = document.getElementById('sidebar-overlay');
+        const isOpen  = !sidebar.classList.contains('-translate-x-full');
+        if (isOpen) { sidebar.classList.add('-translate-x-full');    overlay.classList.add('hidden'); }
+        else         { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
+    }
+
+    // ── Logs ──────────────────────────────────────────────────────────────────
+
+    function addLog(action, target, type = 'info') {
+        const logs = safeGet('calixto_logs') || [];
+        const user = JSON.parse(sessionStorage.getItem('logged_user')) || { name: 'Sistema', email: 'N/A' };
+        logs.unshift({ id: Date.now(), user: user.name, userEmail: user.email, action, target: target || 'N/A', timestamp: new Date().toISOString(), type });
+        if (logs.length > 1000) logs.pop();
+        safeSet('calixto_logs', logs);
+    }
+
+    // ── Admin bootstrap ───────────────────────────────────────────────────────
+
+    function initAdmin() {
+        let users = safeGet('calixto_users') || [];
+
+        // If safeGet returned null the key was corrupt – users is now []
+        // Ensure the root admin always exists with the correct hash
+        const adminHash = hashPassword(ADMIN_PASS);
+        const idx = users.findIndex(u => u.email === ADMIN_EMAIL);
+
+        if (idx === -1) {
+            users.push({ id: 'admin_root', name: 'Administrador Calixto', email: ADMIN_EMAIL, password: adminHash, isAdmin: true });
+        } else {
+            // Fix password in case it was stored with a different algorithm
+            users[idx].password = adminHash;
+            users[idx].isAdmin  = true;
         }
 
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar-menu');
-            const overlay = document.getElementById('sidebar-overlay');
-            const isOpen = !sidebar.classList.contains('-translate-x-full');
+        safeSet('calixto_users', users);
+    }
 
-            if (isOpen) {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            } else {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+    // ── Auth ──────────────────────────────────────────────────────────────────
+
+    function toggleAuth(showLogin) {
+        document.getElementById('login-form').classList.toggle('hidden', !showLogin);
+        document.getElementById('register-form').classList.toggle('hidden', showLogin);
+        document.getElementById('auth-subtitle').innerText = showLogin ? 'Acesso Restrito ao Painel' : 'Solicitação de Acesso Administrativo';
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const pass  = document.getElementById('login-password').value;
+        const users = safeGet('calixto_users') || [];
+        const user  = users.find(u => u.email === email && u.password === hashPassword(pass));
+        if (user) { sessionStorage.setItem('logged_user', JSON.stringify(user)); addLog('Login realizado', email, 'info'); startApp(); }
+        else       { addLog('Tentativa de login falhou', email, 'critical'); alert('Credenciais inválidas.'); }
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const name  = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const pass  = document.getElementById('reg-password').value;
+        const users = safeGet('calixto_users') || [];
+        if (pass.length < 6) return alert('Senha muito curta.');
+        if (users.find(u => u.email === email)) return alert('E-mail já registrado.');
+        users.push({ id: Date.now().toString(), name, email, password: hashPassword(pass), isAdmin: false });
+        safeSet('calixto_users', users);
+        addLog('Nova conta cadastrada', email, 'user_mod');
+        alert('Conta criada!'); toggleAuth(true);
+    }
+
+    function handleLogout() {
+        const user = JSON.parse(sessionStorage.getItem('logged_user'));
+        if (user) addLog('Logout realizado', user.email, 'info');
+        sessionStorage.removeItem('logged_user');
+        window.location.reload();
+    }
+
+    // ── App state ─────────────────────────────────────────────────────────────
+
+    let currentUser   = null;
+    let carnes        = [];
+    let files         = [];
+    let currentFilter = 'todos';
+    let searchQuery   = '';
+
+    function startApp() {
+        currentUser = JSON.parse(sessionStorage.getItem('logged_user'));
+        if (!currentUser) {
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+            return;
+        }
+        const allUsers  = safeGet('calixto_users') || [];
+        const freshUser = allUsers.find(u => u.id === currentUser.id);
+        if (freshUser) { currentUser = freshUser; sessionStorage.setItem('logged_user', JSON.stringify(freshUser)); }
+
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+        document.getElementById('user-display-name').innerText = currentUser.name;
+
+        if (currentUser.isAdmin) {
+            document.getElementById('nav-usuarios').classList.remove('hidden');
+            document.getElementById('nav-logs').classList.remove('hidden');
+        }
+
+        carnes = safeGet(`calixto_data_${currentUser.id}`)  || [];
+        files  = safeGet(`calixto_files_${currentUser.id}`) || [];
+
+        updateStats(); renderLists(); renderFiles(); renderUsersTable(); renderLogs();
+    }
+
+    function saveData() {
+        if (!currentUser) return;
+        safeSet(`calixto_data_${currentUser.id}`,  carnes);
+        safeSet(`calixto_files_${currentUser.id}`, files);
+        updateStats(); renderLists(); renderFiles();
+    }
+
+    // ── Carnê CRUD ────────────────────────────────────────────────────────────
+
+    function openAddModal() {
+        document.getElementById('edit-entry-id').value = '';
+        document.getElementById('modal-carne-title').innerText = 'Novo Registro';
+        document.getElementById('btn-save-carne').innerText = 'Salvar Registro';
+        document.getElementById('form-carne').reset();
+        openModal('modal-add-carne');
+    }
+
+    function openEditCarne(id) {
+        const c = carnes.find(x => x.id === id); if (!c) return;
+        document.getElementById('edit-entry-id').value      = c.id;
+        document.getElementById('entry-name').value         = c.name;
+        document.getElementById('entry-observation').value  = c.observation || '';
+        document.getElementById('entry-type').value         = c.type;
+        document.getElementById('entry-value').value        = c.originalValue;
+        document.getElementById('entry-installments').value = c.installmentsCount;
+        document.getElementById('entry-interest').value     = c.interestRate;
+        document.getElementById('entry-date').value         = c.startDate;
+        document.getElementById('entry-due-date').value     = c.firstDueDate;
+        openModal('modal-add-carne');
+    }
+
+    function saveEntry(e) {
+        e.preventDefault();
+        const editId       = document.getElementById('edit-entry-id').value;
+        const name         = document.getElementById('entry-name').value;
+        const observation  = document.getElementById('entry-observation').value;
+        const type         = document.getElementById('entry-type').value.trim();
+        const value        = parseFloat(document.getElementById('entry-value').value);
+        const count        = parseInt(document.getElementById('entry-installments').value);
+        const interest     = parseFloat(document.getElementById('entry-interest').value) || 0;
+        const startDate    = document.getElementById('entry-date').value;
+        const dueDateInput = document.getElementById('entry-due-date').value;
+        const totalWithInterest = value * (1 + (interest / 100));
+        const parcelValue       = totalWithInterest / count;
+        const installments = [];
+        let lastDate = new Date(dueDateInput + 'T00:00:00');
+        for (let i = 1; i <= count; i++) {
+            const curDate = new Date(lastDate);
+            if (i > 1) curDate.setMonth(curDate.getMonth() + 1);
+            let isPaid = false;
+            if (editId) { const ex = carnes.find(x => x.id == editId); if (ex && ex.installments[i-1]) isPaid = ex.installments[i-1].paid; }
+            installments.push({ id: Date.now() + i, dueDate: curDate.toISOString().split('T')[0], value: parcelValue, paid: isPaid });
+            lastDate = curDate;
+        }
+        if (editId) {
+            const idx = carnes.findIndex(c => c.id == editId);
+            if (idx !== -1) carnes[idx] = { ...carnes[idx], name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments };
+        } else {
+            carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
+        }
+        saveData();
+        closeModal('modal-add-carne');
+        showToast('Registro salvo com sucesso ✓', 'success');
+    }
+
+    function deleteCarne(id) {
+        if (confirm('Excluir registro?')) { carnes = carnes.filter(c => c.id !== id); saveData(); showToast('Registro excluído', 'info'); }
+    }
+
+    function toggleParcela(carneId, parcelaId) {
+        const carne = carnes.find(c => c.id === carneId);
+        if (carne) { const p = carne.installments.find(i => i.id === parcelaId); if (p) { p.paid = !p.paid; saveData(); showDetails(carneId); } }
+    }
+
+    function openEditInstallment(carneId, parcelaId) {
+        const carne = carnes.find(c => c.id === carneId); if (!carne) return;
+        const p = carne.installments.find(i => i.id === parcelaId); if (!p) return;
+        document.getElementById('edit-inst-carne-id').value = carneId;
+        document.getElementById('edit-inst-id').value       = parcelaId;
+        document.getElementById('edit-inst-date').value     = p.dueDate;
+        document.getElementById('edit-inst-value').value    = p.value;
+        document.getElementById('edit-inst-paid').checked   = p.paid;
+        openModal('modal-edit-installment');
+    }
+
+    function saveInstallment(e) {
+        e.preventDefault();
+        const carneId   = parseInt(document.getElementById('edit-inst-carne-id').value);
+        const parcelaId = parseInt(document.getElementById('edit-inst-id').value);
+        const carne = carnes.find(c => c.id === carneId);
+        if (carne) {
+            const p = carne.installments.find(i => i.id === parcelaId);
+            if (p) {
+                p.dueDate = document.getElementById('edit-inst-date').value;
+                p.value   = parseFloat(document.getElementById('edit-inst-value').value);
+                p.paid    = document.getElementById('edit-inst-paid').checked;
+                carne.totalValue = carne.installments.reduce((s, i) => s + i.value, 0);
+                saveData(); showDetails(carneId); closeModal('modal-edit-installment');
+                showToast('Parcela atualizada', 'success');
             }
         }
+    }
 
-        function addLog(action, target, type = 'info') {
-            const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [];
-            const user = JSON.parse(sessionStorage.getItem('logged_user')) || { name: 'Sistema', email: 'N/A' };
-            logs.unshift({ id: Date.now(), user: user.name, userEmail: user.email, action, target: target || 'N/A', timestamp: new Date().toISOString(), type });
-            if (logs.length > 1000) logs.pop();
-            localStorage.setItem('calixto_logs', JSON.stringify(logs));
-        }
+    // ── Files ─────────────────────────────────────────────────────────────────
 
-        function hashPassword(pwd) {
-            let hash = 0;
-            for (let i = 0; i < pwd.length; i++) { hash = ((hash << 5) - hash) + pwd.charCodeAt(i); hash = hash & hash; }
-            return hash.toString();
-        }
-
-        function initAdmin() {
-            let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            let rootAdmin = users.find(u => u.email === ADMIN_EMAIL);
-            if (!rootAdmin) {
-                users.push({ id: 'admin_root', name: 'Administrador Calixto', email: ADMIN_EMAIL, password: hashPassword(ADMIN_PASS), isAdmin: true });
-                localStorage.setItem('calixto_users', JSON.stringify(users));
-            } else if (!rootAdmin.isAdmin) {
-                rootAdmin.isAdmin = true;
-                localStorage.setItem('calixto_users', JSON.stringify(users));
-            }
-        }
-
-        function toggleAuth(showLogin) {
-            document.getElementById('login-form').classList.toggle('hidden', !showLogin);
-            document.getElementById('register-form').classList.toggle('hidden', showLogin);
-            document.getElementById('auth-subtitle').innerText = showLogin ? 'Acesso Restrito ao Painel' : 'Solicitação de Acesso Administrativo';
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            const user = users.find(u => u.email === email && u.password === hashPassword(pass));
-            if (user) { sessionStorage.setItem('logged_user', JSON.stringify(user)); addLog('Login realizado', email, 'info'); startApp(); }
-            else { addLog('Tentativa de login falhou', email, 'critical'); alert('Credenciais inválidas.'); }
-        }
-
-        function handleRegister(e) {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-password').value;
-            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            if (pass.length < 6) return alert('Senha muito curta.');
-            if (users.find(u => u.email === email)) return alert('E-mail já registrado.');
-            users.push({ id: Date.now().toString(), name, email, password: hashPassword(pass), isAdmin: false });
-            localStorage.setItem('calixto_users', JSON.stringify(users));
-            addLog('Nova conta cadastrada', email, 'user_mod');
-            alert('Conta criada!'); toggleAuth(true);
-        }
-
-        function handleLogout() {
-            const user = JSON.parse(sessionStorage.getItem('logged_user'));
-            if (user) addLog('Logout realizado', user.email, 'info');
-            sessionStorage.removeItem('logged_user');
-            window.location.reload();
-        }
-
-        let currentUser = null;
-        let carnes = [];
-        let files = [];
-        let currentFilter = 'todos';
-        let searchQuery = '';
-
-        function startApp() {
-            currentUser = JSON.parse(sessionStorage.getItem('logged_user'));
-            if (!currentUser) {
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('main-app').classList.add('hidden');
-                return;
-            }
-            const allUsers = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            const freshUser = allUsers.find(u => u.id === currentUser.id);
-            if (freshUser) { currentUser = freshUser; sessionStorage.setItem('logged_user', JSON.stringify(freshUser)); }
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('user-display-name').innerText = currentUser.name;
-            if (currentUser.isAdmin) { document.getElementById('nav-usuarios').classList.remove('hidden'); document.getElementById('nav-logs').classList.remove('hidden'); }
-            carnes = JSON.parse(localStorage.getItem(`calixto_data_${currentUser.id}`)) || [];
-            files = JSON.parse(localStorage.getItem(`calixto_files_${currentUser.id}`)) || [];
-            updateStats(); renderLists(); renderFiles(); renderUsersTable(); renderLogs();
-        }
-
-        function saveData() {
-            if (!currentUser) return;
-            localStorage.setItem(`calixto_data_${currentUser.id}`, JSON.stringify(carnes));
-            localStorage.setItem(`calixto_files_${currentUser.id}`, JSON.stringify(files));
-            updateStats(); renderLists(); renderFiles();
-        }
-
-        function openAddModal() {
-            document.getElementById('edit-entry-id').value = '';
-            document.getElementById('modal-carne-title').innerText = 'Novo Registro';
-            document.getElementById('btn-save-carne').innerText = 'Salvar Registro';
-            document.getElementById('form-carne').reset();
-            openModal('modal-add-carne');
-        }
-
-        function openEditCarne(id) {
-            const c = carnes.find(x => x.id === id); if (!c) return;
-            document.getElementById('edit-entry-id').value = c.id;
-            document.getElementById('entry-name').value = c.name;
-            document.getElementById('entry-observation').value = c.observation || '';
-            document.getElementById('entry-type').value = c.type;
-            document.getElementById('entry-value').value = c.originalValue;
-            document.getElementById('entry-installments').value = c.installmentsCount;
-            document.getElementById('entry-interest').value = c.interestRate;
-            document.getElementById('entry-date').value = c.startDate;
-            document.getElementById('entry-due-date').value = c.firstDueDate;
-            openModal('modal-add-carne');
-        }
-
-        function saveEntry(e) {
-            e.preventDefault();
-            const editId = document.getElementById('edit-entry-id').value;
-            const name = document.getElementById('entry-name').value;
-            const observation = document.getElementById('entry-observation').value;
-            const type = document.getElementById('entry-type').value.trim();
-            const value = parseFloat(document.getElementById('entry-value').value);
-            const count = parseInt(document.getElementById('entry-installments').value);
-            const interest = parseFloat(document.getElementById('entry-interest').value) || 0;
-            const startDate = document.getElementById('entry-date').value;
-            const dueDateInput = document.getElementById('entry-due-date').value;
-            const totalWithInterest = value * (1 + (interest / 100));
-            const parcelValue = totalWithInterest / count;
-            const installments = [];
-            let lastDate = new Date(dueDateInput + 'T00:00:00');
-            for (let i = 1; i <= count; i++) {
-                const curDate = new Date(lastDate); if (i > 1) curDate.setMonth(curDate.getMonth() + 1);
-                let isPaid = false;
-                if (editId) { const existing = carnes.find(x => x.id == editId); if (existing && existing.installments[i-1]) isPaid = existing.installments[i-1].paid; }
-                installments.push({ id: Date.now() + i, dueDate: curDate.toISOString().split('T')[0], value: parcelValue, paid: isPaid });
-                lastDate = curDate;
-            }
-            if (editId) {
-                const idx = carnes.findIndex(c => c.id == editId);
-                if (idx !== -1) { carnes[idx] = { ...carnes[idx], name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments }; }
-            } else {
-                carnes.push({ id: Date.now(), name, observation, type, originalValue: value, totalValue: totalWithInterest, interestRate: interest, installmentsCount: count, startDate, firstDueDate: dueDateInput, installments, createdAt: new Date().toISOString() });
-            }
-            saveData(); 
-            closeModal('modal-add-carne');
-            showToast("Registro salvo com sucesso ✓", "success");
-        }
-
-        function deleteCarne(id) { 
-            if (confirm('Excluir registro?')) { 
-                carnes = carnes.filter(c => c.id !== id); 
-                saveData(); 
-                showToast("Registro excluído com sucesso", "info");
-            } 
-        }
-
-        function toggleParcela(carneId, parcelaId) {
-            const carne = carnes.find(c => c.id === carneId);
-            if (carne) { const p = carne.installments.find(i => i.id === parcelaId); if (p) { p.paid = !p.paid; saveData(); showDetails(carneId); } }
-        }
-
-        function openEditInstallment(carneId, parcelaId) {
-            const carne = carnes.find(c => c.id === carneId); if (!carne) return;
-            const p = carne.installments.find(i => i.id === parcelaId); if (!p) return;
-            document.getElementById('edit-inst-carne-id').value = carneId;
-            document.getElementById('edit-inst-id').value = parcelaId;
-            document.getElementById('edit-inst-date').value = p.dueDate;
-            document.getElementById('edit-inst-value').value = p.value;
-            document.getElementById('edit-inst-paid').checked = p.paid;
-            openModal('modal-edit-installment');
-        }
-
-        function saveInstallment(e) {
-            e.preventDefault();
-            const carneId = parseInt(document.getElementById('edit-inst-carne-id').value);
-            const parcelaId = parseInt(document.getElementById('edit-inst-id').value);
-            const carne = carnes.find(c => c.id === carneId);
-            if (carne) {
-                const p = carne.installments.find(i => i.id === parcelaId);
-                if (p) {
-                    p.dueDate = document.getElementById('edit-inst-date').value;
-                    p.value = parseFloat(document.getElementById('edit-inst-value').value);
-                    p.paid = document.getElementById('edit-inst-paid').checked;
-                    carne.totalValue = carne.installments.reduce((sum, item) => sum + item.value, 0);
-                    saveData(); 
-                    showDetails(carneId); 
-                    closeModal('modal-edit-installment');
-                    showToast("Parcela atualizada", "success");
-                }
-            }
-        }
-
-        function handleFileUpload(ev) {
-            const file = ev.target.files[0]; if (!file) return;
-            if (file.size > 2 * 1024 * 1024) return alert("Máx 2MB");
-            const reader = new FileReader();
-            reader.onload = (e) => { 
-                files.push({ id: Date.now(), name: file.name, type: file.type, data: e.target.result, date: new Date().toISOString() }); 
-                saveData(); 
-                showToast("Comprovante enviado", "success");
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function deleteFile(id) { 
-            if (confirm('Excluir arquivo?')) { 
-                files = files.filter(f => f.id !== id); 
-                saveData(); 
-                showToast("Arquivo excluído", "info");
-            } 
-        }
-
-        function startRenameFile(id) {
-            const f = files.find(file => file.id === id);
-            if (!f) return;
-            const container = document.getElementById(`file-name-container-${id}`);
-            if (!container) return;
-            container.innerHTML = `<input type="text" id="input-rename-${id}" class="w-full bg-slate-900 border border-indigo-500 rounded text-[9px] sm:text-[11px] px-1 text-white outline-none" value="${f.name}" onblur="finishRenameFile(${id})" onkeydown="if(event.key==='Enter') finishRenameFile(${id})">`;
-            const input = document.getElementById(`input-rename-${id}`);
-            input.focus();
-            input.select();
-        }
-
-        function finishRenameFile(id) {
-            const input = document.getElementById(`input-rename-${id}`);
-            if (!input) return;
-            const newName = input.value.trim();
-            const f = files.find(file => file.id === id);
-            if (f && newName !== "") {
-                if (f.name !== newName) {
-                    f.name = newName;
-                    saveData();
-                } else {
-                    renderFiles();
-                }
-            } else {
-                renderFiles();
-            }
-        }
-
-        const formatBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-        function getStatus(dateStr, isPaid) {
-            if (isPaid) return { text: 'PAGO', color: 'bg-emerald-500/20 text-emerald-400' };
-            const today = new Date().setHours(0,0,0,0); const due = new Date(dateStr + 'T00:00:00').setHours(0,0,0,0);
-            if (due < today) return { text: 'ATRASADO', color: 'bg-rose-500/20 text-rose-400' };
-            if (due === today) return { text: 'HOJE', color: 'bg-amber-500/20 text-amber-400' };
-            return { text: 'PENDENTE', color: 'bg-blue-500/20 text-blue-400' };
-        }
-
-        function updateStats() {
-            let recebido = 0, aberto = 0; carnes.forEach(c => c.installments.forEach(p => p.paid ? recebido += p.value : aberto += p.value));
-            document.getElementById('stat-total-receber').innerText = formatBRL(recebido + aberto);
-            document.getElementById('stat-total-recebido').innerText = formatBRL(recebido);
-            document.getElementById('stat-total-aberto').innerText = formatBRL(aberto);
-            const pendentes = []; carnes.forEach(c => c.installments.forEach(p => { if(!p.paid) pendentes.push({...p, name: c.name})}));
-            pendentes.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
-            document.getElementById('upcoming-list').innerHTML = pendentes.slice(0, 5).map(p => {
-                const st = getStatus(p.dueDate, false);
-                return `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between">
-                    <div class="truncate mr-2"><p class="font-bold text-sm text-white truncate">${p.name}</p><p class="text-[10px] text-slate-500">${p.dueDate}</p></div>
-                    <div class="text-right flex-shrink-0"><p class="font-bold text-indigo-400 text-xs sm:text-sm">${formatBRL(p.value)}</p><span class="status-badge ${st.color} text-[9px]">${st.text}</span></div>
-                </div>`;
-            }).join('') || '<p class="text-slate-500 text-sm">Sem pendências.</p>';
-            
-            // Render Distribuição por Tipo as modern KPI Cards
-            const categories = {};
-            let grandTotal = 0;
-            carnes.forEach(c => { 
-                categories[c.type] = (categories[c.type] || 0) + c.totalValue; 
-                grandTotal += c.totalValue;
-            });
-
-            document.getElementById('category-stats').innerHTML = Object.keys(categories).map(t => {
-                const value = categories[t];
-                const percentage = grandTotal > 0 ? ((value / grandTotal) * 100).toFixed(1) : 0;
-                return `
-                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 hover:border-indigo-500/40 transition-all group">
-                    <div class="flex justify-between items-start mb-1">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${t}</span>
-                        <span class="text-[10px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-md">${percentage}%</span>
-                    </div>
-                    <div class="text-lg font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">${formatBRL(value)}</div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div class="bg-indigo-500 h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
-                    </div>
-                </div>`;
-            }).join('') || '<p class="text-slate-500 text-xs text-center py-4">Nenhum dado categorizado.</p>';
-
-            const types = [...new Set(carnes.map(c => c.type))];
-            const filterDiv = document.getElementById('dynamic-filters');
-            filterDiv.innerHTML = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter==='todos'?'bg-indigo-600':'bg-slate-800'} text-sm font-medium">Todos</button>` + types.map(t => `<button onclick="filterType('${t}')" class="px-4 py-2 rounded-lg ${currentFilter===t?'bg-indigo-600':'bg-slate-800'} text-sm font-medium capitalize">${t}</button>`).join('');
-        }
-
-        function renderLists() {
-            const grid = document.getElementById('carnes-grid'); if(!grid) return;
-            const sort = document.getElementById('sort-carnes').value;
-            let filtered = carnes.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) && (currentFilter==='todos' || c.type===currentFilter));
-            if (sort === 'newest') filtered.sort((a,b) => b.id - a.id);
-            else if (sort === 'value-desc') filtered.sort((a,b) => b.totalValue - a.totalValue);
-            else if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
-            grid.innerHTML = filtered.map(c => {
-                const paid = c.installments.filter(i => i.paid).length;
-                return `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg card-hover">
-                    <div class="p-5 border-b border-slate-700 flex justify-between">
-                        <div class="truncate"><span class="text-[9px] uppercase font-bold text-indigo-400 block">${c.type}</span><h4 class="font-bold text-white truncate">${c.name}</h4></div>
-                        <div class="flex gap-3 flex-shrink-0">
-                            <button onclick="openEditCarne(${c.id})" class="text-slate-500 hover:text-indigo-400 transition-colors"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>
-                    <div class="p-5 space-y-4">
-                        <div class="flex justify-between items-center"><p class="text-lg font-bold text-white">${formatBRL(c.totalValue)}</p><p class="text-xs text-slate-500">${c.installmentsCount} par.</p></div>
-                        <div class="w-full bg-slate-900 h-1.5 rounded-full"><div class="bg-indigo-500 h-full" style="width: ${(paid/c.installmentsCount)*100}%"></div></div>
-                        <button onclick="showDetails(${c.id})" class="w-full bg-slate-700 hover:bg-indigo-600 py-2 rounded-lg text-xs font-bold transition-all">Ver Detalhes</button>
-                    </div>
-                </div>`;
-            }).join('') || '<div class="col-span-full text-center py-12 text-slate-500">Nenhum registro.</div>';
-        }
-
-        function showDetails(id) {
-            const c = carnes.find(x => x.id === id); if (!c) return;
-            let paidValueTotal = 0, remainingValueTotal = 0;
-            document.getElementById('details-title').innerText = c.name;
-            document.getElementById('details-subtitle').innerText = `${c.installmentsCount} parcelas`;
-            document.getElementById('installments-list').innerHTML = c.installments.map((p, i) => {
-                const st = getStatus(p.dueDate, p.paid);
-                if (p.paid) paidValueTotal += p.value; else remainingValueTotal += p.value;
-                return `<div class="bg-slate-900 p-3 sm:p-4 rounded-xl flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <span class="text-xs text-slate-500 font-bold flex-shrink-0">${i+1}</span>
-                        <div class="min-w-0">
-                            <p class="text-xs sm:text-sm font-bold text-white truncate">${p.dueDate}</p>
-                            <span class="status-badge ${st.color} text-[8px] sm:text-[9px]">${st.text}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
-                        <p class="text-xs sm:text-sm font-bold mr-1">${formatBRL(p.value)}</p>
-                        <div class="flex gap-1">
-                            <button onclick="openEditInstallment(${c.id}, ${p.id})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-400 transition-colors"><i class="fas fa-edit text-[10px]"></i></button>
-                            <button onclick="toggleParcela(${c.id}, ${p.id})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${p.paid?'bg-emerald-600':'bg-slate-700'} flex items-center justify-center transition-colors"><i class="fas ${p.paid?'fa-check':'fa-wallet'} text-[10px]"></i></button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-            document.getElementById('details-paid-total').innerText = formatBRL(paidValueTotal);
-            document.getElementById('details-remaining-total').innerText = formatBRL(remainingValueTotal);
-            openModal('modal-details');
-        }
-
-        function renderFiles() {
-            document.getElementById('files-grid').innerHTML = files.map(f => `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden group">
-                <div class="h-24 sm:h-32 bg-slate-900 flex items-center justify-center relative">
-                    ${f.type.includes('pdf') ? '<i class="fas fa-file-pdf text-2xl sm:text-4xl text-rose-500"></i>' : `<img src="${f.data}" class="w-full h-full object-cover">`}
-                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 sm:gap-3 transition-all">
-                        <a href="${f.data}" download="${f.name}" class="w-7 h-7 sm:w-8 sm:h-8 bg-indigo-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-download"></i></a>
-                        <button onclick="startRenameFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-rose-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-                <div class="p-2 sm:p-3" id="file-name-container-${f.id}">
-                    <p class="text-[9px] sm:text-[11px] font-bold text-white truncate">${f.name}</p>
-                </div>
-            </div>`).join('');
-        }
-
-        function switchTab(t) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`view-${t}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-indigo-600', 'text-white'));
-            const btn = document.getElementById(`nav-${t}`); if (btn) btn.classList.add('bg-indigo-600', 'text-white');
-            document.getElementById('current-tab-title').innerText = t.charAt(0).toUpperCase() + t.slice(1);
-            if (t==='usuarios') renderUsersTable(); if (t==='logs') renderLogs();
-            
-            // Close mobile menu if it was open
-            if (window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar-menu');
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    toggleMobileMenu();
-                }
-            }
-        }
-
-        function handleSearch(v) { 
-            searchQuery = v;
-            const term = (v || '').toLowerCase();
-            const searchableContainers = ['upcoming-list', 'carnes-grid', 'files-grid', 'users-table-body', 'logs-table-body'];
-            
-            searchableContainers.forEach(id => {
-                const container = document.getElementById(id);
-                if (container) {
-                    const items = container.children;
-                    for (let i = 0; i < items.length; i++) {
-                        const item = items[i];
-                        const text = item.innerText.toLowerCase();
-                        if (text.includes(term)) {
-                            item.style.display = "";
-                        } else {
-                            item.style.display = "none";
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Listener to keep search functional when dynamic content changes
-        const contentObserver = new MutationObserver(() => {
-            const currentSearch = document.getElementById('global-search').value;
-            if (currentSearch) {
-                handleSearch(currentSearch);
-            }
-        });
-
-        function filterType(t) { currentFilter = t; renderLists(); updateStats(); }
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        function calculateFinance() {
-            const v = parseFloat(document.getElementById('calc-valor').value), tx = parseFloat(document.getElementById('calc-taxa').value), t = parseFloat(document.getElementById('calc-tempo').value);
-            if (!v || !tx || !t) return; const j = v * (tx/100) * t;
-            document.getElementById('res-juros').innerText = formatBRL(j); document.getElementById('res-montante').innerText = formatBRL(v + j);
-            document.getElementById('calc-result').classList.remove('hidden');
-        }
-
-        function calculateCompoundInterest() {
-            const p = parseFloat(document.getElementById('comp-valor').value), r = parseFloat(document.getElementById('comp-taxa').value)/100, t = parseFloat(document.getElementById('comp-tempo').value);
-            if (!p || !r || !t) return; const m = p * Math.pow((1+r), t);
-            document.getElementById('comp-res-juros').innerText = formatBRL(m - p); document.getElementById('comp-res-montante').innerText = formatBRL(m);
-            document.getElementById('comp-result').classList.remove('hidden');
-        }
-
-        // New function to clear calculator fields
-        function clearCalculator(type) {
-            if (type === 'simple') {
-                document.getElementById('calc-valor').value = '';
-                document.getElementById('calc-taxa').value = '';
-                document.getElementById('calc-tempo').value = '';
-                document.getElementById('calc-result').classList.add('hidden');
-            } else if (type === 'compound') {
-                document.getElementById('comp-valor').value = '';
-                document.getElementById('comp-taxa').value = '';
-                document.getElementById('comp-tempo').value = '';
-                document.getElementById('comp-result').classList.add('hidden');
-            }
-        }
-
-        function renderUsersTable() {
-            if (!currentUser?.isAdmin) return;
-            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            document.getElementById('users-table-body').innerHTML = users.map(u => `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"><td class="px-4 py-4 text-sm font-medium text-slate-200">${u.name} ${u.email === ADMIN_EMAIL ? '<span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold ml-1">ADMIN</span>' : ''}</td><td class="px-4 py-4 text-sm text-slate-400">${u.email}</td><td class="px-4 py-4 text-sm"><span class="status-badge ${u.isAdmin ? 'bg-indigo-500/10 text-indigo-400' : 'bg-slate-700/30 text-slate-500'}">${u.isAdmin ? 'Admin' : 'User'}</span></td><td class="px-4 py-4 text-center"><div class="flex items-center justify-center gap-3"><button onclick="adminEditUser('${u.id}')" class="text-slate-400 hover:text-emerald-400"><i class="fas fa-edit"></i></button>${u.id !== 'admin_root' ? `<button onclick="adminDeleteUser('${u.id}')" class="text-slate-400 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>` : ''}</div></td></tr>`).join('');
-        }
-
-        function adminCreateUser(e) {
-            e.preventDefault();
-            const name = document.getElementById('admin-add-name').value, email = document.getElementById('admin-add-email').value, pass = document.getElementById('admin-add-pass').value, isAdmin = document.getElementById('admin-add-is-admin').checked;
-            const users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            if (pass.length < 6 || users.find(u => u.email === email)) return alert('Erro nos dados.');
-            users.push({ id: Date.now().toString(), name, email, password: hashPassword(pass), isAdmin });
-            localStorage.setItem('calixto_users', JSON.stringify(users)); renderUsersTable(); closeModal('modal-add-user');
-        }
-
-        function adminEditUser(id) {
-            const users = JSON.parse(localStorage.getItem('calixto_users')) || [], user = users.find(u => u.id === id); if (!user) return;
-            document.getElementById('edit-user-id').value = user.id; document.getElementById('edit-user-name').value = user.name;
-            document.getElementById('edit-user-email').value = user.email; document.getElementById('edit-user-pass').value = '';
-            document.getElementById('edit-user-is-admin').checked = user.isAdmin;
-            if (id === 'admin_root') document.getElementById('edit-admin-toggle-wrapper').classList.add('hidden'); else document.getElementById('edit-admin-toggle-wrapper').classList.remove('hidden');
-            openModal('modal-edit-user');
-        }
-
-        function adminUpdateUser(e) {
-            e.preventDefault();
-            const id = document.getElementById('edit-user-id').value, name = document.getElementById('edit-user-name').value, email = document.getElementById('edit-user-email').value, pass = document.getElementById('edit-user-pass').value, isAdmin = document.getElementById('edit-user-is-admin').checked;
-            let users = JSON.parse(localStorage.getItem('calixto_users')) || [];
-            const idx = users.findIndex(u => u.id === id);
-            if (idx !== -1) {
-                users[idx].name = name; users[idx].email = email; if (id !== 'admin_root') users[idx].isAdmin = isAdmin;
-                if (pass.trim() !== '') users[idx].password = hashPassword(pass);
-                localStorage.setItem('calixto_users', JSON.stringify(users)); startApp(); closeModal('modal-edit-user');
-            }
-        }
-
-        function adminDeleteUser(id) { if (id !== 'admin_root' && confirm('Remover usuário?')) { let users = JSON.parse(localStorage.getItem('calixto_users')) || []; users = users.filter(u => u.id !== id); localStorage.setItem('calixto_users', JSON.stringify(users)); renderUsersTable(); } }
-
-        function renderLogs() {
-            if (!currentUser?.isAdmin) return;
-            const logs = JSON.parse(localStorage.getItem('calixto_logs')) || [], filter = document.getElementById('log-filter').value;
-            let filtered = logs;
-            if (filter === 'login') filtered = logs.filter(l => l.action.toLowerCase().includes('login'));
-            else if (filter === 'user_mod') filtered = logs.filter(l => l.type === 'user_mod');
-            else if (filter === 'critical') filtered = logs.filter(l => l.type === 'critical');
-            document.getElementById('logs-table-body').innerHTML = filtered.map(l => `<tr class="border-b border-slate-800/50 text-xs"><td class="px-4 py-3 text-[10px] font-mono text-slate-500">${new Date(l.timestamp).toLocaleString()}</td><td class="px-4 py-3"><p class="font-medium text-slate-300">${l.user}</p></td><td class="px-4 py-3"><span class="${l.type === 'critical' ? 'text-rose-400 font-bold' : 'text-slate-200'}">${l.action}</span></td><td class="px-4 py-3 text-indigo-400 truncate max-w-[100px]">${l.target}</td></tr>`).join('');
-        }
-
-        function exportarCSV() {
-            if (!carnes || carnes.length === 0) {
-                alert('Nenhum registro encontrado para exportar.');
-                return;
-            }
-
-            const headers = ['ID', 'Nome/Cliente', 'Tipo', 'Valor Original', 'Valor Total', 'Qtd Parcelas', 'Taxa Juros (%)', 'Data Inicio', 'Primeiro Vencimento', 'Observacao', 'Data Criacao'];
-            const rows = carnes.map(c => [
-                c.id,
-                `"${c.name.replace(/"/g, '""')}"`,
-                `"${c.type.replace(/"/g, '""')}"`,
-                c.originalValue,
-                c.totalValue,
-                c.installmentsCount,
-                c.interestRate,
-                c.startDate,
-                c.firstDueDate,
-                `"${(c.observation || '').replace(/"/g, '""')}"`,
-                c.createdAt
-            ]);
-
-            const csvContent = [
-                headers.join(','),
-                ...rows.map(r => r.join(','))
-            ].join('\n');
-
-            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'registros.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            addLog('Exportação CSV realizada', 'registros.csv', 'info');
-            showToast("Relatório CSV exportado", "success");
-        }
-
-        window.onload = () => { 
-            initAdmin(); 
-            startApp();
-            // Connect observer to watch for page/tab changes and re-apply search filter
-            const contentCont = document.getElementById('content-container');
-            if (contentCont) {
-                contentObserver.observe(contentCont, { childList: true, subtree: true });
-            }
+    function handleFileUpload(ev) {
+        const file = ev.target.files[0]; if (!file) return;
+        if (file.size > 2 * 1024 * 1024) return alert('Máx 2MB');
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            files.push({ id: Date.now(), name: file.name, type: file.type, data: e.target.result, date: new Date().toISOString() });
+            saveData();
+            showToast('Comprovante enviado', 'success');
         };
-    </script>
+        reader.readAsDataURL(file);
+    }
+
+    function deleteFile(id) {
+        if (confirm('Excluir arquivo?')) { files = files.filter(f => f.id !== id); saveData(); showToast('Arquivo excluído', 'info'); }
+    }
+
+    function startRenameFile(id) {
+        const f = files.find(file => file.id === id); if (!f) return;
+        const container = document.getElementById(`file-name-container-${id}`); if (!container) return;
+        container.innerHTML = `<input type="text" id="input-rename-${id}" class="w-full bg-slate-900 border border-indigo-500 rounded text-[9px] sm:text-[11px] px-1 text-white outline-none" value="${f.name}" onblur="finishRenameFile(${id})" onkeydown="if(event.key==='Enter') finishRenameFile(${id})">`;
+        const input = document.getElementById(`input-rename-${id}`); input.focus(); input.select();
+    }
+
+    function finishRenameFile(id) {
+        const input = document.getElementById(`input-rename-${id}`); if (!input) return;
+        const newName = input.value.trim();
+        const f = files.find(file => file.id === id);
+        if (f && newName !== '') { if (f.name !== newName) { f.name = newName; saveData(); } else renderFiles(); } else renderFiles();
+    }
+
+    // ── Formatters / Status ───────────────────────────────────────────────────
+
+    const formatBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
+    function getStatus(dateStr, isPaid) {
+        if (isPaid) return { text: 'PAGO', color: 'bg-emerald-500/20 text-emerald-400' };
+        const today = new Date().setHours(0,0,0,0);
+        const due   = new Date(dateStr + 'T00:00:00').setHours(0,0,0,0);
+        if (due < today) return { text: 'ATRASADO', color: 'bg-rose-500/20 text-rose-400' };
+        if (due === today) return { text: 'HOJE', color: 'bg-amber-500/20 text-amber-400' };
+        return { text: 'PENDENTE', color: 'bg-blue-500/20 text-blue-400' };
+    }
+
+    // ── Dashboard stats ───────────────────────────────────────────────────────
+
+    function updateStats() {
+        let recebido = 0, aberto = 0;
+        carnes.forEach(c => c.installments.forEach(p => p.paid ? recebido += p.value : aberto += p.value));
+        document.getElementById('stat-total-receber').innerText  = formatBRL(recebido + aberto);
+        document.getElementById('stat-total-recebido').innerText = formatBRL(recebido);
+        document.getElementById('stat-total-aberto').innerText   = formatBRL(aberto);
+
+        const pendentes = [];
+        carnes.forEach(c => c.installments.forEach(p => { if (!p.paid) pendentes.push({...p, name: c.name}); }));
+        pendentes.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+        document.getElementById('upcoming-list').innerHTML = pendentes.slice(0, 5).map(p => {
+            const st = getStatus(p.dueDate, false);
+            return `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between">
+                <div class="truncate mr-2"><p class="font-bold text-sm text-white truncate">${p.name}</p><p class="text-[10px] text-slate-500">${p.dueDate}</p></div>
+                <div class="text-right flex-shrink-0"><p class="font-bold text-indigo-400 text-xs sm:text-sm">${formatBRL(p.value)}</p><span class="status-badge ${st.color} text-[9px]">${st.text}</span></div>
+            </div>`;
+        }).join('') || '<p class="text-slate-500 text-sm">Sem pendências.</p>';
+
+        const categories = {}; let grandTotal = 0;
+        carnes.forEach(c => { categories[c.type] = (categories[c.type] || 0) + c.totalValue; grandTotal += c.totalValue; });
+
+        document.getElementById('category-stats').innerHTML = Object.keys(categories).map(t => {
+            const value = categories[t];
+            const pct   = grandTotal > 0 ? ((value / grandTotal) * 100).toFixed(1) : 0;
+            return `<div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 hover:border-indigo-500/40 transition-all group">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${t}</span>
+                    <span class="text-[10px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-md">${pct}%</span>
+                </div>
+                <div class="text-lg font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">${formatBRL(value)}</div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-indigo-500 h-full rounded-full transition-all duration-700 ease-out" style="width:${pct}%"></div>
+                </div>
+            </div>`;
+        }).join('') || '<p class="text-slate-500 text-xs text-center py-4">Nenhum dado categorizado.</p>';
+
+        const types     = [...new Set(carnes.map(c => c.type))];
+        const filterDiv = document.getElementById('dynamic-filters');
+        filterDiv.innerHTML = `<button onclick="filterType('todos')" class="px-4 py-2 rounded-lg ${currentFilter==='todos'?'bg-indigo-600':'bg-slate-800'} text-sm font-medium">Todos</button>`
+            + types.map(t => `<button onclick="filterType('${t}')" class="px-4 py-2 rounded-lg ${currentFilter===t?'bg-indigo-600':'bg-slate-800'} text-sm font-medium capitalize">${t}</button>`).join('');
+    }
+
+    // ── Render lists ──────────────────────────────────────────────────────────
+
+    function renderLists() {
+        const grid = document.getElementById('carnes-grid'); if (!grid) return;
+        const sort = document.getElementById('sort-carnes').value;
+        let filtered = carnes.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) && (currentFilter === 'todos' || c.type === currentFilter));
+        if (sort === 'newest')     filtered.sort((a, b) => b.id - a.id);
+        else if (sort === 'value-desc') filtered.sort((a, b) => b.totalValue - a.totalValue);
+        else if (sort === 'name')  filtered.sort((a, b) => a.name.localeCompare(b.name));
+        grid.innerHTML = filtered.map(c => {
+            const paid = c.installments.filter(i => i.paid).length;
+            return `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg card-hover">
+                <div class="p-5 border-b border-slate-700 flex justify-between">
+                    <div class="truncate"><span class="text-[9px] uppercase font-bold text-indigo-400 block">${c.type}</span><h4 class="font-bold text-white truncate">${c.name}</h4></div>
+                    <div class="flex gap-3 flex-shrink-0">
+                        <button onclick="openEditCarne(${c.id})" class="text-slate-500 hover:text-indigo-400 transition-colors"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteCarne(${c.id})" class="text-slate-500 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-center"><p class="text-lg font-bold text-white">${formatBRL(c.totalValue)}</p><p class="text-xs text-slate-500">${c.installmentsCount} par.</p></div>
+                    <div class="w-full bg-slate-900 h-1.5 rounded-full"><div class="bg-indigo-500 h-full" style="width:${(paid/c.installmentsCount)*100}%"></div></div>
+                    <button onclick="showDetails(${c.id})" class="w-full bg-slate-700 hover:bg-indigo-600 py-2 rounded-lg text-xs font-bold transition-all">Ver Detalhes</button>
+                </div>
+            </div>`;
+        }).join('') || '<div class="col-span-full text-center py-12 text-slate-500">Nenhum registro.</div>';
+    }
+
+    function showDetails(id) {
+        const c = carnes.find(x => x.id === id); if (!c) return;
+        let pV = 0, rV = 0;
+        document.getElementById('details-title').innerText    = c.name;
+        document.getElementById('details-subtitle').innerText = `${c.installmentsCount} parcelas`;
+        document.getElementById('installments-list').innerHTML = c.installments.map((p, i) => {
+            const st = getStatus(p.dueDate, p.paid);
+            if (p.paid) pV += p.value; else rV += p.value;
+            return `<div class="bg-slate-900 p-3 sm:p-4 rounded-xl flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <span class="text-xs text-slate-500 font-bold flex-shrink-0">${i+1}</span>
+                    <div class="min-w-0"><p class="text-xs sm:text-sm font-bold text-white truncate">${p.dueDate}</p><span class="status-badge ${st.color} text-[8px] sm:text-[9px]">${st.text}</span></div>
+                </div>
+                <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
+                    <p class="text-xs sm:text-sm font-bold mr-1">${formatBRL(p.value)}</p>
+                    <div class="flex gap-1">
+                        <button onclick="openEditInstallment(${c.id},${p.id})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-indigo-400 transition-colors"><i class="fas fa-edit text-[10px]"></i></button>
+                        <button onclick="toggleParcela(${c.id},${p.id})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${p.paid?'bg-emerald-600':'bg-slate-700'} flex items-center justify-center transition-colors"><i class="fas ${p.paid?'fa-check':'fa-wallet'} text-[10px]"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        document.getElementById('details-paid-total').innerText      = formatBRL(pV);
+        document.getElementById('details-remaining-total').innerText = formatBRL(rV);
+        openModal('modal-details');
+    }
+
+    function renderFiles() {
+        document.getElementById('files-grid').innerHTML = files.map(f => `<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden group">
+            <div class="h-24 sm:h-32 bg-slate-900 flex items-center justify-center relative">
+                ${f.type.includes('pdf') ? '<i class="fas fa-file-pdf text-2xl sm:text-4xl text-rose-500"></i>' : `<img src="${f.data}" class="w-full h-full object-cover">`}
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 sm:gap-3 transition-all">
+                    <a href="${f.data}" download="${f.name}" class="w-7 h-7 sm:w-8 sm:h-8 bg-indigo-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-download"></i></a>
+                    <button onclick="startRenameFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteFile(${f.id})" class="w-7 h-7 sm:w-8 sm:h-8 bg-rose-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="p-2 sm:p-3" id="file-name-container-${f.id}"><p class="text-[9px] sm:text-[11px] font-bold text-white truncate">${f.name}</p></div>
+        </div>`).join('');
+    }
+
+    // ── Navigation ────────────────────────────────────────────────────────────
+
+    const TAB_LABELS = { dashboard: 'Dashboard', carnes: 'Registros e Parcelas', arquivos: 'Arquivos e Recibos', calculadora: 'Calculadora', usuarios: 'Gerenciar Usuários', logs: 'Logs do Sistema' };
+
+    function switchTab(t) {
+        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(`view-${t}`).classList.remove('hidden');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-indigo-600', 'text-white'));
+        const btn = document.getElementById(`nav-${t}`); if (btn) btn.classList.add('bg-indigo-600', 'text-white');
+        document.getElementById('current-tab-title').innerText = TAB_LABELS[t] || t;
+        if (t === 'usuarios') renderUsersTable();
+        if (t === 'logs')     renderLogs();
+        if (window.innerWidth < 768) { const s = document.getElementById('sidebar-menu'); if (!s.classList.contains('-translate-x-full')) toggleMobileMenu(); }
+    }
+
+    // ── Search ────────────────────────────────────────────────────────────────
+
+    function handleSearch(v) {
+        searchQuery = v;
+        const term = (v || '').toLowerCase();
+        ['upcoming-list','carnes-grid','files-grid','users-table-body','logs-table-body'].forEach(id => {
+            const c = document.getElementById(id); if (!c) return;
+            for (const item of c.children) item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
+        });
+    }
+
+    const contentObserver = new MutationObserver(() => {
+        const q = document.getElementById('global-search').value;
+        if (q) handleSearch(q);
+    });
+
+    // ── Filters / Modals ──────────────────────────────────────────────────────
+
+    function filterType(t) { currentFilter = t; renderLists(); updateStats(); }
+    function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ── Calculator ────────────────────────────────────────────────────────────
+
+    function calculateFinance() {
+        const v = parseFloat(document.getElementById('calc-valor').value),
+              tx = parseFloat(document.getElementById('calc-taxa').value),
+              t  = parseFloat(document.getElementById('calc-tempo').value);
+        if (!v || !tx || !t) return;
+        const j = v * (tx / 100) * t;
+        document.getElementById('res-juros').innerText    = formatBRL(j);
+        document.getElementById('res-montante').innerText = formatBRL(v + j);
+        document.getElementById('calc-result').classList.remove('hidden');
+    }
+
+    function calculateCompoundInterest() {
+        const p = parseFloat(document.getElementById('comp-valor').value),
+              r = parseFloat(document.getElementById('comp-taxa').value) / 100,
+              t = parseFloat(document.getElementById('comp-tempo').value);
+        if (!p || !r || !t) return;
+        const m = p * Math.pow((1 + r), t);
+        document.getElementById('comp-res-juros').innerText    = formatBRL(m - p);
+        document.getElementById('comp-res-montante').innerText = formatBRL(m);
+        document.getElementById('comp-result').classList.remove('hidden');
+    }
+
+    function clearCalculator(type) {
+        if (type === 'simple') {
+            ['calc-valor','calc-taxa','calc-tempo'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('calc-result').classList.add('hidden');
+        } else {
+            ['comp-valor','comp-taxa','comp-tempo'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('comp-result').classList.add('hidden');
+        }
+    }
+
+    // ── Admin: Users ──────────────────────────────────────────────────────────
+
+    function renderUsersTable() {
+        if (!currentUser?.isAdmin) return;
+        const users = safeGet('calixto_users') || [];
+        document.getElementById('users-table-body').innerHTML = users.map(u =>
+            `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                <td class="px-4 py-4 text-sm font-medium text-slate-200">${u.name} ${u.email === ADMIN_EMAIL ? '<span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold ml-1">ADMIN</span>' : ''}</td>
+                <td class="px-4 py-4 text-sm text-slate-400">${u.email}</td>
+                <td class="px-4 py-4 text-sm"><span class="status-badge ${u.isAdmin ? 'bg-indigo-500/10 text-indigo-400' : 'bg-slate-700/30 text-slate-500'}">${u.isAdmin ? 'Admin' : 'User'}</span></td>
+                <td class="px-4 py-4 text-center"><div class="flex items-center justify-center gap-3">
+                    <button onclick="adminEditUser('${u.id}')" class="text-slate-400 hover:text-emerald-400"><i class="fas fa-edit"></i></button>
+                    ${u.id !== 'admin_root' ? `<button onclick="adminDeleteUser('${u.id}')" class="text-slate-400 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>` : ''}
+                </div></td>
+            </tr>`
+        ).join('');
+    }
+
+    function adminCreateUser(e) {
+        e.preventDefault();
+        const name    = document.getElementById('admin-add-name').value;
+        const email   = document.getElementById('admin-add-email').value;
+        const pass    = document.getElementById('admin-add-pass').value;
+        const isAdmin = document.getElementById('admin-add-is-admin').checked;
+        const users   = safeGet('calixto_users') || [];
+        if (pass.length < 6 || users.find(u => u.email === email)) return alert('Erro nos dados.');
+        users.push({ id: Date.now().toString(), name, email, password: hashPassword(pass), isAdmin });
+        safeSet('calixto_users', users); renderUsersTable(); closeModal('modal-add-user');
+    }
+
+    function adminEditUser(id) {
+        const users = safeGet('calixto_users') || [];
+        const user  = users.find(u => u.id === id); if (!user) return;
+        document.getElementById('edit-user-id').value            = user.id;
+        document.getElementById('edit-user-name').value          = user.name;
+        document.getElementById('edit-user-email').value         = user.email;
+        document.getElementById('edit-user-pass').value          = '';
+        document.getElementById('edit-user-is-admin').checked    = user.isAdmin;
+        if (id === 'admin_root') document.getElementById('edit-admin-toggle-wrapper').classList.add('hidden');
+        else                     document.getElementById('edit-admin-toggle-wrapper').classList.remove('hidden');
+        openModal('modal-edit-user');
+    }
+
+    function adminUpdateUser(e) {
+        e.preventDefault();
+        const id      = document.getElementById('edit-user-id').value;
+        const name    = document.getElementById('edit-user-name').value;
+        const email   = document.getElementById('edit-user-email').value;
+        const pass    = document.getElementById('edit-user-pass').value;
+        const isAdmin = document.getElementById('edit-user-is-admin').checked;
+        let users = safeGet('calixto_users') || [];
+        const idx = users.findIndex(u => u.id === id);
+        if (idx !== -1) {
+            users[idx].name  = name;
+            users[idx].email = email;
+            if (id !== 'admin_root') users[idx].isAdmin = isAdmin;
+            if (pass.trim() !== '') users[idx].password = hashPassword(pass);
+            safeSet('calixto_users', users); startApp(); closeModal('modal-edit-user');
+        }
+    }
+
+    function adminDeleteUser(id) {
+        if (id !== 'admin_root' && confirm('Remover usuário?')) {
+            let users = safeGet('calixto_users') || [];
+            users = users.filter(u => u.id !== id);
+            safeSet('calixto_users', users); renderUsersTable();
+        }
+    }
+
+    // ── Admin: Logs ───────────────────────────────────────────────────────────
+
+    function renderLogs() {
+        if (!currentUser?.isAdmin) return;
+        const logs   = safeGet('calixto_logs') || [];
+        const filter = document.getElementById('log-filter').value;
+        let filtered = logs;
+        if (filter === 'login')    filtered = logs.filter(l => l.action.toLowerCase().includes('login'));
+        else if (filter === 'user_mod')  filtered = logs.filter(l => l.type === 'user_mod');
+        else if (filter === 'critical')  filtered = logs.filter(l => l.type === 'critical');
+        document.getElementById('logs-table-body').innerHTML = filtered.map(l =>
+            `<tr class="border-b border-slate-800/50 text-xs">
+                <td class="px-4 py-3 text-[10px] font-mono text-slate-500">${new Date(l.timestamp).toLocaleString()}</td>
+                <td class="px-4 py-3"><p class="font-medium text-slate-300">${l.user}</p></td>
+                <td class="px-4 py-3"><span class="${l.type === 'critical' ? 'text-rose-400 font-bold' : 'text-slate-200'}">${l.action}</span></td>
+                <td class="px-4 py-3 text-indigo-400 truncate max-w-[100px]">${l.target}</td>
+            </tr>`
+        ).join('');
+    }
+
+    // ── CSV Export ────────────────────────────────────────────────────────────
+
+    function exportarCSV() {
+        if (!carnes || carnes.length === 0) return alert('Nenhum registro encontrado.');
+        const headers = ['ID','Nome/Cliente','Tipo','Valor Original','Valor Total','Qtd Parcelas','Taxa Juros (%)','Data Inicio','Primeiro Vencimento','Observacao','Data Criacao'];
+        const rows = carnes.map(c => [
+            c.id,
+            `"${c.name.replace(/"/g,'""')}"`,
+            `"${c.type.replace(/"/g,'""')}"`,
+            c.originalValue, c.totalValue, c.installmentsCount, c.interestRate,
+            c.startDate, c.firstDueDate,
+            `"${(c.observation||'').replace(/"/g,'""')}"`,
+            c.createdAt
+        ]);
+        const csv  = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href     = URL.createObjectURL(blob);
+        link.download = 'registros.csv';
+        link.click();
+        addLog('Exportação CSV realizada', 'registros.csv', 'info');
+        showToast('Relatório CSV exportado', 'success');
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────────────────
+
+    window.onload = () => {
+        initAdmin();
+        startApp();
+        const contentCont = document.getElementById('content-container');
+        if (contentCont) contentObserver.observe(contentCont, { childList: true, subtree: true });
+    };
+</script>
 </body>
 </html>
