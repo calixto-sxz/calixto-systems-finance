@@ -1471,7 +1471,7 @@
                     </div>
                     <div class="flex gap-2">
                         <button onclick="contabil_openClientModal(${c.id})" class="text-slate-500 hover:text-indigo-400"><i class="fas fa-edit"></i></button>
-                        <button onclick="contabil_deleteClient(${c.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash"></i></button>
+                        <button onclick="contabil_deleteClient(${c.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>
                 <div class="space-y-1 mb-4">
@@ -1561,8 +1561,9 @@
 
     function contabil_saveHonorario(e) {
         e.preventDefault();
+        // Gerando um ID verdadeiramente único para evitar colisão no fluxo de caixa
         const obj = {
-            id: Date.now(),
+            id: Date.now() + Math.random(),
             clientId: document.getElementById('h-client').value,
             ref: document.getElementById('h-ref').value,
             value: parseFloat(document.getElementById('h-value').value),
@@ -1591,7 +1592,12 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-lg font-bold ${h.paid ? 'text-emerald-400' : 'text-white'}">${formatBRL(h.value)}</p>
+                        <div class="flex items-center justify-end gap-3 mb-1">
+                            <p class="text-lg font-bold ${h.paid ? 'text-emerald-400' : 'text-white'}">${formatBRL(h.value)}</p>
+                            <button onclick="mod_excluirHonorario(${h.id})" class="text-slate-500 hover:text-rose-500 text-sm p-1 transition-colors" title="Excluir Honorário">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                         <button onclick="contabil_toggleHonorario(${h.id})" class="text-[10px] font-bold uppercase ${h.paid ? 'text-slate-500' : 'text-indigo-400 hover:underline'}">
                             ${h.paid ? 'Recebido ✓' : 'Marcar como Recebido'}
                         </button>
@@ -1599,6 +1605,19 @@
                 </div>
             `;
         }).join('') || '<p class="col-span-full text-center py-10 text-slate-500 text-xs">Nenhum honorário registrado.</p>';
+    }
+
+    function mod_excluirHonorario(id) {
+        if(confirm('Tem certeza que deseja excluir este honorário?')) {
+            contabil_honorarios = contabil_honorarios.filter(h => h.id != id);
+            contabil_saveData();
+            contabil_renderHonorarios();
+            // Atualiza o fluxo de caixa se estiver visível
+            if(!document.getElementById('view-contabil-fluxo').classList.contains('hidden')) {
+                contabil_renderFluxo();
+            }
+            showToast('Honorário excluído', 'info');
+        }
     }
 
     function contabil_toggleHonorario(id) {
@@ -1615,7 +1634,7 @@
         let totalSaida = 0;
         let htmlItems = [];
 
-        // 1. Honorários como entrada
+        // 1. Honorários como entrada - Iterando sem eliminar duplicados
         contabil_honorarios.forEach(h => {
             if(h.ref === mesFiltro) {
                 totalEntrada += h.value;
@@ -1758,8 +1777,8 @@
         showToast('Backup exportado!');
     }
 
-    function contabil_importBackup(e) {
-        const file = e.target.files[0];
+    function contabil_importBackup(event) {
+        const file = event.target.files[0];
         if(!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
@@ -1780,7 +1799,6 @@
     }
 
     // --- Dashboard Cliente (Painel Consolidado) ---
-    // Injeção de modal de dashboard de cliente dinamicamente se necessário
     function contabil_viewClientDashboard(clientId) {
         const cli = contabil_clientes.find(c => c.id == clientId);
         if(!cli) return;
