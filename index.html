@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap');
         
         :root {
             --primary: #6366f1;
@@ -63,7 +63,6 @@
         .toast-error   { border-color: #ef4444; }
         .toast-info    { border-color: #6366f1; }
 
-        /* Estilos Novos Contábil */
         .contabil-border-accent { border-left: 4px solid #6366f1; }
         .contabil-row-hover:hover { background-color: rgba(99, 102, 241, 0.05); }
     </style>
@@ -150,10 +149,13 @@
                     <i class="fas fa-tasks w-5 flex-shrink-0"></i> Obrigações Fiscais
                 </button>
                 <button onclick="switchTab('contabil-honorarios')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-contabil-honorarios">
-                    <i class="fas fa-hand-holding-usd w-5 flex-shrink-0"></i> Honorários
+                    <i class="fas fa-hand-holding-usd w-5 flex-shrink-0"></i> Contas a Receber
                 </button>
                 <button onclick="switchTab('contabil-fluxo')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-contabil-fluxo">
                     <i class="fas fa-exchange-alt w-5 flex-shrink-0"></i> Fluxo de Caixa
+                </button>
+                <button onclick="switchTab('inventario')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap text-sm" id="nav-inventario">
+                    <i class="fas fa-boxes w-5 flex-shrink-0"></i> Inventário / Imobilizado
                 </button>
 
                 <p class="text-[10px] font-bold text-slate-500 uppercase px-4 mt-6 mb-2 tracking-widest">Ferramentas</p>
@@ -210,21 +212,16 @@
         <div id="content-container" class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-slate-900">
 
             <section id="view-dashboard" class="space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                        <p class="text-slate-400 text-sm mb-1 truncate">Expectativa Bruta</p>
-                        <h3 id="stat-total-receber" class="stat-value font-bold text-white">R$ 0,00</h3>
-                        <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1"><i class="fas fa-clock"></i> Total a receber</div>
+                        <p class="text-slate-400 text-sm mb-1 truncate">Saldo Atual</p>
+                        <h3 id="stat-total-saldo-real" class="stat-value font-bold text-white">R$ 0,00</h3>
+                        <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1"><i class="fas fa-wallet"></i> Entradas pagas - Saídas pagas</div>
                     </div>
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                        <p class="text-slate-400 text-sm mb-1 truncate">Já Recebido</p>
-                        <h3 id="stat-total-recebido" class="stat-value font-bold text-emerald-400">R$ 0,00</h3>
-                        <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1"><i class="fas fa-check-circle"></i> Capital retornado</div>
-                    </div>
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm min-w-0 overflow-hidden flex flex-col justify-between min-h-[140px]">
-                        <p class="text-slate-400 text-sm mb-1 truncate">Total em Aberto</p>
-                        <h3 id="stat-total-aberto" class="stat-value font-bold text-rose-400">R$ 0,00</h3>
-                        <div class="mt-2 text-xs text-rose-400 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Pendente</div>
+                        <p class="text-slate-400 text-sm mb-1 truncate">Pendente de Recebimento</p>
+                        <h3 id="stat-total-pendente-receber" class="stat-value font-bold text-amber-400">R$ 0,00</h3>
+                        <div class="mt-2 text-xs text-amber-400 flex items-center gap-1"><i class="fas fa-clock"></i> Contas a receber em aberto</div>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -335,7 +332,7 @@
                 </div>
             </section>
 
-            <!-- NOVAS SEÇÕES CONTÁBEIS -->
+            <!-- SEÇÕES CONTÁBEIS E ADICIONADOS -->
             <section id="view-contabil-clientes" class="hidden space-y-6">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xl font-bold">Clientes e Empresas</h3>
@@ -354,25 +351,27 @@
                     </button>
                 </div>
                 <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-900/50 border-b border-slate-700">
-                            <tr>
-                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Tipo/Guia</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Cliente</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Vencimento</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Valor</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Status</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contabil-obligations-table"></tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-900/50 border-b border-slate-700">
+                                <tr>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Tipo/Guia</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Cliente</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Vencimento</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Valor</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Status</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contabil-obligations-table"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
             <section id="view-contabil-honorarios" class="hidden space-y-6">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold">Gestão de Honorários</h3>
+                    <h3 class="text-xl font-bold">Gestão de Contas a Receber</h3>
                     <button onclick="contabil_openHonorarioModal()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
                         <i class="fas fa-hand-holding-usd"></i> Registrar Cobrança
                     </button>
@@ -383,15 +382,15 @@
             <section id="view-contabil-fluxo" class="hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl">
-                        <p class="text-xs font-bold uppercase text-emerald-500">Entradas (Honorários/Receitas)</p>
+                        <p class="text-xs font-bold uppercase text-emerald-500">Entradas</p>
                         <h4 id="fluxo-total-entrada" class="text-2xl font-bold mt-1 text-white">R$ 0,00</h4>
                     </div>
                     <div class="bg-rose-500/10 border border-rose-500/20 p-6 rounded-2xl">
-                        <p class="text-xs font-bold uppercase text-rose-500">Saídas (Despesas/Impostos)</p>
+                        <p class="text-xs font-bold uppercase text-rose-500">Saídas</p>
                         <h4 id="fluxo-total-saida" class="text-2xl font-bold mt-1 text-white">R$ 0,00</h4>
                     </div>
                     <div class="bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-2xl">
-                        <p class="text-xs font-bold uppercase text-indigo-500">Saldo Projetado</p>
+                        <p class="text-xs font-bold uppercase text-indigo-500">Saldo</p>
                         <h4 id="fluxo-total-saldo" class="text-2xl font-bold mt-1 text-white">R$ 0,00</h4>
                     </div>
                 </div>
@@ -405,8 +404,19 @@
                             <input type="month" id="fluxo-filtro-mes" onchange="contabil_renderFluxo()" class="bg-slate-900 border-none rounded-lg text-xs px-3 py-1.5 text-white">
                         </div>
                     </div>
-                    <div id="contabil-fluxo-extrato" class="space-y-2"></div>
+                    <div id="contabil-fluxo-extrato" class="space-y-3"></div>
                 </div>
+            </section>
+
+            <!-- INVENTARIO / IMOBILIZADO SECTION -->
+            <section id="view-inventario" class="hidden space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold">Ativos Imobilizados e Inventário</h3>
+                    <button onclick="inventario_openModal()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Cadastrar Ativo
+                    </button>
+                </div>
+                <div id="inventario-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
             </section>
 
             <section id="view-usuarios" class="hidden space-y-6">
@@ -480,9 +490,7 @@
                     <label class="block text-sm font-medium text-slate-400 mb-2">Descrição / Nome do Cliente</label>
                     <input type="text" id="entry-name" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Empréstimo João da Silva">
                 </div>
-                <div class="col-span-full" id="contabil-injection-point">
-                    <!-- Injeção JS de Centro de Custo e Cliente Link via Script -->
-                </div>
+                <div class="col-span-full" id="contabil-injection-point"></div>
                 <div class="col-span-full">
                     <label class="block text-sm font-medium text-slate-400 mb-2">Observação</label>
                     <textarea id="entry-observation" rows="3" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" placeholder="Ex: Detalhes adicionais..."></textarea>
@@ -542,7 +550,7 @@
     </div>
 </div>
 
-<!-- MODALS NOVOS CONTÁBEIS -->
+<!-- MODALS CONTÁBEIS -->
 <div id="contabil-modal-client" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
     <div class="bg-slate-800 w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl modal-enter">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
@@ -586,15 +594,8 @@
         <form id="form-contabil-obligation" onsubmit="contabil_saveObligation(event)" class="p-6 space-y-4">
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Guia</label>
-                    <select id="ob-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm">
-                        <option value="DAS">DAS (Simples Nacional)</option>
-                        <option value="DARF">DARF (IRRF/PIS/COFINS)</option>
-                        <option value="GPS">GPS (INSS)</option>
-                        <option value="FGTS">FGTS</option>
-                        <option value="ISS">ISS (Prefeitura)</option>
-                        <option value="OUTRO">Outros</option>
-                    </select>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome da Obrigação</label>
+                    <input type="text" id="ob-type" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ex: DAS Maio 2026, DARF IRRF...">
                 </div>
                 <div class="col-span-2">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Cliente Vinculado</label>
@@ -617,7 +618,7 @@
 <div id="contabil-modal-honorario" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
     <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl modal-enter">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-            <h3 class="font-bold">Lançar Honorário</h3>
+            <h3 class="font-bold">Lançar Contas a Receber</h3>
             <button onclick="closeModal('contabil-modal-honorario')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
         </div>
         <form id="form-contabil-honorario" onsubmit="contabil_saveHonorario(event)" class="p-6 space-y-4">
@@ -634,6 +635,56 @@
                 <input type="number" step="0.01" id="h-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
             </div>
             <button type="submit" class="w-full bg-emerald-600 py-3 rounded-xl font-bold mt-4">Confirmar Cobrança</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL INVENTARIO -->
+<div id="modal-inventario" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl modal-enter">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+            <h3 id="inventario-modal-title" class="font-bold">Cadastrar Ativo Imobilizado</h3>
+            <button onclick="closeModal('modal-inventario')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form id="form-inventario" onsubmit="inventario_saveItem(event)" class="p-6 space-y-4">
+            <input type="hidden" id="inv-id">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome do Item</label>
+                    <input type="text" id="inv-name" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Categoria</label>
+                    <input type="text" id="inv-category" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ex: Equipamentos, Imóveis...">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Data de Aquisição</label>
+                    <input type="date" id="inv-acq-date" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Valor de Aquisição (R$)</label>
+                    <input type="number" step="0.01" id="inv-acq-value" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Percentual Depreciação (%)</label>
+                    <input type="number" step="0.01" id="inv-dep-pct" required class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ex: 10">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Frequência</label>
+                    <select id="inv-dep-freq" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none">
+                        <option value="Mensal">Mensal</option>
+                        <option value="Anual">Anual</option>
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Observações</label>
+                    <textarea id="inv-obs" rows="2" class="w-full bg-slate-900 border-slate-700 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-4 mt-6">
+                <button type="button" onclick="closeModal('modal-inventario')" class="flex-1 bg-slate-700 py-3 rounded-xl font-bold">Cancelar</button>
+                <button type="submit" class="flex-1 bg-indigo-600 py-3 rounded-xl font-bold">Salvar Patrimônio</button>
+            </div>
         </form>
     </div>
 </div>
@@ -895,8 +946,9 @@
         carnes = safeGet(`calixto_data_${currentUser.id}`)  || [];
         files  = safeGet(`calixto_files_${currentUser.id}`) || [];
 
-        // Inicializa Módulo Contábil
+        // Inicializa Módulo Contábil e Inventário
         contabil_init();
+        inventario_init();
 
         updateStats(); renderLists(); renderFiles(); renderUsersTable(); renderLogs();
     }
@@ -1069,11 +1121,64 @@
     // ── Dashboard stats ───────────────────────────────────────────────────────
 
     function updateStats() {
-        let recebido = 0, aberto = 0;
-        carnes.forEach(c => c.installments.forEach(p => p.paid ? recebido += p.value : aberto += p.value));
-        document.getElementById('stat-total-receber').innerText  = formatBRL(recebido + aberto);
-        document.getElementById('stat-total-recebido').innerText = formatBRL(recebido);
-        document.getElementById('stat-total-aberto').innerText   = formatBRL(aberto);
+        // Cálculo do Saldo Atual (Entradas pagas - Saídas pagas)
+        // 1. Entradas de Carnes/Parcelas com centro de custo 'Receita'
+        let entradasParcelasPagas = 0;
+        carnes.forEach(c => {
+            if (c.contabil_centro === 'Receita') {
+                c.installments.forEach(p => {
+                    if (p.paid) entradasParcelasPagas += p.value;
+                });
+            }
+        });
+        
+        // 2. Entradas de Contas a Receber (antigos Honorários) pagas
+        let contasReceberPagas = 0;
+        contabil_honorarios.forEach(h => {
+            if (h.paid) contasReceberPagas += h.value;
+        });
+
+        // 3. Saídas de Carnes/Parcelas com centro de custo 'Despesa' ou 'Impostos'
+        let saidasParcelasPagas = 0;
+        carnes.forEach(c => {
+            if (c.contabil_centro === 'Despesa' || c.contabil_centro === 'Impostos') {
+                c.installments.forEach(p => {
+                    if (p.paid) saidasParcelasPagas += p.value;
+                });
+            }
+        });
+
+        // 4. Saídas de Obrigações Fiscais pagas
+        let obrigacoesPagas = 0;
+        contabil_obrigacoes.forEach(o => {
+            if (o.paid) obrigacoesPagas += o.value;
+        });
+
+        const totalEntradasPagas = entradasParcelasPagas + contasReceberPagas;
+        const totalSaidasPagas = saidasParcelasPagas + obrigacoesPagas;
+        const saldoReal = totalEntradasPagas - totalSaidasPagas;
+
+        // Cálculo de Pendente de Recebimento
+        // 1. Parcelas de receitas em aberto
+        let entradasParcelasPendentes = 0;
+        carnes.forEach(c => {
+            if (c.contabil_centro === 'Receita') {
+                c.installments.forEach(p => {
+                    if (!p.paid) entradasParcelasPendentes += p.value;
+                });
+            }
+        });
+
+        // 2. Contas a receber em aberto
+        let contasReceberPendentes = 0;
+        contabil_honorarios.forEach(h => {
+            if (!h.paid) contasReceberPendentes += h.value;
+        });
+
+        const totalPendenteReceber = entradasParcelasPendentes + contasReceberPendentes;
+
+        document.getElementById('stat-total-saldo-real').innerText = formatBRL(saldoReal);
+        document.getElementById('stat-total-pendente-receber').innerText = formatBRL(totalPendenteReceber);
 
         const pendentes = [];
         carnes.forEach(c => c.installments.forEach(p => { if (!p.paid) pendentes.push({...p, name: c.name}); }));
@@ -1191,8 +1296,9 @@
         logs: 'Logs do Sistema',
         'contabil-clientes': 'Clientes e Empresas',
         'contabil-obrigacoes': 'Obrigações Fiscais',
-        'contabil-honorarios': 'Honorários Contábeis',
-        'contabil-fluxo': 'Fluxo de Caixa Contábil'
+        'contabil-honorarios': 'Contas a Receber',
+        'contabil-fluxo': 'Fluxo de Caixa Contábil',
+        'inventario': 'Inventário / Imobilizado'
     };
 
     function switchTab(t) {
@@ -1213,6 +1319,7 @@
         if (t === 'contabil-obrigacoes') contabil_renderObligations();
         if (t === 'contabil-honorarios') contabil_renderHonorarios();
         if (t === 'contabil-fluxo') contabil_renderFluxo();
+        if (t === 'inventario') inventario_render();
         
         if (window.innerWidth < 768) { 
             const s = document.getElementById('sidebar-menu'); 
@@ -1225,7 +1332,7 @@
     function handleSearch(v) {
         searchQuery = v;
         const term = (v || '').toLowerCase();
-        ['upcoming-list','carnes-grid','files-grid','users-table-body','logs-table-body','contabil-clients-list','contabil-obligations-table'].forEach(id => {
+        ['upcoming-list','carnes-grid','files-grid','users-table-body','logs-table-body','contabil-clients-list','contabil-obligations-table', 'inventario-grid'].forEach(id => {
             const c = document.getElementById(id); if (!c) return;
             for (const item of c.children) item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
         });
@@ -1402,7 +1509,19 @@
         if(!currentUser) return;
         contabil_clientes = safeGet(`contabil_cli_${currentUser.id}`) || [];
         contabil_obrigacoes = safeGet(`contabil_obr_${currentUser.id}`) || [];
-        contabil_honorarios = safeGet(`contabil_hon_${currentUser.id}`) || [];
+        
+        // MIGRAR DADOS ANTIGOS DE HONORÁRIOS SE EXISTIREM (Sem perda de dados)
+        const oldHonorarios = safeGet(`contabil_hon_${currentUser.id}`);
+        const newContasReceber = safeGet(`contabil_rec_${currentUser.id}`);
+        
+        if (oldHonorarios && !newContasReceber) {
+            contabil_honorarios = oldHonorarios;
+            safeSet(`contabil_rec_${currentUser.id}`, oldHonorarios);
+            localStorage.removeItem(`contabil_hon_${currentUser.id}`);
+        } else {
+            contabil_honorarios = newContasReceber || [];
+        }
+        
         contabil_logs = safeGet(`contabil_log_${currentUser.id}`) || [];
         
         // Configura filtros de data padrão
@@ -1416,8 +1535,9 @@
     function contabil_saveData() {
         safeSet(`contabil_cli_${currentUser.id}`, contabil_clientes);
         safeSet(`contabil_obr_${currentUser.id}`, contabil_obrigacoes);
-        safeSet(`contabil_hon_${currentUser.id}`, contabil_honorarios);
+        safeSet(`contabil_rec_${currentUser.id}`, contabil_honorarios); // Salva com a nova chave preservada
         safeSet(`contabil_log_${currentUser.id}`, contabil_logs);
+        updateStats();
     }
 
     // --- Clientes ---
@@ -1544,14 +1664,7 @@
         if(o) { o.paid = !o.paid; contabil_saveData(); contabil_renderObligations(); }
     }
 
-    function contabil_deleteObligation(id) {
-        if(confirm('Excluir esta obrigação?')) {
-            contabil_obrigacoes = contabil_obrigacoes.filter(o => o.id != id);
-            contabil_saveData(); contabil_renderObligations();
-        }
-    }
-
-    // --- Honorários ---
+    // --- Contas a Receber (antigo Honorários) ---
     function contabil_openHonorarioModal() {
         const sel = document.getElementById('h-client');
         sel.innerHTML = contabil_clientes.map(c => `<option value="${c.id}">${c.name}</option>`).join('') || '<option value="">Cadastre um cliente primeiro</option>';
@@ -1561,7 +1674,6 @@
 
     function contabil_saveHonorario(e) {
         e.preventDefault();
-        // Gerando um ID verdadeiramente único para evitar colisão no fluxo de caixa
         const obj = {
             id: Date.now() + Math.random(),
             clientId: document.getElementById('h-client').value,
@@ -1573,7 +1685,7 @@
         contabil_saveData();
         closeModal('contabil-modal-honorario');
         contabil_renderHonorarios();
-        showToast('Honorário lançado');
+        showToast('Cobrança lançada com sucesso');
     }
 
     function contabil_renderHonorarios() {
@@ -1594,7 +1706,7 @@
                     <div class="text-right">
                         <div class="flex items-center justify-end gap-3 mb-1">
                             <p class="text-lg font-bold ${h.paid ? 'text-emerald-400' : 'text-white'}">${formatBRL(h.value)}</p>
-                            <button onclick="mod_excluirHonorario(${h.id})" class="text-slate-500 hover:text-rose-500 text-sm p-1 transition-colors" title="Excluir Honorário">
+                            <button onclick="mod_excluirHonorario(${h.id})" class="text-slate-500 hover:text-rose-500 text-sm p-1 transition-colors" title="Excluir Lançamento">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
@@ -1604,19 +1716,18 @@
                     </div>
                 </div>
             `;
-        }).join('') || '<p class="col-span-full text-center py-10 text-slate-500 text-xs">Nenhum honorário registrado.</p>';
+        }).join('') || '<p class="col-span-full text-center py-10 text-slate-500 text-xs">Nenhum lançamento registrado.</p>';
     }
 
     function mod_excluirHonorario(id) {
-        if(confirm('Tem certeza que deseja excluir este honorário?')) {
+        if(confirm('Tem certeza que deseja excluir esta cobrança?')) {
             contabil_honorarios = contabil_honorarios.filter(h => h.id != id);
             contabil_saveData();
             contabil_renderHonorarios();
-            // Atualiza o fluxo de caixa se estiver visível
             if(!document.getElementById('view-contabil-fluxo').classList.contains('hidden')) {
                 contabil_renderFluxo();
             }
-            showToast('Honorário excluído', 'info');
+            showToast('Lançamento excluído', 'info');
         }
     }
 
@@ -1634,56 +1745,65 @@
         let totalSaida = 0;
         let htmlItems = [];
 
-        // 1. Honorários como entrada - Iterando sem eliminar duplicados
+        // 1. Contas a receber (Entradas)
         contabil_honorarios.forEach(h => {
             if(h.ref === mesFiltro) {
                 totalEntrada += h.value;
                 const cli = contabil_clientes.find(c => c.id == h.clientId);
                 htmlItems.push(`
-                    <div class="bg-slate-900/40 p-3 rounded-lg flex items-center justify-between border-l-4 border-emerald-500">
+                    <div class="bg-slate-900/40 p-4 rounded-xl flex items-center justify-between border-l-4 border-emerald-500">
                         <div class="text-xs">
-                            <span class="text-emerald-500 font-bold">ENTRADA</span>
-                            <p class="text-white font-medium">Honorário: ${cli ? cli.name : 'N/A'}</p>
+                            <span class="text-emerald-500 font-bold uppercase tracking-wide">ENTRADA</span>
+                            <p class="text-white font-medium text-sm mt-1">Cliente: ${cli ? cli.name : 'N/A'}</p>
+                            <p class="text-slate-400 mt-0.5">Referente: Cobrança Ref: ${h.ref} ${h.paid ? '<span class="text-emerald-400 font-semibold ml-1">(PAGO)</span>' : '<span class="text-amber-400 font-semibold ml-1">(PENDENTE)</span>'}</p>
                         </div>
-                        <span class="text-emerald-400 font-bold">${formatBRL(h.value)}</span>
+                        <span class="text-emerald-400 font-bold text-base">${formatBRL(h.value)}</span>
                     </div>
                 `);
             }
         });
 
-        // 2. Obrigações como saída
+        // 2. Obrigações Fiscais (Saídas)
         contabil_obrigacoes.forEach(o => {
             if(o.due.substring(0, 7) === mesFiltro) {
                 totalSaida += o.value;
                 const cli = contabil_clientes.find(c => c.id == o.clientId);
                 htmlItems.push(`
-                    <div class="bg-slate-900/40 p-3 rounded-lg flex items-center justify-between border-l-4 border-rose-500">
+                    <div class="bg-slate-900/40 p-4 rounded-xl flex items-center justify-between border-l-4 border-rose-500">
                         <div class="text-xs">
-                            <span class="text-rose-500 font-bold">SAÍDA</span>
-                            <p class="text-white font-medium">Guia ${o.type}: ${cli ? cli.name : 'N/A'}</p>
+                            <span class="text-rose-500 font-bold uppercase tracking-wide">SAÍDA</span>
+                            <p class="text-white font-medium text-sm mt-1">Obrigação: ${o.type}</p>
+                            <p class="text-slate-400 mt-0.5">Cliente: ${cli ? cli.name : 'N/A'} ${o.paid ? '<span class="text-emerald-400 font-semibold ml-1">(PAGO)</span>' : '<span class="text-amber-400 font-semibold ml-1">(PENDENTE)</span>'}</p>
                         </div>
-                        <span class="text-rose-400 font-bold">${formatBRL(o.value)}</span>
+                        <span class="text-rose-400 font-bold text-base">${formatBRL(o.value)}</span>
                     </div>
                 `);
             }
         });
 
-        // 3. Lançamentos manuais (Centro de Custo)
+        // 3. Lançamentos parcelados de compras/receitas (Apenas a parcela correspondente do mês)
         carnes.forEach(c => {
-            if(c.startDate.substring(0, 7) === mesFiltro) {
-                const isDespesa = (c.contabil_centro === 'Despesa' || c.contabil_centro === 'Impostos');
-                if(isDespesa) totalSaida += c.totalValue; else totalEntrada += c.totalValue;
-                
-                htmlItems.push(`
-                    <div class="bg-slate-900/40 p-3 rounded-lg flex items-center justify-between border-l-4 ${isDespesa ? 'border-rose-500' : 'border-emerald-500'}">
-                        <div class="text-xs">
-                            <span class="${isDespesa ? 'text-rose-500' : 'text-emerald-500'} font-bold">${isDespesa ? 'SAÍDA' : 'ENTRADA'}</span>
-                            <p class="text-white font-medium">${c.name} (${c.contabil_centro})</p>
+            const isDespesa = (c.contabil_centro === 'Despesa' || c.contabil_centro === 'Impostos');
+            c.installments.forEach((p, idx) => {
+                if(p.dueDate.substring(0, 7) === mesFiltro) {
+                    if (isDespesa) {
+                        totalSaida += p.value;
+                    } else if (c.contabil_centro === 'Receita') {
+                        totalEntrada += p.value;
+                    }
+
+                    htmlItems.push(`
+                        <div class="bg-slate-900/40 p-4 rounded-xl flex items-center justify-between border-l-4 ${isDespesa ? 'border-rose-500' : 'border-emerald-500'}">
+                            <div class="text-xs">
+                                <span class="${isDespesa ? 'text-rose-500' : 'text-emerald-500'} font-bold uppercase tracking-wide">${isDespesa ? 'SAÍDA' : 'ENTRADA'}</span>
+                                <p class="text-white font-medium text-sm mt-1">${isDespesa ? 'Fornecedor/Destino:' : 'Cliente/Origem:'} ${c.name}</p>
+                                <p class="text-slate-400 mt-0.5">Referente: ${c.type} (${c.contabil_centro}) | Parcela: ${idx+1}/${c.installmentsCount} ${p.paid ? '<span class="text-emerald-400 font-semibold ml-1">(PAGO)</span>' : '<span class="text-amber-400 font-semibold ml-1">(PENDENTE)</span>'}</p>
+                            </div>
+                            <span class="${isDespesa ? 'text-rose-400' : 'text-emerald-400'} font-bold text-base">${formatBRL(p.value)}</span>
                         </div>
-                        <span class="${isDespesa ? 'text-rose-400' : 'text-emerald-400'} font-bold">${formatBRL(c.totalValue)}</span>
-                    </div>
-                `);
-            }
+                    `);
+                }
+            });
         });
 
         document.getElementById('fluxo-total-entrada').innerText = formatBRL(totalEntrada);
@@ -1722,38 +1842,93 @@
         `;
     }
 
-    // --- PDF Export ---
+    // --- PDF Export (Consolidado e Idêntico à Tela) ---
     function contabil_exportRelatorioPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         const mes = document.getElementById('fluxo-filtro-mes').value;
         
         doc.setFontSize(18);
-        doc.text(`Relatório Financeiro Contábil - ${mes}`, 14, 20);
+        doc.text(`Relatório de Fluxo de Caixa - ${mes}`, 14, 20);
         doc.setFontSize(10);
         doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 26);
 
-        const data = [];
-        // Coleta itens (lógica similar ao renderFluxo)
-        contabil_honorarios.filter(h => h.ref === mes).forEach(h => {
-            const cli = contabil_clientes.find(c => c.id == h.clientId);
-            data.push(['ENTRADA', `Honorário: ${cli?.name || 'N/A'}`, formatBRL(h.value)]);
+        const tableBody = [];
+        let totalEntradas = 0;
+        let totalSaidas = 0;
+
+        // 1. Contas a Receber
+        contabil_honorarios.forEach(h => {
+            if(h.ref === mes) {
+                totalEntradas += h.value;
+                const cli = contabil_clientes.find(c => c.id == h.clientId);
+                tableBody.push([
+                    'ENTRADA',
+                    cli ? cli.name : 'N/A',
+                    `Contas a Receber Ref: ${h.ref}`,
+                    '-',
+                    h.paid ? 'PAGO' : 'PENDENTE',
+                    formatBRL(h.value)
+                ]);
+            }
         });
-        contabil_obrigacoes.filter(o => o.due.substring(0, 7) === mes).forEach(o => {
-            const cli = contabil_clientes.find(c => c.id == o.clientId);
-            data.push(['SAÍDA', `Obrigação ${o.type}: ${cli?.name || 'N/A'}`, formatBRL(o.value)]);
+
+        // 2. Obrigações Fiscais
+        contabil_obrigacoes.forEach(o => {
+            if(o.due.substring(0, 7) === mes) {
+                totalSaidas += o.value;
+                const cli = contabil_clientes.find(c => c.id == o.clientId);
+                tableBody.push([
+                    'SAÍDA',
+                    o.type,
+                    cli ? cli.name : 'N/A',
+                    o.due,
+                    o.paid ? 'PAGO' : 'PENDENTE',
+                    formatBRL(o.value)
+                ]);
+            }
+        });
+
+        // 3. Parcelas de Compras/Despesas
+        carnes.forEach(c => {
+            const isDespesa = (c.contabil_centro === 'Despesa' || c.contabil_centro === 'Impostos');
+            c.installments.forEach((p, idx) => {
+                if(p.dueDate.substring(0, 7) === mes) {
+                    if (isDespesa) totalSaidas += p.value;
+                    else if (c.contabil_centro === 'Receita') totalEntradas += p.value;
+
+                    tableBody.push([
+                        isDespesa ? 'SAÍDA' : 'ENTRADA',
+                        c.name,
+                        `${c.type} (${c.contabil_centro}) - Parcela ${idx+1}/${c.installmentsCount}`,
+                        p.dueDate,
+                        p.paid ? 'PAGO' : 'PENDENTE',
+                        formatBRL(p.value)
+                    ]);
+                }
+            });
         });
 
         doc.autoTable({
             startY: 35,
-            head: [['Fluxo', 'Descrição', 'Valor']],
-            body: data,
+            head: [['Tipo', 'Origem / Destino', 'Referente / Categoria', 'Vencimento', 'Status', 'Valor']],
+            body: tableBody,
             theme: 'striped',
-            headStyles: { fillColor: [99, 102, 241] }
+            headStyles: { fillColor: [99, 102, 241] },
+            columnStyles: {
+                5: { halign: 'right' }
+            }
         });
 
-        doc.save(`relatorio_${mes}.pdf`);
-        showToast('PDF gerado com sucesso!');
+        const finalY = doc.previousAutoTable.finalY + 10;
+        doc.setFontSize(11);
+        doc.text(`Total Entradas: ${formatBRL(totalEntradas)}`, 14, finalY);
+        doc.text(`Total Saídas: ${formatBRL(totalSaidas)}`, 14, finalY + 6);
+        doc.setFontSize(12);
+        doc.text(`Saldo Final do Período: ${formatBRL(totalEntradas - totalSaidas)}`, 14, finalY + 14);
+
+        doc.save(`extrato_fluxo_caixa_${mes}.pdf`);
+        showToast('PDF exportado com sucesso!');
     }
 
     // --- Backup & Restore ---
@@ -1821,14 +1996,14 @@
                 </div>
                 
                 <div>
-                    <h5 class="text-sm font-bold text-indigo-400 mb-3 uppercase">Histórico de Honorários</h5>
+                    <h5 class="text-sm font-bold text-indigo-400 mb-3 uppercase">Histórico de Cobranças</h5>
                     <div class="space-y-2">
                         ${clientHon.map(h => `
                             <div class="flex justify-between text-xs p-2 bg-slate-900 rounded border border-slate-700">
                                 <span>Ref: ${h.ref}</span>
                                 <span class="font-bold ${h.paid ? 'text-emerald-400' : 'text-rose-400'}">${formatBRL(h.value)}</span>
                             </div>
-                        `).join('') || '<p class="text-xs text-slate-500 italic">Sem honorários.</p>'}
+                        `).join('') || '<p class="text-xs text-slate-500 italic">Sem lançamentos.</p>'}
                     </div>
                 </div>
 
@@ -1870,6 +2045,156 @@
             </div>
         `;
         document.body.appendChild(dashModal);
+    }
+
+    // ==========================================================================
+    // MÓDULO INVENTÁRIO / IMOBILIZADO
+    // ==========================================================================
+    let inventario_itens = [];
+
+    function inventario_init() {
+        if (!currentUser) return;
+        inventario_itens = safeGet(`contabil_inv_${currentUser.id}`) || [];
+    }
+
+    function inventario_saveData() {
+        safeSet(`contabil_inv_${currentUser.id}`, inventario_itens);
+        inventario_render();
+    }
+
+    function inventario_openModal(id = null) {
+        document.getElementById('form-inventario').reset();
+        document.getElementById('inv-id').value = '';
+        document.getElementById('inventario-modal-title').innerText = 'Cadastrar Ativo Imobilizado';
+        if (id) {
+            const item = inventario_itens.find(i => i.id == id);
+            if (item) {
+                document.getElementById('inv-id').value = item.id;
+                document.getElementById('inv-name').value = item.name;
+                document.getElementById('inv-category').value = item.category;
+                document.getElementById('inv-acq-date').value = item.acquisitionDate;
+                document.getElementById('inv-acq-value').value = item.acquisitionValue;
+                document.getElementById('inv-dep-pct').value = item.depreciationPercentage;
+                document.getElementById('inv-dep-freq').value = item.depreciationFrequency;
+                document.getElementById('inv-obs').value = item.obs || '';
+                document.getElementById('inventario-modal-title').innerText = 'Editar Ativo';
+            }
+        }
+        openModal('modal-inventario');
+    }
+
+    function inventario_saveItem(e) {
+        e.preventDefault();
+        const id = document.getElementById('inv-id').value;
+        const data = {
+            name: document.getElementById('inv-name').value,
+            category: document.getElementById('inv-category').value,
+            acquisitionDate: document.getElementById('inv-acq-date').value,
+            acquisitionValue: parseFloat(document.getElementById('inv-acq-value').value),
+            depreciationPercentage: parseFloat(document.getElementById('inv-dep-pct').value),
+            depreciationFrequency: document.getElementById('inv-dep-freq').value,
+            obs: document.getElementById('inv-obs').value
+        };
+
+        if (id) {
+            const idx = inventario_itens.findIndex(i => i.id == id);
+            inventario_itens[idx] = { ...inventario_itens[idx], ...data };
+        } else {
+            inventario_itens.push({ ...data, id: Date.now() });
+        }
+        inventario_saveData();
+        closeModal('modal-inventario');
+        showToast('Ativo patrimonial registrado com sucesso');
+    }
+
+    function inventario_deleteItem(id) {
+        if (confirm('Tem certeza que deseja excluir este ativo patrimonial?')) {
+            inventario_itens = inventario_itens.filter(i => i.id != id);
+            inventario_saveData();
+            showToast('Item removido do inventário', 'info');
+        }
+    }
+
+    function inventario_calculateDetails(item) {
+        const valOrig = item.acquisitionValue;
+        const pct = item.depreciationPercentage / 100;
+        const acqDate = new Date(item.acquisitionDate + 'T00:00:00');
+        const today = new Date();
+        
+        let periods = 0;
+        if (item.depreciationFrequency === 'Mensal') {
+            periods = (today.getFullYear() - acqDate.getFullYear()) * 12 + (today.getMonth() - acqDate.getMonth());
+        } else {
+            periods = today.getFullYear() - acqDate.getFullYear();
+        }
+        periods = Math.max(0, periods);
+
+        const depPeriod = valOrig * pct;
+        const totDep = Math.min(valOrig, periods * depPeriod);
+        const valCur = valOrig - totDep;
+
+        const hist = [];
+        for (let i = 1; i <= periods; i++) {
+            const histDep = Math.min(valOrig, i * depPeriod);
+            hist.push({
+                period: i,
+                depreciated: histDep,
+                val: valOrig - histDep
+            });
+        }
+
+        return { valOrig, valCur, totDep, periods, hist };
+    }
+
+    function inventario_render() {
+        const grid = document.getElementById('inventario-grid');
+        grid.innerHTML = inventario_itens.map(item => {
+            const calc = inventario_calculateDetails(item);
+            return `
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg p-5 space-y-4">
+                    <div class="flex justify-between items-start border-b border-slate-700 pb-3">
+                        <div>
+                            <span class="text-[9px] uppercase font-bold text-indigo-400 block">${item.category}</span>
+                            <h4 class="font-bold text-white text-lg">${item.name}</h4>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="inventario_openModal(${item.id})" class="text-slate-500 hover:text-indigo-400"><i class="fas fa-edit"></i></button>
+                            <button onclick="inventario_deleteItem(${item.id})" class="text-slate-500 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <p class="text-slate-500 uppercase font-bold text-[10px]">Valor Aquisição</p>
+                            <p class="text-white font-bold text-sm">${formatBRL(calc.valOrig)}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 uppercase font-bold text-[10px]">Valor Atualizado</p>
+                            <p class="text-emerald-400 font-bold text-sm">${formatBRL(calc.valCur)}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 uppercase font-bold text-[10px]">Total Depreciado</p>
+                            <p class="text-rose-400 font-bold text-sm">${formatBRL(calc.totDep)}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 uppercase font-bold text-[10px]">Depreciação (${item.depreciationFrequency})</p>
+                            <p class="text-white font-bold text-sm">${item.depreciationPercentage}%</p>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 bg-slate-900/50 p-3 rounded-lg">
+                        <p class="font-bold mb-1 uppercase text-[9px] text-slate-500">Histórico de Depreciação (${calc.periods} períodos)</p>
+                        <div class="max-h-[80px] overflow-y-auto custom-scrollbar space-y-1">
+                            ${calc.hist.map(h => `
+                                <div class="flex justify-between text-[10px]">
+                                    <span>${item.depreciationFrequency} ${h.period}</span>
+                                    <span class="text-rose-400 font-medium">${formatBRL(h.depreciated)} (-${((h.depreciated/calc.valOrig)*100).toFixed(0)}%)</span>
+                                </div>
+                            `).join('') || '<p class="text-[10px] italic text-slate-600">Sem desgaste relevante registrado.</p>'}
+                        </div>
+                    </div>
+                    ${item.obs ? `<p class="text-xs italic text-slate-400">Obs: ${item.obs}</p>` : ''}
+                </div>
+            `;
+        }).join('') || '<div class="col-span-full text-center py-12 text-slate-500 text-xs">Nenhum patrimônio cadastrado.</div>';
     }
 
     // ── Boot ──────────────────────────────────────────────────────────────────
